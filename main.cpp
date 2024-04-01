@@ -2,14 +2,38 @@
 #include "mPrint.h"
 
 #include <cstdio>
+#include <ctime>
 #include <string>
+#include <unordered_map>
+#include <vector>
 
 using std::snprintf;
 using std::string;
+using std::unordered_map;
+using std::vector;
 
-#define DEBUG_TEXT_WRAP_LEN 2048
+typedef int entity_id;
 
-char texture_text[128] = "frame_count: 00000";
+typedef struct {
+  SDL_Texture *texture;
+  SDL_Rect src;
+  SDL_Rect dest;
+  int current_clip;
+  int num_clips;
+} sprite_component;
+
+typedef struct {
+  double x;
+  double y;
+} transform_component;
+
+void load_debug_text();
+int generate_random_char();
+entity_id get_next_entity_id();
+
+const int DEBUG_TEXT_WRAP_LEN = 2048;
+
+char texture_text[1024] = "a bunch of random text";
 const int target_texture_width = 400;
 const int target_texture_height = 240;
 const int zoom = 4;
@@ -28,6 +52,7 @@ bool left_is_pressed = false;
 bool right_is_pressed = false;
 bool up_is_pressed = false;
 bool down_is_pressed = false;
+bool a_is_pressed = false;
 TTF_Font *gFont = nullptr;
 SDL_Event e;
 SDL_Surface *text_surface = nullptr;
@@ -45,33 +70,16 @@ SDL_Rect debug_texture_src;
 SDL_Rect debug_texture_dest;
 string filepath = "img/skull-sheet.png";
 
-void load_debug_text();
-void load_debug_text() {
-  snprintf(texture_text, 128, "frame_count: %05d", frame_count++);
-  text_surface = TTF_RenderText_Blended_Wrapped(gFont, texture_text, textColor,
-                                                DEBUG_TEXT_WRAP_LEN);
-  if (text_surface == NULL) {
-    mPrint("text_surface == NULL");
-    // printf("textureText = %s\n", textureText);
-    printf("Unable to render text_surface! SDL_ttf Error: %s\n",
-           TTF_GetError());
-  } else {
-    // Create texture from surface pixels
-    debug_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
-    if (debug_texture == NULL) {
-      mPrint("mTexture == NULL");
-      printf("Unable to create texture from rendered text! SDL Error: %s\n",
-             SDL_GetError());
-    }
-    // Get image dimensions
-    mWidth = text_surface->w;
-    mHeight = text_surface->h;
-    // Get rid of old surface
-    SDL_FreeSurface(text_surface);
-  }
-}
+static entity_id next_entity_id = 0;
+
+vector<entity_id> entities;
+unordered_map<entity_id, sprite_component> sprites;
+unordered_map<entity_id, transform_component> transforms;
+unordered_map<entity_id, bool> inputs;
 
 int main() {
+  srand(time(nullptr));
+
   SDL_Init(SDL_INIT_VIDEO);
   window =
       SDL_CreateWindow("SDL2 Displaying Image", SDL_WINDOWPOS_UNDEFINED,
@@ -143,6 +151,16 @@ int main() {
   target_texture_dest.w = window_width;
   target_texture_dest.h = window_height;
 
+  // sprites.push_back({skull_sheet_texture, skull_clip, skull_dest});
+  // transforms.push_back({0, 0});
+
+  entity_id id = get_next_entity_id();
+  // sprites[id] = {skull_sheet_texture, skull_clip, skull_dest};
+  sprites[id] = {skull_sheet_texture, skull_clip, skull_dest, 0, 2};
+  transforms[id] = {0, 0};
+  inputs[id] = true;
+  entities.push_back(id);
+
   while (!quit) {
     // handle input
     while (SDL_PollEvent(&e)) {
@@ -165,6 +183,9 @@ int main() {
         case SDLK_q:
           quit = true;
           break;
+        case SDLK_a:
+          a_is_pressed = true;
+          break;
         default:
           break;
         }
@@ -182,22 +203,65 @@ int main() {
         case SDLK_DOWN:
           down_is_pressed = false;
           break;
+        case SDLK_a:
+          a_is_pressed = false;
+          break;
         default:
           break;
         }
       }
     }
-    // update gamestate
-    if (left_is_pressed) {
-      skull_dest.x--;
-    } else if (right_is_pressed) {
-      skull_dest.x++;
+
+    // handle input
+    for (auto kv : inputs) {
+      entity_id id = kv.first;
+      transform_component transform = transforms[id];
+      sprite_component sprite = sprites[id];
+      if (left_is_pressed) {
+        transform.x--;
+      } else if (right_is_pressed) {
+        transform.x++;
+      }
+      if (up_is_pressed) {
+        transform.y--;
+      } else if (down_is_pressed) {
+        transform.y++;
+      }
+
+      if (a_is_pressed) {
+        sprite.current_clip = 1;
+        sprite.src.x = sprite.current_clip * 24;
+      } else {
+        sprite.current_clip = 0;
+        sprite.src.x = sprite.current_clip * 24;
+      }
+
+      transforms[id] = transform;
+      sprites[id] = sprite;
     }
-    if (up_is_pressed) {
-      skull_dest.y--;
-    } else if (down_is_pressed) {
-      skull_dest.y++;
+
+    // update game state
+    for (auto kv : transforms) {
+      entity_id id = kv.first;
+      transform_component transform = kv.second;
+      sprite_component sprite = sprites[id];
+      sprite.dest.x = kv.second.x;
+      sprite.dest.y = kv.second.y;
+      sprites[id] = sprite;
     }
+    //}
+
+    // if (left_is_pressed) {
+    //  skull_dest.x--;
+    //} else if (right_is_pressed) {
+    //  skull_dest.x++;
+    //}
+    // if (up_is_pressed) {
+    //  skull_dest.y--;
+    //} else if (down_is_pressed) {
+    //  skull_dest.y++;
+    //}
+
     // render frame
     // clear screen
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
@@ -206,19 +270,56 @@ int main() {
     SDL_SetRenderTarget(renderer, target_texture);
     SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, skull_sheet_texture, &skull_clip, &skull_dest);
+
+    // render sprites
+    for (auto id : entities) {
+      sprite_component sprite = sprites[id];
+      // transform_component transform = transforms[id];
+      SDL_RenderCopy(renderer, sprite.texture, &sprite.src, &sprite.dest);
+    }
+
+    // SDL_RenderCopy(renderer, skull_sheet_texture, &skull_clip, &skull_dest);
+
     // render debug text
-    // SDL_RenderCopy(renderer, debug_texture, NULL, NULL); // lol
     //  reset the render target
     SDL_SetRenderTarget(renderer, NULL);
     SDL_RenderCopy(renderer, target_texture, &target_texture_src,
                    &target_texture_dest);
-    SDL_RenderCopy(renderer, debug_texture, &debug_texture_src,
-                   &debug_texture_dest);
+    // SDL_RenderCopy(renderer, debug_texture, &debug_texture_src,
+    //                &debug_texture_dest);
     SDL_RenderPresent(renderer);
-    // lets fuck with the text
 
     load_debug_text();
+
+    frame_count++;
   }
   return 0;
 }
+
+void load_debug_text() {
+  snprintf(texture_text, 1024, "frame_count: %06d\n", frame_count);
+
+  text_surface = TTF_RenderText_Blended_Wrapped(gFont, texture_text, textColor,
+                                                DEBUG_TEXT_WRAP_LEN);
+  if (text_surface == NULL) {
+    mPrint("text_surface == NULL");
+    // printf("textureText = %s\n", textureText);
+    printf("Unable to render text_surface! SDL_ttf Error: %s\n",
+           TTF_GetError());
+  } else {
+    // Create texture from surface pixels
+    debug_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
+    if (debug_texture == NULL) {
+      mPrint("mTexture == NULL");
+      printf("Unable to create texture from rendered text! SDL Error: %s\n",
+             SDL_GetError());
+    }
+    // Get image dimensions
+    mWidth = text_surface->w;
+    mHeight = text_surface->h;
+    // Get rid of old surface
+    SDL_FreeSurface(text_surface);
+  }
+}
+
+entity_id get_next_entity_id() { return next_entity_id++; }
