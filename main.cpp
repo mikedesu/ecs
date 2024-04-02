@@ -1,13 +1,16 @@
 #include "SDL_handler.h"
 #include "mPrint.h"
 
+#include <cmath>
 #include <cstdio>
 #include <ctime>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
+using std::pow;
 using std::snprintf;
+using std::sqrt;
 using std::string;
 using std::unordered_map;
 using std::vector;
@@ -20,14 +23,16 @@ typedef struct {
   SDL_Rect dest;
   int current_clip;
   int num_clips;
+  bool is_animating;
 } sprite_component;
 
 typedef struct {
-  double x;
-  double y;
+  int x;
+  int y;
 } transform_component;
 
 void load_debug_text();
+void spawn_eyeball();
 int generate_random_char();
 entity_id get_next_entity_id();
 
@@ -61,14 +66,27 @@ SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
 SDL_Texture *target_texture = nullptr;
 SDL_Texture *skull_sheet_texture = nullptr;
+SDL_Texture *eyeball_sheet_texture = nullptr;
+
 SDL_Texture *debug_texture = nullptr;
+SDL_Texture *debug_bg_texture = nullptr;
+
 SDL_Rect skull_clip;
 SDL_Rect skull_dest;
+
+SDL_Rect eyeball_clip;
+SDL_Rect eyeball_dest;
+
 SDL_Rect target_texture_src;
 SDL_Rect target_texture_dest;
+
 SDL_Rect debug_texture_src;
 SDL_Rect debug_texture_dest;
-string filepath = "img/skull-sheet.png";
+
+SDL_Surface *debug_surface = nullptr;
+
+string skullsheet_filepath = "img/skull-sheet.png";
+string eyeballsheet_filepath = "img/eyeball-sheet.png";
 
 static entity_id next_entity_id = 0;
 
@@ -86,14 +104,25 @@ int main() {
                        SDL_WINDOWPOS_UNDEFINED, window_width, window_height, 0);
   renderer = SDL_CreateRenderer(
       window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+  SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
   result = IMG_Init(imgFlags);
   result = TTF_Init();
   // init the target texture
   target_texture = SDL_CreateTexture(
       renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
       target_texture_width, target_texture_height);
-  skull_sheet_texture = IMG_LoadTexture(renderer, filepath.c_str());
+
+  skull_sheet_texture = IMG_LoadTexture(renderer, skullsheet_filepath.c_str());
   if (skull_sheet_texture == nullptr) {
+    printf("Failed to load texture image!\n");
+    return 1;
+  }
+
+  eyeball_sheet_texture =
+      IMG_LoadTexture(renderer, eyeballsheet_filepath.c_str());
+  if (eyeball_sheet_texture == nullptr) {
     printf("Failed to load texture image!\n");
     return 1;
   }
@@ -151,15 +180,41 @@ int main() {
   target_texture_dest.w = window_width;
   target_texture_dest.h = window_height;
 
+  eyeball_clip.x = 0;
+  eyeball_clip.y = 0;
+  eyeball_clip.w = 14; // has to be the size of one sprite animation
+  eyeball_clip.h = 14; // has to be the size of one sprite animation
+
+  eyeball_dest.x = 0;
+  eyeball_dest.y = 0;
+  eyeball_dest.w = 14;
+  eyeball_dest.h = 14;
+
   // sprites.push_back({skull_sheet_texture, skull_clip, skull_dest});
   // transforms.push_back({0, 0});
 
   entity_id id = get_next_entity_id();
   // sprites[id] = {skull_sheet_texture, skull_clip, skull_dest};
-  sprites[id] = {skull_sheet_texture, skull_clip, skull_dest, 0, 2};
+  sprites[id] = {skull_sheet_texture, skull_clip, skull_dest, 0, 2, false};
   transforms[id] = {0, 0};
   inputs[id] = true;
   entities.push_back(id);
+
+  // debug_surface = SDL_CreateRGBSurface(0, mWidth, mHeight, 32, 0, 0, 0, 0);
+  // if (debug_surface == NULL) {
+  //   mPrint("debug_surface == NULL");
+  //   printf("Unable to create debug_surface! SDL Error: %s\n",
+  //   SDL_GetError());
+  // }
+  // SDL_FillRect(debug_surface, NULL, SDL_MapRGB(debug_surface->format, 0, 0,
+  // 0));
+
+  // debug_bg_texture = SDL_CreateTextureFromSurface(renderer, debug_surface);
+  // if (debug_bg_texture == NULL) {
+  //   mPrint("debug_bg_texture == NULL");
+  //   printf("Unable to create debug_bg_texture! SDL Error: %s\n",
+  //          SDL_GetError());
+  // }
 
   while (!quit) {
     // handle input
@@ -185,6 +240,9 @@ int main() {
           break;
         case SDLK_a:
           a_is_pressed = true;
+          break;
+        case SDLK_i:
+          spawn_eyeball();
           break;
         default:
           break;
@@ -271,6 +329,17 @@ int main() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
     SDL_RenderClear(renderer);
 
+    // update animating sprite clips
+    for (auto id : entities) {
+      sprite_component sprite = sprites[id];
+      if (sprite.is_animating) {
+        //   mPrint("animating");
+        sprite.current_clip = (sprite.current_clip + 1) % sprite.num_clips;
+        sprite.src.x = sprite.current_clip * 14;
+        sprites[id] = sprite;
+      }
+    }
+
     // render sprites
     for (auto id : entities) {
       sprite_component sprite = sprites[id];
@@ -283,10 +352,27 @@ int main() {
     // render debug text
     //  reset the render target
     SDL_SetRenderTarget(renderer, NULL);
+
     SDL_RenderCopy(renderer, target_texture, &target_texture_src,
                    &target_texture_dest);
-    // SDL_RenderCopy(renderer, debug_texture, &debug_texture_src,
-    //                &debug_texture_dest);
+
+    // SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    //  can sdl render a transparent bg? the above comes in dark
+    // SDL_Rect a = {0, 0, mWidth, mHeight};
+    // SDL_RenderFillRect(renderer, &a);
+    // if (text_surface) {
+    //  SDL_BlitSurface(debug_surface, NULL, text_surface, NULL);
+    //}
+
+    // SDL_RenderCopy(renderer, debug_bg_texture, NULL, &debug_texture_dest);
+
+    SDL_Color color = {0, 0, 0, 128};
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+    SDL_RenderFillRect(renderer, &debug_texture_dest);
+
+    SDL_RenderCopy(renderer, debug_texture, &debug_texture_src,
+                   &debug_texture_dest);
+
     SDL_RenderPresent(renderer);
 
     load_debug_text();
@@ -297,7 +383,8 @@ int main() {
 }
 
 void load_debug_text() {
-  snprintf(texture_text, 1024, "frame_count: %06d\n", frame_count);
+  snprintf(texture_text, 1024, "frame_count: %06d\nnum_entities: %d\n",
+           frame_count, next_entity_id);
 
   text_surface = TTF_RenderText_Blended_Wrapped(gFont, texture_text, textColor,
                                                 DEBUG_TEXT_WRAP_LEN);
@@ -323,3 +410,30 @@ void load_debug_text() {
 }
 
 entity_id get_next_entity_id() { return next_entity_id++; }
+
+int distance(int x1, int y1, int x2, int y2) {
+  return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+}
+
+const int MIN_SPAWN_DISTANCE = 100;
+
+void spawn_eyeball() {
+  entity_id id = get_next_entity_id();
+
+  // eyeball_dest.x = rand() % target_texture_width - eyeball_clip.w;
+  // eyeball_dest.y = rand() % target_texture_height - eyeball_clip.h;
+
+  int x = -1;
+  int y = -1;
+  x = rand() % target_texture_width - eyeball_clip.w;
+  y = rand() % target_texture_height - eyeball_clip.h;
+
+  eyeball_dest.x = x;
+  eyeball_dest.y = y;
+
+  sprites[id] = {
+      eyeball_sheet_texture, eyeball_clip, eyeball_dest, 0, 18, true};
+  transforms[id] = {eyeball_dest.x, eyeball_dest.y};
+  // inputs[id] = false;
+  entities.push_back(id);
+}
