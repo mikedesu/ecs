@@ -93,8 +93,6 @@ SDL_Color textColor = {255, 255, 255};
 SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
 SDL_Texture *target_texture = nullptr;
-SDL_Texture *skull_sheet_texture = nullptr;
-SDL_Texture *eyeball_sheet_texture = nullptr;
 SDL_Texture *debug_texture = nullptr;
 SDL_Texture *debug_bg_texture = nullptr;
 SDL_Rect target_texture_src;
@@ -109,8 +107,8 @@ vector<entity_id> entities;
 unordered_map<entity_id, sprite_component> sprites;
 unordered_map<entity_id, transform_component> transforms;
 unordered_map<entity_id, bool> inputs;
-
 unordered_map<int, bool> is_pressed;
+unordered_map<string, SDL_Texture *> textures;
 
 int main() {
   srand(time(nullptr));
@@ -192,19 +190,15 @@ double frame_time() {
 double fps() { return frame_count / (SDL_GetTicks64() / 1000.0f); }
 
 void spawn_eyeball() {
-  const int width = 14;
-  const int height = 14;
+  const int w = 14;
+  const int h = 14;
   const int num_clips = 18;
   bool is_animating = true;
   entity_id id = get_next_entity_id();
-  int x = rand() % (target_texture_width - width);
-  int y = rand() % (target_texture_height - height);
-  sprites[id] = {eyeball_sheet_texture,
-                 {0, 0, width, height},
-                 {0, 0, width, height},
-                 0,
-                 num_clips,
-                 is_animating};
+  int x = rand() % (target_texture_width - w);
+  int y = rand() % (target_texture_height - h);
+  sprites[id] = {textures["eyeball"], {0, 0, w, h}, {0, 0, w, h}, 0,
+                 num_clips,           is_animating};
   transforms[id] = {x, y};
   // inputs[id] = false;
   entities.push_back(id);
@@ -291,8 +285,8 @@ void cleanup() {
   cleanup_transforms();
   cleanup_inputs();
   cleanup_entities();
-  SDL_DestroyTexture(skull_sheet_texture);
-  SDL_DestroyTexture(eyeball_sheet_texture);
+  SDL_DestroyTexture(textures["skull"]);
+  SDL_DestroyTexture(textures["eyeball"]);
   SDL_DestroyTexture(debug_texture);
   SDL_DestroyTexture(debug_bg_texture);
   SDL_DestroyTexture(target_texture);
@@ -389,27 +383,27 @@ void handle_init_target_texture() {
 }
 
 void load_skull_sheet_texture() {
-  skull_sheet_texture = IMG_LoadTexture(renderer, skullsheet_filepath.c_str());
-  if (skull_sheet_texture == nullptr) {
+  SDL_Texture *t = IMG_LoadTexture(renderer, skullsheet_filepath.c_str());
+  if (t == nullptr) {
     cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
                                          skullsheet_filepath);
   }
+  textures["skull"] = t;
 }
 
 void load_eyeball_sheet_texture() {
-  eyeball_sheet_texture =
-      IMG_LoadTexture(renderer, eyeballsheet_filepath.c_str());
-  if (eyeball_sheet_texture == nullptr) {
+  SDL_Texture *t = IMG_LoadTexture(renderer, eyeballsheet_filepath.c_str());
+  if (t == nullptr) {
     cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
                                          eyeballsheet_filepath);
   }
+  textures["eyeball"] = t;
 }
 
 void spawn_skull() {
-  SDL_QueryTexture(skull_sheet_texture, NULL, NULL, &w, &h);
+  SDL_QueryTexture(textures["skull"], NULL, NULL, &w, &h);
   entity_id id = get_next_entity_id();
-  sprites[id] = {
-      skull_sheet_texture, {0, 0, 24, h}, {0, 0, 24, h}, 0, 2, false};
+  sprites[id] = {textures["skull"], {0, 0, 24, h}, {0, 0, 24, h}, 0, 2, false};
   transforms[id] = {0, 0};
   inputs[id] = true;
   entities.push_back(id);
