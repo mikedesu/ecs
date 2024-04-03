@@ -47,6 +47,7 @@ void cleanup_sprites();
 void cleanup_transforms();
 void cleanup_inputs();
 void cleanup_entities();
+void cleanup_textures();
 void init_debug_texture_rects();
 void init_target_texture_rects();
 void cleanup_and_exit_with_failure();
@@ -279,14 +280,20 @@ void cleanup_transforms() { transforms.clear(); }
 
 void cleanup_inputs() { inputs.clear(); }
 
+void cleanup_textures() {
+  for (auto kv : textures) {
+    SDL_DestroyTexture(kv.second);
+  }
+  textures.clear();
+}
+
 void cleanup() {
   mPrint("cleaning up");
   cleanup_sprites();
   cleanup_transforms();
   cleanup_inputs();
   cleanup_entities();
-  SDL_DestroyTexture(textures["skull"]);
-  SDL_DestroyTexture(textures["eyeball"]);
+  cleanup_textures();
   SDL_DestroyTexture(debug_texture);
   SDL_DestroyTexture(debug_bg_texture);
   SDL_DestroyTexture(target_texture);
