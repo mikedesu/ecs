@@ -408,9 +408,13 @@ void load_eyeball_sheet_texture() {
 }
 
 void spawn_skull() {
+  const int num_clips = 2;
+  bool is_animating = false;
   SDL_QueryTexture(textures["skull"], NULL, NULL, &w, &h);
+  w = w / num_clips;
   entity_id id = get_next_entity_id();
-  sprites[id] = {textures["skull"], {0, 0, 24, h}, {0, 0, 24, h}, 0, 2, false};
+  sprites[id] = {textures["skull"], {0, 0, w, h}, {0, 0, w, h}, 0,
+                 num_clips,         is_animating};
   transforms[id] = {0, 0};
   inputs[id] = true;
   entities.push_back(id);
@@ -433,10 +437,10 @@ void handle_input_component() {
     }
     if (is_pressed[SDLK_a]) {
       sprite.current_clip = 1;
-      sprite.src.x = sprite.current_clip * 24;
+      sprite.src.x = sprite.current_clip * sprite.src.w;
     } else {
       sprite.current_clip = 0;
-      sprite.src.x = sprite.current_clip * 24;
+      sprite.src.x = sprite.current_clip * sprite.src.w;
     }
     transforms[id] = transform;
     sprites[id] = sprite;
