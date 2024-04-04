@@ -2,8 +2,6 @@
 
 An entity-component-system (ECS) written in pure C++ and libsdl.
 
------
-
 ## Building
 
 You'll currently need to add in your own graphics. This repository is meant more for the ECS than the game itself.
@@ -17,8 +15,6 @@ make clean && make
 
 If you happen to have the graphics, you can run the game with: `./game`
 
------
-
 ## Motivations
 
 I am looking to create a very tight development feedback loop, so building as fast as possible is important. Everything currently sits inside of `main.cpp` at the moment for this reason. I feel like if the source code is kept extremely clean and tight and as few LOC as possible, it will be easier to refactor and build upon in the future. This is a very experimental approach, but I am excited to see where it goes.
@@ -31,7 +27,9 @@ I also seek to offer an alternative method to gamedev. There are many existing e
 - Versatile ECS for multiple game types
 - Fun!
 
------
+## Story
+
+This project emerged from a competition held via the l0de Radio Hour on EFNet IRC between myself and hughbord. The competition was initially to see if either of us could reproduce the classic game, "Tempest", in an alotted time. I created a variant on the game that later became a sidescrolling shooter. During initial development, I discovered an interesting mechanic I hadn't seen in other games, so I decided to start building the idea forward to see what it could become. The initial code was trash but worked. The idea and assets still exist and now I've finally decided to push it forward as far as I can.
 
 ## Other gamedevs to learn from
 
