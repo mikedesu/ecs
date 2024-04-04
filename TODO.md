@@ -17,12 +17,12 @@
 - [ ] knives
     - [x] spawning
     - [x] movement
-    - [ ] removal when off-screen
+    - [x] removal when off-screen
     - [ ] collision with player
-    - [ ] collision with enemies
+    - [x] collision with enemies
 - [ ] distinguishing entity types
     - [ ] player
         - [x] capturing the player's `entity_id` on `spawn_skull()`
-    - [ ] enemies
-    - [ ] knives
+    - [x] enemies
+    - [x] knives
     - [ ] power-ups
