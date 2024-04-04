@@ -15,6 +15,7 @@ using std::for_each;
 using std::function;
 using std::pair;
 using std::pow;
+using std::remove;
 using std::snprintf;
 using std::sqrt;
 using std::string;
@@ -52,9 +53,10 @@ double frame_time();
 double fps();
 double distance(int x1, int y1, int x2, int y2);
 void cleanup();
-void cleanup_textures();
 void cleanup_and_exit_with_failure();
 void cleanup_and_exit_with_failure_mprint(string message);
+void cleanup_entities_marked_for_deletion();
+void cleanup_textures();
 void create_window();
 void create_renderer();
 void handle_input();
@@ -130,6 +132,8 @@ unordered_map<entity_id, bool> is_enemy;
 unordered_map<entity_id, bool> is_knife;
 unordered_map<entity_id, bool> is_marked_for_deletion;
 static int knife_cooldown = 0;
+const int default_knife_cooldown = 30;
+int current_knife_cooldown = default_knife_cooldown;
 
 function<void(sprite_pair)> draw_sprite = [](const sprite_pair p) {
   SDL_RenderCopyEx(renderer, p.second.texture, &p.second.src, &p.second.dest,
@@ -156,11 +160,9 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   sprite.dest.y = transform.y;
   sprites[id] = sprite;
 
-  if (transform.x > target_texture_width) {
-    // just playing around with wrapping
-    transform.x = -sprite.src.w;
-  } else if (transform.x < -sprite.src.w) {
-    transform.x = target_texture_width;
+  if (id != player_id) {
+    is_marked_for_deletion[id] =
+        (transform.x > target_texture_width) || (transform.x < -sprite.src.w);
   }
   transforms[id] = transform;
 };
@@ -216,18 +218,39 @@ int main() {
     render_frame();
 
     knife_cooldown = (knife_cooldown > 0) ? knife_cooldown - 1 : 0;
+
+    // remove entities that are marked for deletion
+    cleanup_entities_marked_for_deletion();
   }
   cleanup();
   return EXIT_SUCCESS;
 }
 
+void cleanup_entities_marked_for_deletion() {
+  for (auto kv : is_marked_for_deletion) {
+    entity_id id = kv.first;
+    if (kv.second) {
+      sprites.erase(id);
+      transforms.erase(id);
+      inputs.erase(id);
+      is_rotating.erase(id);
+      is_collidable.erase(id);
+      is_enemy.erase(id);
+      is_knife.erase(id);
+      entities.erase(remove(entities.begin(), entities.end(), id),
+                     entities.end());
+      // is_marked_for_deletion.erase(id);
+    }
+  }
+}
+
 void load_debug_text() {
   snprintf(texture_text, 1024,
            "target texture: %dx%d\nwindow size: %dx%d\nframe_count: "
-           "%06d\nnum_entities: %d\n"
+           "%06d\nnum_entities: %ld\n"
            "fps: %.02f\nzoom: %.02f",
            target_texture_width, target_texture_height, window_width,
-           window_height, frame_count, next_entity_id, fps(), zoom);
+           window_height, frame_count, entities.size(), fps(), zoom);
   text_surface = TTF_RenderText_Blended_Wrapped(gFont, texture_text, textColor,
                                                 DEBUG_TEXT_WRAP_LEN);
   if (text_surface == NULL) {
@@ -303,9 +326,11 @@ void spawn_knife() {
     sprites[id] = {is_animating, 0,           num_clips, textures["knife"],
                    {0, 0, w, h}, {0, 0, w, h}};
     transforms[id] = {x, y, 1, 0, angle};
+    is_knife[id] = true;
+    is_collidable[id] = true;
     // is_rotating[id] = true;
     entities.push_back(id);
-    knife_cooldown = 30;
+    knife_cooldown = current_knife_cooldown;
   }
 }
 
