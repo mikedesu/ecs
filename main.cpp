@@ -40,32 +40,30 @@ typedef struct {
 
 typedef pair<int, sprite_component> sprite_pair;
 typedef pair<int, transform_component> transform_pair;
+typedef pair<int, bool> rotation_pair;
+typedef pair<int, bool> collision_pair;
 
 int generate_random_char();
+int init_target_texture();
 entity_id get_next_entity_id();
 double frame_time();
 double fps();
 double distance(int x1, int y1, int x2, int y2);
 void cleanup();
-void cleanup_sprites();
-void cleanup_transforms();
-void cleanup_inputs();
-void cleanup_entities();
 void cleanup_textures();
 void cleanup_and_exit_with_failure();
 void cleanup_and_exit_with_failure_mprint(string message);
 void create_window();
 void create_renderer();
 void handle_input();
-void handle_keydown();
-void handle_keyup();
 void handle_init_target_texture();
 void handle_input_component();
-void handle_transform_components();
+void handle_keydown();
+void handle_keyup();
+void update_transform_components();
 void init_gfont();
 void init_img();
 void init_ttf();
-int init_target_texture();
 void init_debug_texture_rects();
 void init_target_texture_rects();
 void load_debug_text();
@@ -77,6 +75,7 @@ void render_frame();
 void spawn_skull();
 void spawn_eyeball();
 void update_animations();
+void update_rotations();
 
 const int DEBUG_TEXT_WRAP_LEN = 2048;
 const int MIN_SPAWN_DISTANCE = 100;
@@ -84,6 +83,7 @@ const int MIN_SPAWN_DISTANCE = 100;
 char texture_text[1024] = "a bunch of random text";
 const int target_texture_width = 400;
 const int target_texture_height = 240;
+const int debug_font_size = 16;
 double zoom = 4.0;
 const int window_width = target_texture_width * zoom;
 const int window_height = target_texture_height * zoom;
@@ -119,9 +119,12 @@ unordered_map<entity_id, transform_component> transforms;
 unordered_map<entity_id, bool> inputs;
 unordered_map<int, bool> is_pressed;
 unordered_map<string, SDL_Texture *> textures;
+unordered_map<entity_id, bool> is_rotating;
+unordered_map<entity_id, bool> is_collidable;
 
 function<void(sprite_pair)> draw_sprite = [](const sprite_pair p) {
-  SDL_RenderCopy(renderer, p.second.texture, &p.second.src, &p.second.dest);
+  SDL_RenderCopyEx(renderer, p.second.texture, &p.second.src, &p.second.dest,
+                   transforms[p.first].angle, NULL, SDL_FLIP_NONE);
 };
 
 function<void(sprite_pair)> update_animation = [](const sprite_pair p) {
@@ -141,6 +144,16 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   sprite.dest.x = transform.x;
   sprite.dest.y = transform.y;
   sprites[id] = sprite;
+};
+
+function<void(rotation_pair)> handle_rotation = [](const rotation_pair p) {
+  entity_id id = p.first;
+  bool is_rotating = p.second;
+  if (is_rotating) {
+    transform_component transform = transforms[id];
+    transform.angle += 1.0;
+    transforms[id] = transform;
+  }
 };
 
 int main() {
@@ -175,9 +188,9 @@ int main() {
       target_texture_dest.h = target_texture_height * zoom;
     }
     */
-
-    handle_transform_components();
+    update_transform_components();
     update_animations();
+    update_rotations();
     render_frame();
   }
   cleanup();
@@ -246,6 +259,7 @@ void spawn_eyeball() {
   sprites[id] = {is_animating, 0,           num_clips, textures["eyeball"],
                  {0, 0, w, h}, {0, 0, w, h}};
   transforms[id] = {x, y, angle};
+  // is_rotating[id] = true;
   entities.push_back(id);
 }
 
@@ -267,9 +281,7 @@ void handle_keydown() {
     do_render_debug_panel = !do_render_debug_panel;
     break;
   case SDLK_i:
-    for (int i = 0; i < 100; i++) {
-      spawn_eyeball();
-    }
+    spawn_eyeball();
     break;
   default:
     break;
@@ -315,18 +327,6 @@ int init_target_texture() {
   return 1;
 }
 
-void cleanup_sprites() {
-  for (auto kv : sprites) {
-    SDL_DestroyTexture(kv.second.texture);
-  }
-  sprites.clear();
-}
-
-void cleanup_entities() { entities.clear(); }
-
-void cleanup_transforms() { transforms.clear(); }
-
-void cleanup_inputs() { inputs.clear(); }
 void cleanup_textures() {
   for (auto kv : textures) {
     SDL_DestroyTexture(kv.second);
@@ -336,10 +336,13 @@ void cleanup_textures() {
 
 void cleanup() {
   mPrint("cleaning up");
-  cleanup_sprites();
-  cleanup_transforms();
-  cleanup_inputs();
-  cleanup_entities();
+  sprites.clear();
+  transforms.clear();
+  inputs.clear();
+  entities.clear();
+  is_pressed.clear();
+  is_rotating.clear();
+  is_collidable.clear();
   cleanup_textures();
   SDL_DestroyTexture(debug_texture);
   SDL_DestroyTexture(debug_bg_texture);
@@ -423,7 +426,7 @@ void init_ttf() {
 }
 
 void init_gfont() {
-  gFont = TTF_OpenFont("ttf/hack.ttf", 28);
+  gFont = TTF_OpenFont("ttf/hack.ttf", debug_font_size);
   if (gFont == nullptr) {
     cleanup_and_exit_with_failure_mprint("Failed to load font");
   }
@@ -503,7 +506,7 @@ void handle_input_component() {
   }
 }
 
-void handle_transform_components() {
+void update_transform_components() {
   for_each(transforms.begin(), transforms.end(), handle_transform);
 }
 
@@ -519,6 +522,10 @@ void render_debug_panel() {
 
 void update_animations() {
   for_each(sprites.begin(), sprites.end(), update_animation);
+}
+
+void update_rotations() {
+  for_each(is_rotating.begin(), is_rotating.end(), handle_rotation);
 }
 
 void render_frame() {
