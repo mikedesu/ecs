@@ -88,10 +88,10 @@ const int DEBUG_TEXT_WRAP_LEN = 2048;
 const int MIN_SPAWN_DISTANCE = 100;
 
 char texture_text[1024] = "a bunch of random text";
-const int target_texture_width = 400;
-const int target_texture_height = 240;
+const int target_texture_width = 400 * 4;
+const int target_texture_height = 240 * 4;
 const int debug_font_size = 16;
-double zoom = 4.0;
+double zoom = 1.0;
 const int window_width = target_texture_width * zoom;
 const int window_height = target_texture_height * zoom;
 int imgFlags = IMG_INIT_PNG;
@@ -117,8 +117,8 @@ SDL_Rect target_texture_dest;
 SDL_Rect debug_texture_src;
 SDL_Rect debug_texture_dest;
 SDL_Surface *debug_surface = nullptr;
-string skullsheet_filepath = "img/skull-sheet.png";
-string eyeballsheet_filepath = "img/eyeball-sheet.png";
+string skullsheet_filepath = "img/skull-sheet4x.png";
+string eyeballsheet_filepath = "img/eyeball-sheet4x.png";
 static entity_id next_entity_id = 0;
 entity_id player_id = -1;
 vector<entity_id> entities;
@@ -315,10 +315,15 @@ double frame_time() {
 double fps() { return frame_count / (SDL_GetTicks64() / 1000.0f); }
 
 void spawn_eyeball() {
-  const int w = 14;
-  const int h = 14;
+  // const int w = 14;
+  // const int h = 14;
+
   const int num_clips = 18;
   bool is_animating = true;
+
+  SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
+  w = w / num_clips;
+
   entity_id id = get_next_entity_id();
   int x = (rand() % ((target_texture_width - w) / 2)) +
           (target_texture_width - w) / 2;
@@ -337,11 +342,13 @@ void spawn_eyeball() {
 
 void spawn_knife() {
   if (!knife_cooldown) {
-    const int w = 14;
-    const int h = 8;
+    // const int w = 14;
+    // const int h = 8;
     const int num_clips = 1;
     bool is_animating = false;
     entity_id id = get_next_entity_id();
+    SDL_QueryTexture(textures["knife"], NULL, NULL, &w, &h);
+    w = w / num_clips;
     int x = sprites[player_id].dest.x + sprites[player_id].dest.w;
     int y = sprites[player_id].dest.y + sprites[player_id].dest.h / 2 + 4;
     // need to set x,y to player position
@@ -555,7 +562,7 @@ void load_eyeball_sheet_texture() {
 }
 
 void load_knife_sheet_texture() {
-  string filepath = "img/knife.png";
+  string filepath = "img/knife4x.png";
   SDL_Texture *t = IMG_LoadTexture(renderer, filepath.c_str());
   if (t == nullptr) {
     cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
