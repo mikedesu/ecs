@@ -29,7 +29,7 @@ I also seek to offer an alternative method to gamedev. There are many existing e
 
 ## Story
 
-This project emerged from a competition held via the l0de Radio Hour on EFNet IRC between myself and hughbord. The competition was initially to see if either of us could reproduce the classic game, "Tempest", in an alotted time. I created a variant on the game that later became a sidescrolling shooter. During initial development, I discovered an interesting mechanic I hadn't seen in other games, so I decided to start building the idea forward to see what it could become. The initial code was trash but worked. The idea and assets still exist and now I've finally decided to push it forward as far as I can.
+This project emerged from a competition held via the l0de Radio Hour on EFNet IRC between myself and [birdneststream](https://github.com/birdneststream/). The competition was initially to see if either of us could reproduce the classic game, "Tempest", in an alotted time. I created a variant on the game that later became a sidescrolling shooter. During initial development, I discovered an interesting mechanic I hadn't seen in other games, so I decided to start building the idea forward to see what it could become. The initial code was trash but worked. The idea and assets still exist and now I've finally decided to push it forward as far as I can.
 
 ## Other gamedevs to learn from
 
@@ -42,6 +42,7 @@ This project emerged from a competition held via the l0de Radio Hour on EFNet IR
 ## Other developers to learn from
 
 - [ThePrimeAgen](https://www.youtube.com/@ThePrimeTimeagen)
+- [birdneststream](https://github.com/birdneststream/)
 
 -----
 
