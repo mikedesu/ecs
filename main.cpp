@@ -84,17 +84,23 @@ void update_animations();
 void update_rotations();
 void update_knife_collisions();
 
+double zoom = 1.0;
+
 const int DEBUG_TEXT_WRAP_LEN = 2048;
 const int MIN_SPAWN_DISTANCE = 100;
 
 char texture_text[1024] = "a bunch of random text";
-double zoom = 1.0;
 const int target_texture_width = 400 * 4;
 const int target_texture_height = 240 * 4;
 const int debug_font_size = 16;
-const int window_width = target_texture_width * zoom;
-const int window_height = target_texture_height * zoom;
+const int default_window_width = target_texture_width * zoom;
+const int default_window_height = target_texture_height * zoom;
+const int window_width = default_window_width;
+const int window_height = default_window_height;
 const int default_knife_speed = 4;
+const int default_knife_cooldown = 30;
+static int knife_cooldown = 0;
+int current_knife_cooldown = default_knife_cooldown;
 int num_collisions = 0;
 int current_knife_speed = default_knife_speed;
 int imgFlags = IMG_INIT_PNG;
@@ -135,9 +141,6 @@ unordered_map<entity_id, bool> is_collidable;
 unordered_map<entity_id, bool> is_enemy;
 unordered_map<entity_id, bool> is_knife;
 unordered_map<entity_id, bool> is_marked_for_deletion;
-static int knife_cooldown = 0;
-const int default_knife_cooldown = 30;
-int current_knife_cooldown = default_knife_cooldown;
 
 function<void(sprite_pair)> draw_sprite = [](const sprite_pair p) {
   SDL_RenderCopyEx(renderer, p.second.texture, &p.second.src, &p.second.dest,
@@ -163,10 +166,12 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   sprite.dest.x = transform.x;
   sprite.dest.y = transform.y;
   sprites[id] = sprite;
-
   if (id != player_id) {
-    is_marked_for_deletion[id] =
-        (transform.x > target_texture_width) || (transform.x < -sprite.src.w);
+    if (is_enemy[id]) {
+      is_marked_for_deletion[id] = transform.x < -sprite.src.w;
+    } else if (is_knife[id]) {
+      is_marked_for_deletion[id] = transform.x > window_width;
+    }
   }
   transforms[id] = transform;
 };
@@ -190,11 +195,9 @@ int main() {
   init_img();
   init_ttf();
   handle_init_target_texture();
-
   load_skull_sheet_texture();
   load_eyeball_sheet_texture();
   load_knife_sheet_texture();
-
   init_gfont();
   load_debug_text();
   init_debug_texture_rects();
@@ -205,22 +208,10 @@ int main() {
     handle_input();
     handle_input_component();
     // update game state
-    /*
-    if (is_pressed[SDLK_z]) {
-      zoom += 0.1;
-      target_texture_dest.w = target_texture_width * zoom;
-      target_texture_dest.h = target_texture_height * zoom;
-    } else if (is_pressed[SDLK_x]) {
-      zoom -= 0.1;
-      target_texture_dest.w = target_texture_width * zoom;
-      target_texture_dest.h = target_texture_height * zoom;
-    }
-    */
     update_transform_components();
     update_animations();
     update_rotations();
     update_knife_collisions();
-
     render_frame();
     knife_cooldown = (knife_cooldown > 0) ? knife_cooldown - 1 : 0;
     // remove entities that are marked for deletion
@@ -234,21 +225,26 @@ void update_knife_collisions() {
   for (auto kv : is_knife) {
     entity_id id = kv.first;
     sprite_component knife = sprites[id];
-    SDL_Rect &knife_rect = knife.dest;
-
+    // SDL_Rect &knife_rect = knife.dest;
     for (auto kv2 : is_enemy) {
       entity_id enemy_id = kv2.first;
+      bool is_enemy = kv2.second;
       sprite_component enemy = sprites[enemy_id];
-      SDL_Rect &enemy_rect = enemy.dest;
-
-      if (SDL_HasIntersection(&knife_rect, &enemy_rect)) {
+      // SDL_Rect &enemy_rect = enemy.dest;
+      if (!is_enemy) {
+        continue;
+      }
+      if (SDL_HasIntersection(&knife.dest, &enemy.dest)) {
         is_marked_for_deletion[enemy_id] = true;
         is_marked_for_deletion[id] = true;
+        mPrint("knife collision with enemy id " + std::to_string(enemy_id));
         num_collisions++;
       }
     }
   }
 }
+
+vector<entity_id> entities_marked_for_deletion_tmp;
 
 void cleanup_entities_marked_for_deletion() {
   for (auto kv : is_marked_for_deletion) {
@@ -263,19 +259,24 @@ void cleanup_entities_marked_for_deletion() {
       is_knife.erase(id);
       entities.erase(remove(entities.begin(), entities.end(), id),
                      entities.end());
-      // is_marked_for_deletion.erase(id);
+      entities_marked_for_deletion_tmp.push_back(id);
     }
   }
+  for (auto id : entities_marked_for_deletion_tmp) {
+    is_marked_for_deletion.erase(id);
+  }
+  entities_marked_for_deletion_tmp.clear();
 }
 
 void load_debug_text() {
   snprintf(texture_text, 1024,
            "target texture: %dx%d\nwindow size: %dx%d\nframe_count: "
            "%06d\nnum_entities: %ld\n"
-           "fps: %.02f\nzoom: %.02f\nnum_collisions: %d\n",
+           "fps: %.02f\nzoom: %.02f\nnum_collisions: "
+           "%d\nknife_cooldown: %d\ncurrent_knife_cooldown: %d\n",
            target_texture_width, target_texture_height, window_width,
            window_height, frame_count, entities.size(), fps(), zoom,
-           num_collisions);
+           num_collisions, knife_cooldown, current_knife_cooldown);
   text_surface = TTF_RenderText_Blended_Wrapped(gFont, texture_text, textColor,
                                                 DEBUG_TEXT_WRAP_LEN);
   if (text_surface == NULL) {
@@ -320,26 +321,21 @@ double frame_time() {
 double fps() { return frame_count / (SDL_GetTicks64() / 1000.0f); }
 
 void spawn_eyeball() {
-  // const int w = 14;
-  // const int h = 14;
-
   const int num_clips = 18;
   bool is_animating = true;
-
   SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
   w = w / num_clips;
-
   entity_id id = get_next_entity_id();
+  mPrint("spawning eyeball with id " + std::to_string(id));
   int x = (rand() % ((target_texture_width - w) / 2)) +
-          (target_texture_width - w) / 2;
+          (target_texture_width - w) / 2 + target_texture_width;
   int y = (rand() % (target_texture_height - h));
-  int vx = -1;
+  int vx = -4;
   int vy = 0;
   double angle = 0.0;
   sprites[id] = {is_animating, 0,           num_clips, textures["eyeball"],
                  {0, 0, w, h}, {0, 0, w, h}};
   transforms[id] = {x, y, vx, vy, angle};
-  // is_rotating[id] = true;
   is_collidable[id] = true;
   is_enemy[id] = true;
   entities.push_back(id);
@@ -347,16 +343,15 @@ void spawn_eyeball() {
 
 void spawn_knife() {
   if (!knife_cooldown) {
-    // const int w = 14;
-    // const int h = 8;
     const int num_clips = 1;
+    const int padding = 16;
     bool is_animating = false;
     entity_id id = get_next_entity_id();
+    mPrint("spawning knife with id " + std::to_string(id));
     SDL_QueryTexture(textures["knife"], NULL, NULL, &w, &h);
     w = w / num_clips;
-    int x = sprites[player_id].dest.x + sprites[player_id].dest.w;
+    int x = sprites[player_id].dest.x + sprites[player_id].dest.w + padding;
     int y = sprites[player_id].dest.y + sprites[player_id].dest.h / 2 + 4;
-    // need to set x,y to player position
     double angle = 0.0;
     sprites[id] = {is_animating, 0,           num_clips, textures["knife"],
                    {0, 0, w, h}, {0, 0, w, h}};
@@ -364,6 +359,7 @@ void spawn_knife() {
     int vy = 0;
     transforms[id] = {x, y, vx, vy, angle};
     is_knife[id] = true;
+    is_enemy[id] = false;
     is_collidable[id] = true;
     is_rotating[id] = true;
     entities.push_back(id);
@@ -380,6 +376,8 @@ void handle_keydown() {
   case SDLK_a:
   case SDLK_z:
   case SDLK_x:
+  case SDLK_LSHIFT:
+  case SDLK_RSHIFT:
     is_pressed[e.key.keysym.sym] = true;
     break;
   case SDLK_q:
@@ -405,6 +403,8 @@ void handle_keyup() {
   case SDLK_a:
   case SDLK_z:
   case SDLK_x:
+  case SDLK_LSHIFT:
+  case SDLK_RSHIFT:
     is_pressed[e.key.keysym.sym] = false;
     break;
   default:
@@ -467,23 +467,17 @@ void cleanup() {
 }
 
 void init_debug_texture_rects() {
-  debug_texture_src.x = 0;
-  debug_texture_src.y = 0;
-  debug_texture_src.w = mWidth;
-  debug_texture_src.h = mHeight;
-  debug_texture_dest.x = 0;
-  debug_texture_dest.y = 0;
-  debug_texture_dest.w = mWidth;
-  debug_texture_dest.h = mHeight;
+  debug_texture_src.x = debug_texture_src.y = debug_texture_dest.x =
+      debug_texture_dest.y = 0;
+  debug_texture_src.w = debug_texture_dest.w = mWidth;
+  debug_texture_src.h = debug_texture_dest.h = mHeight;
 }
 
 void init_target_texture_rects() {
-  target_texture_src.x = 0;
-  target_texture_src.y = 0;
+  target_texture_src.x = target_texture_src.y = target_texture_dest.x =
+      target_texture_dest.y = 0;
   target_texture_src.w = target_texture_width;
   target_texture_src.h = target_texture_height;
-  target_texture_dest.x = 0;
-  target_texture_dest.y = 0;
   target_texture_dest.w = window_width;
   target_texture_dest.h = window_height;
 }
@@ -503,7 +497,6 @@ void create_window() {
   window =
       SDL_CreateWindow("SDL2 Displaying Image", SDL_WINDOWPOS_UNDEFINED,
                        SDL_WINDOWPOS_UNDEFINED, window_width, window_height, 0);
-
   if (window == nullptr) {
     cleanup_and_exit_with_failure_mprint("Failed to create window: " +
                                          string(SDL_GetError()));
@@ -611,21 +604,27 @@ void handle_input_component() {
     entity_id id = kv.first;
     transform_component transform = transforms[id];
     sprite_component sprite = sprites[id];
-    if (is_pressed[SDLK_LEFT]) {
 
+    if (is_pressed[SDLK_LEFT] && is_pressed[SDLK_LSHIFT]) {
+      transform.x -= 8;
+    } else if (is_pressed[SDLK_RIGHT] && is_pressed[SDLK_LSHIFT]) {
+      transform.x += 8;
+    } else if (is_pressed[SDLK_LEFT]) {
       transform.x -= 4;
-
     } else if (is_pressed[SDLK_RIGHT]) {
-
       transform.x += 4;
     }
-    if (is_pressed[SDLK_UP]) {
 
+    if (is_pressed[SDLK_UP] && is_pressed[SDLK_LSHIFT]) {
+      transform.y -= 8;
+    } else if (is_pressed[SDLK_DOWN] && is_pressed[SDLK_LSHIFT]) {
+      transform.y += 8;
+    } else if (is_pressed[SDLK_UP]) {
       transform.y -= 4;
     } else if (is_pressed[SDLK_DOWN]) {
-
       transform.y += 4;
     }
+
     if (is_pressed[SDLK_a]) {
       spawn_knife();
       sprite.current_clip = 1;

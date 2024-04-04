@@ -26,3 +26,7 @@
     - [x] enemies
     - [x] knives
     - [ ] power-ups
+- [x] scaling up graphics to make 4x the new 'default' 1x
+- [ ] faster movement using the SHIFT key
+- [ ] knife "catching" mechanic
+
