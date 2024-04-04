@@ -1,14 +1,19 @@
 #include "SDL_handler.h"
 #include "mPrint.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <ctime>
+#include <functional>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 using std::exit;
+using std::for_each;
+using std::function;
+using std::pair;
 using std::pow;
 using std::snprintf;
 using std::sqrt;
@@ -19,54 +24,59 @@ using std::vector;
 typedef int entity_id;
 
 typedef struct {
+  bool is_animating;
+  int current_clip;
+  int num_clips;
   SDL_Texture *texture;
   SDL_Rect src;
   SDL_Rect dest;
-  int current_clip;
-  int num_clips;
-  bool is_animating;
 } sprite_component;
 
 typedef struct {
   int x;
   int y;
+  double angle;
 } transform_component;
 
-void load_debug_text();
-void spawn_eyeball();
+typedef pair<int, sprite_component> sprite_pair;
+typedef pair<int, transform_component> transform_pair;
+
 int generate_random_char();
 entity_id get_next_entity_id();
 double frame_time();
 double fps();
-void handle_input();
-void handle_keydown();
-void handle_keyup();
-int init_target_texture();
+double distance(int x1, int y1, int x2, int y2);
 void cleanup();
 void cleanup_sprites();
 void cleanup_transforms();
 void cleanup_inputs();
 void cleanup_entities();
 void cleanup_textures();
-void init_debug_texture_rects();
-void init_target_texture_rects();
 void cleanup_and_exit_with_failure();
 void cleanup_and_exit_with_failure_mprint(string message);
 void create_window();
 void create_renderer();
-void init_img();
-void init_ttf();
-void init_gfont();
+void handle_input();
+void handle_keydown();
+void handle_keyup();
 void handle_init_target_texture();
-void load_skull_sheet_texture();
-void load_eyeball_sheet_texture();
-void spawn_skull();
 void handle_input_component();
 void handle_transform_components();
+void init_gfont();
+void init_img();
+void init_ttf();
+int init_target_texture();
+void init_debug_texture_rects();
+void init_target_texture_rects();
+void load_debug_text();
+void load_skull_sheet_texture();
+void load_eyeball_sheet_texture();
 void render_sprites();
 void render_debug_panel();
-void update_animations();
 void render_frame();
+void spawn_skull();
+void spawn_eyeball();
+void update_animations();
 
 const int DEBUG_TEXT_WRAP_LEN = 2048;
 const int MIN_SPAWN_DISTANCE = 100;
@@ -81,7 +91,6 @@ int imgFlags = IMG_INIT_PNG;
 int result = -1;
 int w = 0;
 int h = 0;
-int num_clips = 2;
 int frame_count = 0;
 int mWidth = -1;
 int mHeight = -1;
@@ -111,6 +120,29 @@ unordered_map<entity_id, bool> inputs;
 unordered_map<int, bool> is_pressed;
 unordered_map<string, SDL_Texture *> textures;
 
+function<void(sprite_pair)> draw_sprite = [](const sprite_pair p) {
+  SDL_RenderCopy(renderer, p.second.texture, &p.second.src, &p.second.dest);
+};
+
+function<void(sprite_pair)> update_animation = [](const sprite_pair p) {
+  int id = p.first;
+  sprite_component sprite = sprites[id];
+  if (sprite.is_animating) {
+    sprite.current_clip = (sprite.current_clip + 1) % sprite.num_clips;
+    sprite.src.x = sprite.current_clip * sprite.src.w;
+    sprites[id] = sprite;
+  }
+};
+
+function<void(transform_pair)> handle_transform = [](const transform_pair t) {
+  entity_id id = t.first;
+  transform_component transform = t.second;
+  sprite_component sprite = sprites[id];
+  sprite.dest.x = transform.x;
+  sprite.dest.y = transform.y;
+  sprites[id] = sprite;
+};
+
 int main() {
   srand(time(nullptr));
   SDL_Init(SDL_INIT_VIDEO);
@@ -132,6 +164,18 @@ int main() {
     handle_input();
     handle_input_component();
     // update game state
+    /*
+    if (is_pressed[SDLK_z]) {
+      zoom += 0.1;
+      target_texture_dest.w = target_texture_width * zoom;
+      target_texture_dest.h = target_texture_height * zoom;
+    } else if (is_pressed[SDLK_x]) {
+      zoom -= 0.1;
+      target_texture_dest.w = target_texture_width * zoom;
+      target_texture_dest.h = target_texture_height * zoom;
+    }
+    */
+
     handle_transform_components();
     update_animations();
     render_frame();
@@ -176,7 +220,7 @@ void load_debug_text() {
 
 entity_id get_next_entity_id() { return next_entity_id++; }
 
-int distance(int x1, int y1, int x2, int y2) {
+double distance(int x1, int y1, int x2, int y2) {
   return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
 
@@ -198,10 +242,10 @@ void spawn_eyeball() {
   entity_id id = get_next_entity_id();
   int x = rand() % (target_texture_width - w);
   int y = rand() % (target_texture_height - h);
-  sprites[id] = {textures["eyeball"], {0, 0, w, h}, {0, 0, w, h}, 0,
-                 num_clips,           is_animating};
-  transforms[id] = {x, y};
-  // inputs[id] = false;
+  double angle = 0.0;
+  sprites[id] = {is_animating, 0,           num_clips, textures["eyeball"],
+                 {0, 0, w, h}, {0, 0, w, h}};
+  transforms[id] = {x, y, angle};
   entities.push_back(id);
 }
 
@@ -212,6 +256,8 @@ void handle_keydown() {
   case SDLK_UP:
   case SDLK_DOWN:
   case SDLK_a:
+  case SDLK_z:
+  case SDLK_x:
     is_pressed[e.key.keysym.sym] = true;
     break;
   case SDLK_q:
@@ -237,6 +283,8 @@ void handle_keyup() {
   case SDLK_UP:
   case SDLK_DOWN:
   case SDLK_a:
+  case SDLK_z:
+  case SDLK_x:
     is_pressed[e.key.keysym.sym] = false;
     break;
   default:
@@ -279,7 +327,6 @@ void cleanup_entities() { entities.clear(); }
 void cleanup_transforms() { transforms.clear(); }
 
 void cleanup_inputs() { inputs.clear(); }
-
 void cleanup_textures() {
   for (auto kv : textures) {
     SDL_DestroyTexture(kv.second);
@@ -410,12 +457,21 @@ void load_eyeball_sheet_texture() {
 void spawn_skull() {
   const int num_clips = 2;
   bool is_animating = false;
+  int src_x = 0;
+  int src_y = 0;
+  int dest_x = 0;
+  int dest_y = 0;
+  double angle = 0.0;
   SDL_QueryTexture(textures["skull"], NULL, NULL, &w, &h);
   w = w / num_clips;
   entity_id id = get_next_entity_id();
-  sprites[id] = {textures["skull"], {0, 0, w, h}, {0, 0, w, h}, 0,
-                 num_clips,         is_animating};
-  transforms[id] = {0, 0};
+  sprites[id] = {is_animating,
+                 0,
+                 num_clips,
+                 textures["skull"],
+                 {src_x, src_y, w, h},
+                 {dest_x, dest_y, w, h}};
+  transforms[id] = {dest_x, dest_y, angle};
   inputs[id] = true;
   entities.push_back(id);
 }
@@ -448,23 +504,10 @@ void handle_input_component() {
 }
 
 void handle_transform_components() {
-  for (auto kv : transforms) {
-    entity_id id = kv.first;
-    transform_component transform = kv.second;
-    sprite_component sprite = sprites[id];
-    sprite.dest.x = kv.second.x;
-    sprite.dest.y = kv.second.y;
-    sprites[id] = sprite;
-  }
+  for_each(transforms.begin(), transforms.end(), handle_transform);
 }
 
-void render_sprites() {
-  for (auto id : entities) {
-    sprite_component sprite = sprites[id];
-    // transform_component transform = transforms[id];
-    SDL_RenderCopy(renderer, sprite.texture, &sprite.src, &sprite.dest);
-  }
-}
+void render_sprites() { for_each(sprites.begin(), sprites.end(), draw_sprite); }
 
 void render_debug_panel() {
   SDL_Color color = {0, 0, 0, 128};
@@ -475,15 +518,7 @@ void render_debug_panel() {
 }
 
 void update_animations() {
-  for (auto id : entities) {
-    sprite_component sprite = sprites[id];
-    if (sprite.is_animating) {
-      //   mPrint("animating");
-      sprite.current_clip = (sprite.current_clip + 1) % sprite.num_clips;
-      sprite.src.x = sprite.current_clip * 14;
-      sprites[id] = sprite;
-    }
-  }
+  for_each(sprites.begin(), sprites.end(), update_animation);
 }
 
 void render_frame() {
