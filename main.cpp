@@ -35,6 +35,8 @@ typedef struct {
 typedef struct {
   int x;
   int y;
+  int vx;
+  int vy;
   double angle;
 } transform_component;
 
@@ -69,11 +71,13 @@ void init_target_texture_rects();
 void load_debug_text();
 void load_skull_sheet_texture();
 void load_eyeball_sheet_texture();
+void load_knife_sheet_texture();
 void render_sprites();
 void render_debug_panel();
 void render_frame();
-void spawn_skull();
 void spawn_eyeball();
+void spawn_knife();
+void spawn_skull();
 void update_animations();
 void update_rotations();
 
@@ -113,6 +117,7 @@ SDL_Surface *debug_surface = nullptr;
 string skullsheet_filepath = "img/skull-sheet.png";
 string eyeballsheet_filepath = "img/eyeball-sheet.png";
 static entity_id next_entity_id = 0;
+entity_id player_id = -1;
 vector<entity_id> entities;
 unordered_map<entity_id, sprite_component> sprites;
 unordered_map<entity_id, transform_component> transforms;
@@ -121,6 +126,10 @@ unordered_map<int, bool> is_pressed;
 unordered_map<string, SDL_Texture *> textures;
 unordered_map<entity_id, bool> is_rotating;
 unordered_map<entity_id, bool> is_collidable;
+unordered_map<entity_id, bool> is_enemy;
+unordered_map<entity_id, bool> is_knife;
+unordered_map<entity_id, bool> is_marked_for_deletion;
+static int knife_cooldown = 0;
 
 function<void(sprite_pair)> draw_sprite = [](const sprite_pair p) {
   SDL_RenderCopyEx(renderer, p.second.texture, &p.second.src, &p.second.dest,
@@ -141,9 +150,19 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   entity_id id = t.first;
   transform_component transform = t.second;
   sprite_component sprite = sprites[id];
+  transform.x += transform.vx;
+  transform.y += transform.vy;
   sprite.dest.x = transform.x;
   sprite.dest.y = transform.y;
   sprites[id] = sprite;
+
+  if (transform.x > target_texture_width) {
+    // just playing around with wrapping
+    transform.x = -sprite.src.w;
+  } else if (transform.x < -sprite.src.w) {
+    transform.x = target_texture_width;
+  }
+  transforms[id] = transform;
 };
 
 function<void(rotation_pair)> handle_rotation = [](const rotation_pair p) {
@@ -165,8 +184,11 @@ int main() {
   init_img();
   init_ttf();
   handle_init_target_texture();
+
   load_skull_sheet_texture();
   load_eyeball_sheet_texture();
+  load_knife_sheet_texture();
+
   init_gfont();
   load_debug_text();
   init_debug_texture_rects();
@@ -192,6 +214,8 @@ int main() {
     update_animations();
     update_rotations();
     render_frame();
+
+    knife_cooldown = (knife_cooldown > 0) ? knife_cooldown - 1 : 0;
   }
   cleanup();
   return EXIT_SUCCESS;
@@ -258,9 +282,31 @@ void spawn_eyeball() {
   double angle = 0.0;
   sprites[id] = {is_animating, 0,           num_clips, textures["eyeball"],
                  {0, 0, w, h}, {0, 0, w, h}};
-  transforms[id] = {x, y, angle};
+  transforms[id] = {x, y, 0, 0, angle};
   // is_rotating[id] = true;
+  is_collidable[id] = true;
+  is_enemy[id] = true;
   entities.push_back(id);
+}
+
+void spawn_knife() {
+  if (!knife_cooldown) {
+    const int w = 14;
+    const int h = 8;
+    const int num_clips = 1;
+    bool is_animating = false;
+    entity_id id = get_next_entity_id();
+    int x = sprites[player_id].dest.x + sprites[player_id].dest.w;
+    int y = sprites[player_id].dest.y + sprites[player_id].dest.h / 2 + 4;
+    // need to set x,y to player position
+    double angle = 0.0;
+    sprites[id] = {is_animating, 0,           num_clips, textures["knife"],
+                   {0, 0, w, h}, {0, 0, w, h}};
+    transforms[id] = {x, y, 1, 0, angle};
+    // is_rotating[id] = true;
+    entities.push_back(id);
+    knife_cooldown = 30;
+  }
 }
 
 void handle_keydown() {
@@ -343,6 +389,8 @@ void cleanup() {
   is_pressed.clear();
   is_rotating.clear();
   is_collidable.clear();
+  is_enemy.clear();
+  is_knife.clear();
   cleanup_textures();
   SDL_DestroyTexture(debug_texture);
   SDL_DestroyTexture(debug_bg_texture);
@@ -457,26 +505,40 @@ void load_eyeball_sheet_texture() {
   textures["eyeball"] = t;
 }
 
+void load_knife_sheet_texture() {
+  string filepath = "img/knife.png";
+  SDL_Texture *t = IMG_LoadTexture(renderer, filepath.c_str());
+  if (t == nullptr) {
+    cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
+                                         filepath);
+  }
+  textures["knife"] = t;
+}
+
 void spawn_skull() {
-  const int num_clips = 2;
-  bool is_animating = false;
-  int src_x = 0;
-  int src_y = 0;
-  int dest_x = 0;
-  int dest_y = 0;
-  double angle = 0.0;
-  SDL_QueryTexture(textures["skull"], NULL, NULL, &w, &h);
-  w = w / num_clips;
-  entity_id id = get_next_entity_id();
-  sprites[id] = {is_animating,
-                 0,
-                 num_clips,
-                 textures["skull"],
-                 {src_x, src_y, w, h},
-                 {dest_x, dest_y, w, h}};
-  transforms[id] = {dest_x, dest_y, angle};
-  inputs[id] = true;
-  entities.push_back(id);
+  if (player_id == -1) {
+    const int num_clips = 2;
+    bool is_animating = false;
+    int src_x = 0;
+    int src_y = 0;
+    int dest_x = 0;
+    int dest_y = 0;
+    double angle = 0.0;
+    SDL_QueryTexture(textures["skull"], NULL, NULL, &w, &h);
+    w = w / num_clips;
+    entity_id id = get_next_entity_id();
+    sprites[id] = {is_animating,
+                   0,
+                   num_clips,
+                   textures["skull"],
+                   {src_x, src_y, w, h},
+                   {dest_x, dest_y, w, h}};
+    // transforms[id] = {dest_x, dest_y, angle};
+    transforms[id] = {dest_x, dest_y, 0, 0, angle};
+    inputs[id] = true;
+    player_id = id;
+    entities.push_back(id);
+  }
 }
 
 void handle_input_component() {
@@ -495,6 +557,7 @@ void handle_input_component() {
       transform.y++;
     }
     if (is_pressed[SDLK_a]) {
+      spawn_knife();
       sprite.current_clip = 1;
       sprite.src.x = sprite.current_clip * sprite.src.w;
     } else {

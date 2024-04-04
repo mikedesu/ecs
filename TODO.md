@@ -10,3 +10,19 @@
     - [x] Textures done
     - [ ] Rects may not be necessary?
 
+## 04 April 2024
+
+### 13:56 CST
+
+- [ ] knives
+    - [x] spawning
+    - [x] movement
+    - [ ] removal when off-screen
+    - [ ] collision with player
+    - [ ] collision with enemies
+- [ ] distinguishing entity types
+    - [ ] player
+        - [x] capturing the player's `entity_id` on `spawn_skull()`
+    - [ ] enemies
+    - [ ] knives
+    - [ ] power-ups
