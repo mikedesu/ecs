@@ -6,10 +6,12 @@
 #include <cstdio>
 #include <ctime>
 #include <functional>
+#include <random>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
+using std::default_random_engine;
 using std::exit;
 using std::for_each;
 using std::function;
@@ -19,6 +21,7 @@ using std::remove;
 using std::snprintf;
 using std::sqrt;
 using std::string;
+using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
 
@@ -34,10 +37,10 @@ typedef struct {
 } sprite_component;
 
 typedef struct {
-  int x;
-  int y;
-  int vx;
-  int vy;
+  double x;
+  double y;
+  double vx;
+  double vy;
   double angle;
 } transform_component;
 
@@ -83,6 +86,7 @@ void spawn_skull();
 void update_animations();
 void update_rotations();
 void update_knife_collisions();
+void init_rng();
 
 double zoom = 1.0;
 
@@ -142,6 +146,10 @@ unordered_map<entity_id, bool> is_enemy;
 unordered_map<entity_id, bool> is_knife;
 unordered_map<entity_id, bool> is_marked_for_deletion;
 
+// random number generator
+default_random_engine generator;
+uniform_real_distribution<double> eyeball_vx_distribution;
+
 function<void(sprite_pair)> draw_sprite = [](const sprite_pair p) {
   SDL_RenderCopyEx(renderer, p.second.texture, &p.second.src, &p.second.dest,
                    transforms[p.first].angle, NULL, SDL_FLIP_NONE);
@@ -188,6 +196,7 @@ function<void(rotation_pair)> handle_rotation = [](const rotation_pair p) {
 
 int main() {
   srand(time(nullptr));
+  init_rng();
   SDL_Init(SDL_INIT_VIDEO);
   create_window();
   create_renderer();
@@ -327,11 +336,17 @@ void spawn_eyeball() {
   w = w / num_clips;
   entity_id id = get_next_entity_id();
   mPrint("spawning eyeball with id " + std::to_string(id));
-  int x = (rand() % ((target_texture_width - w) / 2)) +
-          (target_texture_width - w) / 2 + target_texture_width;
-  int y = (rand() % (target_texture_height - h));
-  int vx = -4;
-  int vy = 0;
+
+  // double pad = target_texture_width / 4.0;
+
+  double x = (target_texture_width - w);
+  double y = (rand() % (target_texture_height - h));
+
+  // double vx = -4.0;
+  double vy = 0.0;
+  double vx = eyeball_vx_distribution(generator);
+  // double vy = distribution(generator);
+
   double angle = 0.0;
   sprites[id] = {is_animating, 0,           num_clips, textures["eyeball"],
                  {0, 0, w, h}, {0, 0, w, h}};
@@ -350,13 +365,13 @@ void spawn_knife() {
     mPrint("spawning knife with id " + std::to_string(id));
     SDL_QueryTexture(textures["knife"], NULL, NULL, &w, &h);
     w = w / num_clips;
-    int x = sprites[player_id].dest.x + sprites[player_id].dest.w + padding;
-    int y = sprites[player_id].dest.y + sprites[player_id].dest.h / 2 + 4;
+    double x = sprites[player_id].dest.x + sprites[player_id].dest.w + padding;
+    double y = sprites[player_id].dest.y + sprites[player_id].dest.h / 2.0 + 4;
     double angle = 0.0;
     sprites[id] = {is_animating, 0,           num_clips, textures["knife"],
                    {0, 0, w, h}, {0, 0, w, h}};
-    int vx = current_knife_speed;
-    int vy = 0;
+    double vx = current_knife_speed;
+    double vy = 0;
     transforms[id] = {x, y, vx, vy, angle};
     is_knife[id] = true;
     is_enemy[id] = false;
@@ -577,10 +592,10 @@ void spawn_skull() {
     bool is_animating = false;
     int src_x = 0;
     int src_y = 0;
-    int dest_x = 0;
-    int dest_y = 0;
-    int vx = 0;
-    int vy = 0;
+    double dest_x = 0;
+    double dest_y = 0;
+    double vx = 0;
+    double vy = 0;
     double angle = 0.0;
     SDL_QueryTexture(textures["skull"], NULL, NULL, &w, &h);
     w = w / num_clips;
@@ -590,7 +605,7 @@ void spawn_skull() {
                    num_clips,
                    textures["skull"],
                    {src_x, src_y, w, h},
-                   {dest_x, dest_y, w, h}};
+                   {(int)dest_x, (int)dest_y, w, h}};
     // transforms[id] = {dest_x, dest_y, angle};
     transforms[id] = {dest_x, dest_y, vx, vy, angle};
     inputs[id] = true;
@@ -677,4 +692,8 @@ void render_frame() {
   }
   SDL_RenderPresent(renderer);
   frame_count++;
+}
+
+void init_rng() {
+  eyeball_vx_distribution = uniform_real_distribution<double>(-4.0, 0.0);
 }
