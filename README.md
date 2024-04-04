@@ -36,6 +36,8 @@ I also seek to offer an alternative method to gamedev. There are many existing e
 ## Other gamedevs to learn from
 
 - [DaFluffyPotato](https://www.youtube.com/@DaFluffyPotato)
+- [TokyoSpliff](https://www.youtube.com/@tokyospliff)
+- [bisqwit](https://www.youtube.com/@Bisqwit)
 
 -----
 
