@@ -82,6 +82,7 @@ void spawn_knife();
 void spawn_skull();
 void update_animations();
 void update_rotations();
+void update_knife_collisions();
 
 const int DEBUG_TEXT_WRAP_LEN = 2048;
 const int MIN_SPAWN_DISTANCE = 100;
@@ -172,7 +173,7 @@ function<void(rotation_pair)> handle_rotation = [](const rotation_pair p) {
   bool is_rotating = p.second;
   if (is_rotating) {
     transform_component transform = transforms[id];
-    transform.angle += 1.0;
+    transform.angle += 2.0;
     transforms[id] = transform;
   }
 };
@@ -215,15 +216,34 @@ int main() {
     update_transform_components();
     update_animations();
     update_rotations();
+    update_knife_collisions();
+
     render_frame();
-
     knife_cooldown = (knife_cooldown > 0) ? knife_cooldown - 1 : 0;
-
     // remove entities that are marked for deletion
     cleanup_entities_marked_for_deletion();
   }
   cleanup();
   return EXIT_SUCCESS;
+}
+
+void update_knife_collisions() {
+  for (auto kv : is_knife) {
+    entity_id id = kv.first;
+    sprite_component knife = sprites[id];
+    SDL_Rect &knife_rect = knife.dest;
+
+    for (auto kv2 : is_enemy) {
+      entity_id enemy_id = kv2.first;
+      sprite_component enemy = sprites[enemy_id];
+      SDL_Rect &enemy_rect = enemy.dest;
+
+      if (SDL_HasIntersection(&knife_rect, &enemy_rect)) {
+        is_marked_for_deletion[enemy_id] = true;
+        is_marked_for_deletion[id] = true;
+      }
+    }
+  }
 }
 
 void cleanup_entities_marked_for_deletion() {
@@ -328,7 +348,7 @@ void spawn_knife() {
     transforms[id] = {x, y, 1, 0, angle};
     is_knife[id] = true;
     is_collidable[id] = true;
-    // is_rotating[id] = true;
+    is_rotating[id] = true;
     entities.push_back(id);
     knife_cooldown = current_knife_cooldown;
   }
@@ -416,6 +436,7 @@ void cleanup() {
   is_collidable.clear();
   is_enemy.clear();
   is_knife.clear();
+  is_marked_for_deletion.clear();
   cleanup_textures();
   SDL_DestroyTexture(debug_texture);
   SDL_DestroyTexture(debug_bg_texture);
