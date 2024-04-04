@@ -88,12 +88,14 @@ const int DEBUG_TEXT_WRAP_LEN = 2048;
 const int MIN_SPAWN_DISTANCE = 100;
 
 char texture_text[1024] = "a bunch of random text";
+double zoom = 1.0;
 const int target_texture_width = 400 * 4;
 const int target_texture_height = 240 * 4;
 const int debug_font_size = 16;
-double zoom = 1.0;
 const int window_width = target_texture_width * zoom;
 const int window_height = target_texture_height * zoom;
+const int default_knife_speed = 4;
+int current_knife_speed = default_knife_speed;
 int imgFlags = IMG_INIT_PNG;
 int result = -1;
 int w = 0;
@@ -355,7 +357,9 @@ void spawn_knife() {
     double angle = 0.0;
     sprites[id] = {is_animating, 0,           num_clips, textures["knife"],
                    {0, 0, w, h}, {0, 0, w, h}};
-    transforms[id] = {x, y, 1, 0, angle};
+    int vx = current_knife_speed;
+    int vy = 0;
+    transforms[id] = {x, y, vx, vy, angle};
     is_knife[id] = true;
     is_collidable[id] = true;
     is_rotating[id] = true;
@@ -579,6 +583,8 @@ void spawn_skull() {
     int src_y = 0;
     int dest_x = 0;
     int dest_y = 0;
+    int vx = 0;
+    int vy = 0;
     double angle = 0.0;
     SDL_QueryTexture(textures["skull"], NULL, NULL, &w, &h);
     w = w / num_clips;
@@ -590,7 +596,7 @@ void spawn_skull() {
                    {src_x, src_y, w, h},
                    {dest_x, dest_y, w, h}};
     // transforms[id] = {dest_x, dest_y, angle};
-    transforms[id] = {dest_x, dest_y, 0, 0, angle};
+    transforms[id] = {dest_x, dest_y, vx, vy, angle};
     inputs[id] = true;
     player_id = id;
     entities.push_back(id);
@@ -603,14 +609,19 @@ void handle_input_component() {
     transform_component transform = transforms[id];
     sprite_component sprite = sprites[id];
     if (is_pressed[SDLK_LEFT]) {
-      transform.x--;
+
+      transform.x -= 4;
+
     } else if (is_pressed[SDLK_RIGHT]) {
-      transform.x++;
+
+      transform.x += 4;
     }
     if (is_pressed[SDLK_UP]) {
-      transform.y--;
+
+      transform.y -= 4;
     } else if (is_pressed[SDLK_DOWN]) {
-      transform.y++;
+
+      transform.y += 4;
     }
     if (is_pressed[SDLK_a]) {
       spawn_knife();
