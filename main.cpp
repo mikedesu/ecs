@@ -320,12 +320,15 @@ void spawn_eyeball() {
   const int num_clips = 18;
   bool is_animating = true;
   entity_id id = get_next_entity_id();
-  int x = rand() % (target_texture_width - w);
-  int y = rand() % (target_texture_height - h);
+  int x = (rand() % ((target_texture_width - w) / 2)) +
+          (target_texture_width - w) / 2;
+  int y = (rand() % (target_texture_height - h));
+  int vx = -1;
+  int vy = 0;
   double angle = 0.0;
   sprites[id] = {is_animating, 0,           num_clips, textures["eyeball"],
                  {0, 0, w, h}, {0, 0, w, h}};
-  transforms[id] = {x, y, 0, 0, angle};
+  transforms[id] = {x, y, vx, vy, angle};
   // is_rotating[id] = true;
   is_collidable[id] = true;
   is_enemy[id] = true;
