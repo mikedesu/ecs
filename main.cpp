@@ -95,6 +95,7 @@ const int debug_font_size = 16;
 const int window_width = target_texture_width * zoom;
 const int window_height = target_texture_height * zoom;
 const int default_knife_speed = 4;
+int num_collisions = 0;
 int current_knife_speed = default_knife_speed;
 int imgFlags = IMG_INIT_PNG;
 int result = -1;
@@ -243,6 +244,7 @@ void update_knife_collisions() {
       if (SDL_HasIntersection(&knife_rect, &enemy_rect)) {
         is_marked_for_deletion[enemy_id] = true;
         is_marked_for_deletion[id] = true;
+        num_collisions++;
       }
     }
   }
@@ -270,9 +272,10 @@ void load_debug_text() {
   snprintf(texture_text, 1024,
            "target texture: %dx%d\nwindow size: %dx%d\nframe_count: "
            "%06d\nnum_entities: %ld\n"
-           "fps: %.02f\nzoom: %.02f",
+           "fps: %.02f\nzoom: %.02f\nnum_collisions: %d\n",
            target_texture_width, target_texture_height, window_width,
-           window_height, frame_count, entities.size(), fps(), zoom);
+           window_height, frame_count, entities.size(), fps(), zoom,
+           num_collisions);
   text_surface = TTF_RenderText_Blended_Wrapped(gFont, texture_text, textColor,
                                                 DEBUG_TEXT_WRAP_LEN);
   if (text_surface == NULL) {
