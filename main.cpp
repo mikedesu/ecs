@@ -27,6 +27,8 @@ using std::vector;
 
 typedef int entity_id;
 
+typedef enum { ENEMY_TYPE_EYEBALL = 0, ENEMY_TYPE_COUNT } enemy_type;
+
 typedef struct {
   bool is_animating;
   int current_clip;
@@ -43,6 +45,12 @@ typedef struct {
   double vy;
   double angle;
 } transform_component;
+
+typedef struct {
+  enemy_type type;
+  int timer;
+  int cooldown;
+} generator_component;
 
 typedef pair<int, sprite_component> sprite_pair;
 typedef pair<int, transform_component> transform_pair;
@@ -83,39 +91,46 @@ void render_frame();
 void spawn_eyeball();
 void spawn_knife();
 void spawn_skull();
+void spawn_generator(enemy_type type, int timer, int cooldown);
 void update_animations();
 void update_rotations();
 void update_knife_collisions();
+void update_generators();
 void init_rng();
-
-double zoom = 1.0;
 
 const int DEBUG_TEXT_WRAP_LEN = 2048;
 const int MIN_SPAWN_DISTANCE = 100;
 
+double zoom = 1.0; // has to appear
 char texture_text[1024] = "a bunch of random text";
-const int target_texture_width = 400 * 4;
-const int target_texture_height = 240 * 4;
-const int debug_font_size = 16;
-const int default_window_width = target_texture_width * zoom;
-const int default_window_height = target_texture_height * zoom;
+const int target_texture_width = 1600;
+const int target_texture_height = 960;
+const int debug_font_size = 24;
+const int default_window_width = 1600;
+const int default_window_height = 960;
 const int window_width = default_window_width;
 const int window_height = default_window_height;
 const int default_knife_speed = 4;
 const int default_knife_cooldown = 30;
 static int knife_cooldown = 0;
+bool quit = false;
+bool do_render_debug_panel = true;
 int current_knife_cooldown = default_knife_cooldown;
 int num_collisions = 0;
 int current_knife_speed = default_knife_speed;
-int imgFlags = IMG_INIT_PNG;
+int img_flags = IMG_INIT_PNG;
 int result = -1;
 int w = 0;
 int h = 0;
 int frame_count = 0;
 int mWidth = -1;
 int mHeight = -1;
-bool quit = false;
-bool do_render_debug_panel = true;
+int num_knives_fired = 0;
+int num_enemies_escaped = 0;
+string skullsheet_filepath = "img/skull-sheet4x.png";
+string eyeballsheet_filepath = "img/eyeball-sheet4x.png";
+static entity_id next_entity_id = 0;
+entity_id player_id = -1;
 TTF_Font *gFont = nullptr;
 SDL_Event e;
 SDL_Surface *text_surface = nullptr;
@@ -130,11 +145,8 @@ SDL_Rect target_texture_dest;
 SDL_Rect debug_texture_src;
 SDL_Rect debug_texture_dest;
 SDL_Surface *debug_surface = nullptr;
-string skullsheet_filepath = "img/skull-sheet4x.png";
-string eyeballsheet_filepath = "img/eyeball-sheet4x.png";
-static entity_id next_entity_id = 0;
-entity_id player_id = -1;
 vector<entity_id> entities;
+vector<entity_id> entities_marked_for_deletion_tmp;
 unordered_map<entity_id, sprite_component> sprites;
 unordered_map<entity_id, transform_component> transforms;
 unordered_map<entity_id, bool> inputs;
@@ -145,9 +157,10 @@ unordered_map<entity_id, bool> is_collidable;
 unordered_map<entity_id, bool> is_enemy;
 unordered_map<entity_id, bool> is_knife;
 unordered_map<entity_id, bool> is_marked_for_deletion;
+unordered_map<entity_id, generator_component> generators;
 
 // random number generator
-default_random_engine generator;
+default_random_engine rng_generator;
 uniform_real_distribution<double> eyeball_vx_distribution;
 
 function<void(sprite_pair)> draw_sprite = [](const sprite_pair p) {
@@ -176,7 +189,11 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   sprites[id] = sprite;
   if (id != player_id) {
     if (is_enemy[id]) {
-      is_marked_for_deletion[id] = transform.x < -sprite.src.w;
+      bool marked = transform.x < -sprite.src.w;
+      is_marked_for_deletion[id] = marked;
+      if (marked) {
+        num_enemies_escaped++;
+      }
     } else if (is_knife[id]) {
       is_marked_for_deletion[id] = transform.x > window_width;
     }
@@ -213,6 +230,8 @@ int main() {
   // get the width and height of the texture
   init_target_texture_rects();
   spawn_skull();
+  spawn_generator(ENEMY_TYPE_EYEBALL, 0, 10);
+
   while (!quit) {
     handle_input();
     handle_input_component();
@@ -221,6 +240,7 @@ int main() {
     update_animations();
     update_rotations();
     update_knife_collisions();
+    update_generators();
     render_frame();
     knife_cooldown = (knife_cooldown > 0) ? knife_cooldown - 1 : 0;
     // remove entities that are marked for deletion
@@ -228,6 +248,23 @@ int main() {
   }
   cleanup();
   return EXIT_SUCCESS;
+}
+
+void update_generators() {
+  for (auto kv : generators) {
+    entity_id id = kv.first;
+    generator_component generator = kv.second;
+    if (frame_count % generator.cooldown == 0) {
+      switch (generator.type) {
+      case ENEMY_TYPE_EYEBALL:
+        spawn_eyeball();
+        break;
+      default:
+        mPrint("invalid enemy type");
+        break;
+      }
+    }
+  }
 }
 
 void update_knife_collisions() {
@@ -246,14 +283,12 @@ void update_knife_collisions() {
       if (SDL_HasIntersection(&knife.dest, &enemy.dest)) {
         is_marked_for_deletion[enemy_id] = true;
         is_marked_for_deletion[id] = true;
-        mPrint("knife collision with enemy id " + std::to_string(enemy_id));
+        // mPrint("knife collision with enemy id " + std::to_string(enemy_id));
         num_collisions++;
       }
     }
   }
 }
-
-vector<entity_id> entities_marked_for_deletion_tmp;
 
 void cleanup_entities_marked_for_deletion() {
   for (auto kv : is_marked_for_deletion) {
@@ -282,10 +317,12 @@ void load_debug_text() {
            "target texture: %dx%d\nwindow size: %dx%d\nframe_count: "
            "%06d\nnum_entities: %ld\n"
            "fps: %.02f\nzoom: %.02f\nnum_collisions: "
-           "%d\nknife_cooldown: %d\ncurrent_knife_cooldown: %d\n",
+           "%d\nknife_cooldown: %d\ncurrent_knife_cooldown: "
+           "%d\nnum_knives_fired: %d\nnum_enemies_escaped: %d\n",
            target_texture_width, target_texture_height, window_width,
            window_height, frame_count, entities.size(), fps(), zoom,
-           num_collisions, knife_cooldown, current_knife_cooldown);
+           num_collisions, knife_cooldown, current_knife_cooldown,
+           num_knives_fired, num_enemies_escaped);
   text_surface = TTF_RenderText_Blended_Wrapped(gFont, texture_text, textColor,
                                                 DEBUG_TEXT_WRAP_LEN);
   if (text_surface == NULL) {
@@ -335,18 +372,14 @@ void spawn_eyeball() {
   SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
   w = w / num_clips;
   entity_id id = get_next_entity_id();
-  mPrint("spawning eyeball with id " + std::to_string(id));
-
-  // double pad = target_texture_width / 4.0;
-
+  // mPrint("spawning eyeball with id " + std::to_string(id));
+  //  double pad = target_texture_width / 4.0;
   double x = (target_texture_width - w);
   double y = (rand() % (target_texture_height - h));
-
   // double vx = -4.0;
   double vy = 0.0;
-  double vx = eyeball_vx_distribution(generator);
+  double vx = eyeball_vx_distribution(rng_generator);
   // double vy = distribution(generator);
-
   double angle = 0.0;
   sprites[id] = {is_animating, 0,           num_clips, textures["eyeball"],
                  {0, 0, w, h}, {0, 0, w, h}};
@@ -362,7 +395,7 @@ void spawn_knife() {
     const int padding = 16;
     bool is_animating = false;
     entity_id id = get_next_entity_id();
-    mPrint("spawning knife with id " + std::to_string(id));
+    // mPrint("spawning knife with id " + std::to_string(id));
     SDL_QueryTexture(textures["knife"], NULL, NULL, &w, &h);
     w = w / num_clips;
     double x = sprites[player_id].dest.x + sprites[player_id].dest.w + padding;
@@ -379,6 +412,7 @@ void spawn_knife() {
     is_rotating[id] = true;
     entities.push_back(id);
     knife_cooldown = current_knife_cooldown;
+    num_knives_fired++;
   }
 }
 
@@ -401,9 +435,9 @@ void handle_keydown() {
   case SDLK_d:
     do_render_debug_panel = !do_render_debug_panel;
     break;
-  case SDLK_i:
-    spawn_eyeball();
-    break;
+  // case SDLK_i:
+  //   spawn_eyeball();
+  //   break;
   default:
     break;
   }
@@ -528,8 +562,8 @@ void create_renderer() {
 }
 
 void init_img() {
-  result = IMG_Init(imgFlags);
-  if ((result & imgFlags) != imgFlags) {
+  result = IMG_Init(img_flags);
+  if ((result & img_flags) != img_flags) {
     cleanup_and_exit_with_failure_mprint(
         "IMG_Init: Failed to init required png support: " +
         string(IMG_GetError()));
@@ -696,4 +730,28 @@ void render_frame() {
 
 void init_rng() {
   eyeball_vx_distribution = uniform_real_distribution<double>(-4.0, 0.0);
+}
+
+void spawn_generator(enemy_type type, int timer, int cooldown) {
+  if (type > ENEMY_TYPE_COUNT) {
+    mPrint("invalid enemy type");
+    return;
+  }
+
+  if (cooldown < 1) {
+    mPrint("invalid cooldown");
+    return;
+  }
+
+  for (auto kv : generators) {
+    generator_component generator = kv.second;
+    if (generator.type == type) {
+      mPrint("generator for type " + std::to_string(type) + " already exists");
+      return;
+    }
+  }
+
+  entity_id id = get_next_entity_id();
+  generators[id] = {type, timer, cooldown};
+  entities.push_back(id);
 }
