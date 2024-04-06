@@ -56,13 +56,13 @@ typedef pair<int, bool> collision_pair;
 
 // externally defined
 double fps();
+double frame_time();
+double distance(int x1, int y1, int x2, int y2);
 
 // internally defined
 int generate_random_char();
 int init_target_texture();
 entity_id get_next_entity_id();
-double frame_time();
-double distance(int x1, int y1, int x2, int y2);
 void cleanup();
 void cleanup_and_exit_with_failure();
 void cleanup_and_exit_with_failure_mprint(string message);
