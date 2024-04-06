@@ -1,5 +1,8 @@
 #include "SDL_handler.h"
+#include "entity_id.h"
 #include "mPrint.h"
+#include "sprite_component.h"
+#include "transform_component.h"
 
 #include <algorithm>
 #include <cstdio>
@@ -22,26 +25,26 @@ using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
 
-typedef int entity_id;
+// typedef int entity_id;
 
 typedef enum { ENEMY_TYPE_EYEBALL = 0, ENEMY_TYPE_COUNT } enemy_type;
 
-typedef struct {
-  bool is_animating;
-  int current_clip;
-  int num_clips;
-  SDL_Texture *texture;
-  SDL_Rect src;
-  SDL_Rect dest;
-} sprite_component;
+// typedef struct {
+//   bool is_animating;
+//   int current_clip;
+//   int num_clips;
+//   SDL_Texture *texture;
+//   SDL_Rect src;
+//   SDL_Rect dest;
+// } sprite_component;
 
-typedef struct {
-  double x;
-  double y;
-  double vx;
-  double vy;
-  double angle;
-} transform_component;
+// typedef struct {
+//   double x;
+//   double y;
+//   double vx;
+//   double vy;
+//   double angle;
+// } transform_component;
 
 typedef struct {
   enemy_type type;
@@ -60,7 +63,6 @@ double frame_time();
 double distance(int x1, int y1, int x2, int y2);
 
 // internally defined
-int generate_random_char();
 int init_target_texture();
 entity_id get_next_entity_id();
 void cleanup();
@@ -163,10 +165,10 @@ unordered_map<entity_id, generator_component> generators;
 default_random_engine rng_generator;
 uniform_real_distribution<double> eyeball_vx_distribution;
 
-function<void(sprite_pair)> draw_sprite = [](const sprite_pair p) {
-  SDL_RenderCopyEx(renderer, p.second.texture, &p.second.src, &p.second.dest,
-                   transforms[p.first].angle, NULL, SDL_FLIP_NONE);
-};
+// function<void(sprite_pair)> draw_sprite = [](const sprite_pair p) {
+//   SDL_RenderCopyEx(renderer, p.second.texture, &p.second.src, &p.second.dest,
+//                    transforms[p.first].angle, NULL, SDL_FLIP_NONE);
+// };
 
 function<void(sprite_pair)> update_animation = [](const sprite_pair p) {
   int id = p.first;
@@ -367,8 +369,9 @@ void spawn_eyeball() {
   double vx = eyeball_vx_distribution(rng_generator);
   // double vy = distribution(generator);
   double angle = 0.0;
-  sprites[id] = {is_animating, 0,           num_clips, textures["eyeball"],
-                 {0, 0, w, h}, {0, 0, w, h}};
+  sprites[id] = {is_animating, 0,
+                 num_clips,    textures["eyeball"],
+                 {0, 0, w, h}, {(int)x, (int)y, w, h}};
   transforms[id] = {x, y, vx, vy, angle};
   is_collidable[id] = true;
   is_enemy[id] = true;
@@ -677,7 +680,8 @@ void update_transform_components() {
   for_each(transforms.begin(), transforms.end(), handle_transform);
 }
 
-void render_sprites() { for_each(sprites.begin(), sprites.end(), draw_sprite); }
+// void render_sprites() { for_each(sprites.begin(), sprites.end(),
+// draw_sprite); }
 
 void render_debug_panel() {
   SDL_Color color = {0, 0, 0, 128};
@@ -712,10 +716,6 @@ void render_frame() {
   }
   SDL_RenderPresent(renderer);
   frame_count++;
-}
-
-void init_rng() {
-  eyeball_vx_distribution = uniform_real_distribution<double>(-4.0, 0.0);
 }
 
 void spawn_generator(enemy_type type, int timer, int cooldown) {
