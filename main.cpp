@@ -1,5 +1,7 @@
 #include "SDL_handler.h"
+#include "enemy_type.h"
 #include "entity_id.h"
+#include "generator_component.h"
 #include "mPrint.h"
 #include "sprite_component.h"
 #include "transform_component.h"
@@ -24,33 +26,6 @@ using std::string;
 using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
-
-// typedef int entity_id;
-
-typedef enum { ENEMY_TYPE_EYEBALL = 0, ENEMY_TYPE_COUNT } enemy_type;
-
-// typedef struct {
-//   bool is_animating;
-//   int current_clip;
-//   int num_clips;
-//   SDL_Texture *texture;
-//   SDL_Rect src;
-//   SDL_Rect dest;
-// } sprite_component;
-
-// typedef struct {
-//   double x;
-//   double y;
-//   double vx;
-//   double vy;
-//   double angle;
-// } transform_component;
-
-typedef struct {
-  enemy_type type;
-  int timer;
-  int cooldown;
-} generator_component;
 
 typedef pair<int, sprite_component> sprite_pair;
 typedef pair<int, transform_component> transform_pair;
