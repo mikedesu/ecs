@@ -364,7 +364,7 @@ double frame_time() {
   return frame_time;
 }
 
-double fps() { return frame_count / (SDL_GetTicks64() / 1000.0f); }
+// double fps() { return frame_count / (SDL_GetTicks64() / 1000.0f); }
 
 void spawn_eyeball() {
   const int num_clips = 18;
