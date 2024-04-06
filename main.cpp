@@ -2,7 +2,6 @@
 #include "mPrint.h"
 
 #include <algorithm>
-#include <cmath>
 #include <cstdio>
 #include <ctime>
 #include <functional>
@@ -16,10 +15,8 @@ using std::exit;
 using std::for_each;
 using std::function;
 using std::pair;
-using std::pow;
 using std::remove;
 using std::snprintf;
-using std::sqrt;
 using std::string;
 using std::uniform_real_distribution;
 using std::unordered_map;
@@ -57,11 +54,14 @@ typedef pair<int, transform_component> transform_pair;
 typedef pair<int, bool> rotation_pair;
 typedef pair<int, bool> collision_pair;
 
+// externally defined
+double fps();
+
+// internally defined
 int generate_random_char();
 int init_target_texture();
 entity_id get_next_entity_id();
 double frame_time();
-double fps();
 double distance(int x1, int y1, int x2, int y2);
 void cleanup();
 void cleanup_and_exit_with_failure();
@@ -351,20 +351,6 @@ void load_debug_text() {
 }
 
 entity_id get_next_entity_id() { return next_entity_id++; }
-
-double distance(int x1, int y1, int x2, int y2) {
-  return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
-}
-
-double frame_time() {
-  static double last_time = 0;
-  double current_time = SDL_GetTicks();
-  double frame_time = current_time - last_time;
-  last_time = current_time;
-  return frame_time;
-}
-
-// double fps() { return frame_count / (SDL_GetTicks64() / 1000.0f); }
 
 void spawn_eyeball() {
   const int num_clips = 18;
