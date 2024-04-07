@@ -24,7 +24,7 @@ double zoom = 1.0; // has to appear
 const int default_window_width = 1600;
 const int default_window_height = 960;
 const int default_knife_speed = 4;
-const int default_knife_cooldown = 10;
+const int default_knife_cooldown = 60;
 
 char texture_text[1024] = "a bunch of random text";
 int target_texture_width = 1600;
@@ -87,12 +87,14 @@ unordered_map<entity_id, bool> is_knife;
 unordered_map<entity_id, bool> is_flipped;
 unordered_map<entity_id, bool> is_generator;
 unordered_map<entity_id, bool> is_marked_for_deletion;
+unordered_map<enemy_type, int> enemies_killed;
 
 // random number generator
 default_random_engine rng_generator;
 uniform_real_distribution<double> eyeball_vx_distribution;
 
 int init_target_texture();
+size_t get_num_enemies_killed();
 entity_id get_next_entity_id();
 double fps();
 double frame_time();

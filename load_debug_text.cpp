@@ -3,6 +3,7 @@
 
 #include <cstdio>
 // #include <string>
+#include "enemy_type.h"
 #include "entity_id.h"
 #include "mPrint.h"
 #include <vector>
@@ -37,17 +38,20 @@ extern vector<entity_id> entities;
 
 extern double fps();
 
+extern size_t get_num_enemies_killed();
+
 void load_debug_text() {
   snprintf(texture_text, 1024,
            "target texture: %dx%d\nwindow size: %dx%d\nframe_count: "
            "%06d\nnum_entities: %ld\n"
            "fps: %.02f\nzoom: %.02f\nnum_collisions: "
            "%d\nknife_cooldown: %d\ncurrent_knife_cooldown: "
-           "%d\nnum_knives_fired: %d\nnum_enemies_escaped: %d\n",
+           "%d\nnum_knives_fired: %d\nnum_enemies_escaped: "
+           "%d\nnum_enemies_killed: %ld\n",
            target_texture_width, target_texture_height, window_width,
            window_height, frame_count, entities.size(), fps(), zoom,
            num_collisions, knife_cooldown, current_knife_cooldown,
-           num_knives_fired, num_enemies_escaped);
+           num_knives_fired, num_enemies_escaped, get_num_enemies_killed());
   text_surface = TTF_RenderText_Blended_Wrapped(gFont, texture_text, textColor,
                                                 DEBUG_TEXT_WRAP_LEN);
   if (text_surface == NULL) {
