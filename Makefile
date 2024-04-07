@@ -18,6 +18,8 @@ OBJ_FILES=fps.o \
 					handle_input_component.o \
 					cleanup.o \
 					spawn_skull.o \
+					load_knife_sheet_texture.o \
+					load_eyeball_sheet_texture.o \
 					render_debug_panel.o
 MAIN_FILE=main.cpp
 SDL_FLAGS=-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
@@ -47,6 +49,8 @@ update_transform_components.o: update_transform_components.cpp
 update_rotations.o: update_rotations.cpp
 update_animations.o: update_animations.cpp
 spawn_skull.o: spawn_skull.cpp
+load_knife_sheet_texture.o: load_knife_sheet_texture.cpp
+load_eyeball_sheet_texture.o: load_eyeball_sheet_texture.cpp
 	g++ -c $^
 
 clean:

@@ -379,22 +379,3 @@ void load_skull_sheet_texture() {
   }
   textures["skull"] = t;
 }
-
-void load_eyeball_sheet_texture() {
-  SDL_Texture *t = IMG_LoadTexture(renderer, eyeballsheet_filepath.c_str());
-  if (t == nullptr) {
-    cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
-                                         eyeballsheet_filepath);
-  }
-  textures["eyeball"] = t;
-}
-
-void load_knife_sheet_texture() {
-  string filepath = "img/knife4x.png";
-  SDL_Texture *t = IMG_LoadTexture(renderer, filepath.c_str());
-  if (t == nullptr) {
-    cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
-                                         filepath);
-  }
-  textures["knife"] = t;
-}

@@ -18,7 +18,7 @@ function<void(rotation_pair)> handle_rotation = [](const rotation_pair p) {
   bool is_rotating = p.second;
   if (is_rotating) {
     transform_component transform = transforms[id];
-    transform.angle += 2.0;
+    transform.angle += 4.0;
     transforms[id] = transform;
   }
 };
