@@ -4,14 +4,11 @@
 #include "generator_component.h"
 #include "mPrint.h"
 #include "sprite_component.h"
-// #include "sprite_pair.h"
 #include "transform_component.h"
-// #include "transform_pair.h"
 
 #include <algorithm>
 #include <cstdio>
 #include <ctime>
-// #include <functional>
 #include <random>
 #include <string>
 #include <unordered_map>
@@ -19,8 +16,6 @@
 
 using std::default_random_engine;
 using std::exit;
-// using std::for_each;
-// using std::function;
 using std::remove;
 using std::snprintf;
 using std::string;
@@ -33,15 +28,15 @@ const int MIN_SPAWN_DISTANCE = 100;
 
 double zoom = 1.0; // has to appear
 char texture_text[1024] = "a bunch of random text";
-const int target_texture_width = 1600;
-const int target_texture_height = 960;
+int target_texture_width = 1600;
+int target_texture_height = 960;
 const int debug_font_size = 24;
 const int default_window_width = 1600;
 const int default_window_height = 960;
-int window_width = default_window_width;
-int window_height = default_window_height;
 const int default_knife_speed = 4;
 const int default_knife_cooldown = 30;
+int window_width = default_window_width;
+int window_height = default_window_height;
 static int knife_cooldown = 0;
 bool quit = false;
 bool do_render_debug_panel = true;
@@ -59,7 +54,7 @@ int num_knives_fired = 0;
 int num_enemies_escaped = 0;
 string skullsheet_filepath = "img/skull-sheet4x.png";
 string eyeballsheet_filepath = "img/eyeball-sheet4x.png";
-static entity_id next_entity_id = 0;
+entity_id next_entity_id = 0;
 entity_id player_id = -1;
 TTF_Font *gFont = nullptr;
 SDL_Event e;
@@ -103,6 +98,12 @@ void init_rng();
 void update_rotations();
 void spawn_generator(enemy_type type, int timer, int cooldown);
 void update_transform_components();
+void update_generators();
+void update_animations();
+void update_knife_collisions();
+void init_debug_texture_rects();
+void init_target_texture_rects();
+void render_debug_panel();
 
 // internally defined
 int init_target_texture();
@@ -122,19 +123,13 @@ void handle_keyup();
 void init_gfont();
 void init_img();
 void init_ttf();
-void init_debug_texture_rects();
-void init_target_texture_rects();
 void load_debug_text();
 void load_skull_sheet_texture();
 void load_eyeball_sheet_texture();
 void load_knife_sheet_texture();
-void render_debug_panel();
 void spawn_eyeball();
 void spawn_knife();
 void spawn_skull();
-void update_animations();
-void update_knife_collisions();
-void update_generators();
 
 int main() {
   srand(time(nullptr));
@@ -173,46 +168,6 @@ int main() {
   }
   cleanup();
   return EXIT_SUCCESS;
-}
-
-void update_generators() {
-  for (auto kv : generators) {
-    entity_id id = kv.first;
-    generator_component generator = kv.second;
-    if (frame_count % generator.cooldown == 0) {
-      switch (generator.type) {
-      case ENEMY_TYPE_EYEBALL:
-        spawn_eyeball();
-        break;
-      default:
-        mPrint("invalid enemy type");
-        break;
-      }
-    }
-  }
-}
-
-void update_knife_collisions() {
-  for (auto kv : is_knife) {
-    entity_id id = kv.first;
-    sprite_component knife = sprites[id];
-    // SDL_Rect &knife_rect = knife.dest;
-    for (auto kv2 : is_enemy) {
-      entity_id enemy_id = kv2.first;
-      bool is_enemy = kv2.second;
-      sprite_component enemy = sprites[enemy_id];
-      // SDL_Rect &enemy_rect = enemy.dest;
-      if (!is_enemy) {
-        continue;
-      }
-      if (SDL_HasIntersection(&knife.dest, &enemy.dest)) {
-        is_marked_for_deletion[enemy_id] = true;
-        is_marked_for_deletion[id] = true;
-        // mPrint("knife collision with enemy id " + std::to_string(enemy_id));
-        num_collisions++;
-      }
-    }
-  }
 }
 
 void cleanup_entities_marked_for_deletion() {
@@ -274,8 +229,6 @@ void load_debug_text() {
     SDL_FreeSurface(text_surface);
   }
 }
-
-entity_id get_next_entity_id() { return next_entity_id++; }
 
 void spawn_eyeball() {
   const int num_clips = 18;
@@ -419,22 +372,6 @@ void cleanup() {
   TTF_Quit();
   IMG_Quit();
   SDL_Quit();
-}
-
-void init_debug_texture_rects() {
-  debug_texture_src.x = debug_texture_src.y = debug_texture_dest.x =
-      debug_texture_dest.y = 0;
-  debug_texture_src.w = debug_texture_dest.w = mWidth;
-  debug_texture_src.h = debug_texture_dest.h = mHeight;
-}
-
-void init_target_texture_rects() {
-  target_texture_src.x = target_texture_src.y = target_texture_dest.x =
-      target_texture_dest.y = 0;
-  target_texture_src.w = target_texture_width;
-  target_texture_src.h = target_texture_height;
-  target_texture_dest.w = window_width;
-  target_texture_dest.h = window_height;
 }
 
 void cleanup_and_exit_with_failure() {
