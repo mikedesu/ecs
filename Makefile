@@ -20,6 +20,12 @@ OBJ_FILES=fps.o \
 					spawn_skull.o \
 					load_knife_sheet_texture.o \
 					load_eyeball_sheet_texture.o \
+					load_skull_sheet_texture.o \
+					init_target_texture.o \
+					init_gfont.o \
+					init_ttf.o \
+					init_img.o \
+					create_renderer.o \
 					render_debug_panel.o
 MAIN_FILE=main.cpp
 SDL_FLAGS=-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
@@ -51,6 +57,12 @@ update_animations.o: update_animations.cpp
 spawn_skull.o: spawn_skull.cpp
 load_knife_sheet_texture.o: load_knife_sheet_texture.cpp
 load_eyeball_sheet_texture.o: load_eyeball_sheet_texture.cpp
+load_skull_sheet_texture.o: load_skull_sheet_texture.cpp
+init_target_texture.o: init_target_texture.cpp
+init_gfont.o: init_gfont.cpp
+init_ttf.o: init_ttf.cpp
+init_img.o: init_img.cpp
+create_renderer.o: create_renderer.cpp
 	g++ -c $^
 
 clean:

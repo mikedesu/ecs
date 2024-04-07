@@ -6,7 +6,6 @@
 #include "sprite_component.h"
 #include "transform_component.h"
 
-// #include <algorithm>
 #include <cstdio>
 #include <ctime>
 #include <random>
@@ -15,8 +14,6 @@
 #include <vector>
 
 using std::default_random_engine;
-// using std::exit;
-// using std::remove;
 using std::snprintf;
 using std::string;
 using std::uniform_real_distribution;
@@ -30,7 +27,7 @@ double zoom = 1.0; // has to appear
 char texture_text[1024] = "a bunch of random text";
 int target_texture_width = 1600;
 int target_texture_height = 960;
-const int debug_font_size = 24;
+int debug_font_size = 24;
 const int default_window_width = 1600;
 const int default_window_height = 960;
 const int default_knife_speed = 4;
@@ -310,17 +307,6 @@ void handle_input() {
   }
 }
 
-int init_target_texture() {
-  target_texture = SDL_CreateTexture(
-      renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
-      target_texture_width, target_texture_height);
-  if (target_texture == nullptr) {
-    mPrint("Failed to create target texture!");
-    return 0;
-  }
-  return 1;
-}
-
 void create_window() {
   window =
       SDL_CreateWindow("SDL2 Displaying Image", SDL_WINDOWPOS_UNDEFINED,
@@ -329,53 +315,4 @@ void create_window() {
     cleanup_and_exit_with_failure_mprint("Failed to create window: " +
                                          string(SDL_GetError()));
   }
-}
-
-void create_renderer() {
-  renderer = SDL_CreateRenderer(
-      window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-  if (renderer == nullptr) {
-    cleanup_and_exit_with_failure_mprint("Could not create renderer: " +
-                                         string(SDL_GetError()));
-  }
-}
-
-void init_img() {
-  result = IMG_Init(img_flags);
-  if ((result & img_flags) != img_flags) {
-    cleanup_and_exit_with_failure_mprint(
-        "IMG_Init: Failed to init required png support: " +
-        string(IMG_GetError()));
-  }
-}
-
-void init_ttf() {
-  result = TTF_Init();
-  if (result == -1) {
-    cleanup_and_exit_with_failure_mprint("Failed to init TTF" +
-                                         string(TTF_GetError()));
-  }
-}
-
-void init_gfont() {
-  gFont = TTF_OpenFont("ttf/hack.ttf", debug_font_size);
-  if (gFont == nullptr) {
-    cleanup_and_exit_with_failure_mprint("Failed to load font");
-  }
-}
-
-void handle_init_target_texture() {
-  result = init_target_texture();
-  if (!result) {
-    cleanup_and_exit_with_failure_mprint("Failed to init target texture");
-  }
-}
-
-void load_skull_sheet_texture() {
-  SDL_Texture *t = IMG_LoadTexture(renderer, skullsheet_filepath.c_str());
-  if (t == nullptr) {
-    cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
-                                         skullsheet_filepath);
-  }
-  textures["skull"] = t;
 }
