@@ -38,7 +38,8 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
         num_enemies_escaped++;
       }
     } else if (is_knife[id]) {
-      is_marked_for_deletion[id] = transform.x > window_width;
+      is_marked_for_deletion[id] =
+          transform.x < -sprite.src.w || transform.x > window_width;
     }
   }
   transforms[id] = transform;
