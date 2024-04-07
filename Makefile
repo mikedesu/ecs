@@ -15,6 +15,7 @@ OBJ_FILES=fps.o \
 					init_debug_texture_rects.o \
 					init_target_texture_rects.o \
 					get_next_entity_id.o \
+					cleanup.o \
 					render_debug_panel.o
 MAIN_FILE=main.cpp
 SDL_FLAGS=-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
@@ -41,6 +42,7 @@ update_knife_collisions.o: update_knife_collisions.cpp
 init_debug_texture_rects.o: init_debug_texture_rects.cpp
 init_target_texture_rects.o: init_target_texture_rects.cpp
 get_next_entity_id.o: get_next_entity_id.cpp
+cleanup.o: cleanup.cpp
 	g++ -c $^
 
 clean:

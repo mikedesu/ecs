@@ -104,10 +104,10 @@ void update_knife_collisions();
 void init_debug_texture_rects();
 void init_target_texture_rects();
 void render_debug_panel();
+entity_id get_next_entity_id();
 
 // internally defined
 int init_target_texture();
-entity_id get_next_entity_id();
 void cleanup();
 void cleanup_and_exit_with_failure();
 void cleanup_and_exit_with_failure_mprint(string message);
@@ -341,48 +341,6 @@ int init_target_texture() {
     return 0;
   }
   return 1;
-}
-
-void cleanup_textures() {
-  for (auto kv : textures) {
-    SDL_DestroyTexture(kv.second);
-  }
-  textures.clear();
-}
-
-void cleanup() {
-  mPrint("cleaning up");
-  sprites.clear();
-  transforms.clear();
-  inputs.clear();
-  entities.clear();
-  is_pressed.clear();
-  is_rotating.clear();
-  is_collidable.clear();
-  is_enemy.clear();
-  is_knife.clear();
-  is_marked_for_deletion.clear();
-  cleanup_textures();
-  SDL_DestroyTexture(debug_texture);
-  SDL_DestroyTexture(debug_bg_texture);
-  SDL_DestroyTexture(target_texture);
-  SDL_DestroyRenderer(renderer);
-  SDL_DestroyWindow(window);
-  TTF_CloseFont(gFont);
-  TTF_Quit();
-  IMG_Quit();
-  SDL_Quit();
-}
-
-void cleanup_and_exit_with_failure() {
-  cleanup();
-  exit(EXIT_FAILURE);
-}
-
-void cleanup_and_exit_with_failure_mprint(string message) {
-  mPrint(message);
-  cleanup();
-  exit(EXIT_FAILURE);
 }
 
 void create_window() {
