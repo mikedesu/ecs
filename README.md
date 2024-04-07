@@ -36,6 +36,9 @@ This project emerged from a competition held via the [l0de Radio Hour](https://w
 - [DaFluffyPotato](https://www.youtube.com/@DaFluffyPotato)
 - [TokyoSpliff](https://www.youtube.com/@tokyospliff)
 - [bisqwit](https://www.youtube.com/@Bisqwit)
+- [lazyfoo](https://lazyfoo.net/)
+- [John Carmack](https://twitter.com/ID_AA_Carmack)
+- [Masahiro Sakurai](https://www.youtube.com/@sora_sakurai_en)
 
 -----
 

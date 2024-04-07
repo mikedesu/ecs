@@ -4,6 +4,6 @@
 
 typedef struct {
   enemy_type type;
-  int timer;
+  bool active;
   int cooldown;
 } generator_component;

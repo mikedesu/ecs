@@ -1,5 +1,8 @@
 all: game
 
+CC=g++
+OBJ_FLAG=-c
+
 OBJ_FILES=fps.o \
 					distance.o \
 					frame_time.o \
@@ -31,6 +34,7 @@ OBJ_FILES=fps.o \
 					spawn_knife.o \
 					spawn_eyeball.o \
 					load_debug_text.o \
+					generator_set_active.o \
 					render_debug_panel.o
 MAIN_FILE=main.cpp
 SDL_FLAGS=-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
@@ -38,7 +42,7 @@ BINARY=game
 
 # main game binary
 $(BINARY): $(MAIN_FILE) $(OBJ_FILES)
-	g++ $^ $(SDL_FLAGS) -o $@
+	$(CC) $^ $(SDL_FLAGS) -o $@
 
 # object files
 cleanup.o: cleanup.cpp
@@ -73,7 +77,8 @@ handle_input.o: handle_input.cpp
 spawn_knife.o: spawn_knife.cpp
 spawn_eyeball.o: spawn_eyeball.cpp
 load_debug_text.o: load_debug_text.cpp
-	g++ -c $^
+generator_set_active.o: generator_set_active.cpp
+	$(CC) $(OBJ_FLAG) $^
 
 clean:
 	rm -f $(OBJ_FILES) $(BINARY)

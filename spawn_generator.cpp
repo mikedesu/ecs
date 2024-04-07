@@ -8,10 +8,12 @@ using std::unordered_map;
 using std::vector;
 
 extern unordered_map<entity_id, generator_component> generators;
+extern unordered_map<entity_id, bool> is_generator;
 extern entity_id get_next_entity_id();
 extern vector<entity_id> entities;
 
-void spawn_generator(enemy_type type, int timer, int cooldown) {
+// void spawn_generator(enemy_type type, int timer, int cooldown) {
+void spawn_generator(enemy_type type, bool active, int cooldown) {
   if (type > ENEMY_TYPE_COUNT) {
     // mPrint("invalid enemy type");
     return;
@@ -29,6 +31,8 @@ void spawn_generator(enemy_type type, int timer, int cooldown) {
     }
   }
   entity_id id = get_next_entity_id();
-  generators[id] = {type, timer, cooldown};
+  // generators[id] = {type, timer, cooldown};
+  generators[id] = {type, active, cooldown};
+  is_generator[id] = true;
   entities.push_back(id);
 }

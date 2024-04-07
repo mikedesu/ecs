@@ -13,7 +13,7 @@ void update_generators() {
   for (auto kv : generators) {
     entity_id id = kv.first;
     generator_component generator = kv.second;
-    if (frame_count % generator.cooldown == 0) {
+    if (generator.active && frame_count % generator.cooldown == 0) {
       switch (generator.type) {
       case ENEMY_TYPE_EYEBALL:
         spawn_eyeball();

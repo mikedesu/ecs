@@ -8,6 +8,8 @@ extern bool do_render_debug_panel;
 extern SDL_Event e;
 extern unordered_map<int, bool> is_pressed;
 
+extern void generator_set_all_active_flip();
+
 void handle_keyup() {
   switch (e.key.keysym.sym) {
   case SDLK_LEFT:
@@ -15,8 +17,9 @@ void handle_keyup() {
   case SDLK_UP:
   case SDLK_DOWN:
   case SDLK_a:
-  case SDLK_z:
+  // case SDLK_g:
   case SDLK_x:
+  case SDLK_z:
   case SDLK_LSHIFT:
   case SDLK_RSHIFT:
     is_pressed[e.key.keysym.sym] = false;
@@ -33,8 +36,9 @@ void handle_keydown() {
   case SDLK_UP:
   case SDLK_DOWN:
   case SDLK_a:
-  case SDLK_z:
+  // case SDLK_g:
   case SDLK_x:
+  case SDLK_z:
   case SDLK_LSHIFT:
   case SDLK_RSHIFT:
     is_pressed[e.key.keysym.sym] = true;
@@ -44,6 +48,9 @@ void handle_keydown() {
     break;
   case SDLK_d:
     do_render_debug_panel = !do_render_debug_panel;
+    break;
+  case SDLK_g:
+    generator_set_all_active_flip();
     break;
   default:
     break;

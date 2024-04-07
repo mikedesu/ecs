@@ -20,14 +20,17 @@ int DEBUG_TEXT_WRAP_LEN = 2048;
 const int MIN_SPAWN_DISTANCE = 100;
 
 double zoom = 1.0; // has to appear
-char texture_text[1024] = "a bunch of random text";
-int target_texture_width = 1600;
-int target_texture_height = 960;
-int debug_font_size = 24;
+
 const int default_window_width = 1600;
 const int default_window_height = 960;
 const int default_knife_speed = 4;
 const int default_knife_cooldown = 10;
+
+char texture_text[1024] = "a bunch of random text";
+int target_texture_width = 1600;
+int target_texture_height = 960;
+int debug_font_size = 24;
+
 int window_width = default_window_width;
 int window_height = default_window_height;
 int knife_cooldown = 0;
@@ -45,11 +48,15 @@ int mWidth = -1;
 int mHeight = -1;
 int num_knives_fired = 0;
 int num_enemies_escaped = 0;
+
 string skullsheet_filepath = "img/skull-sheet4x.png";
 string eyeballsheet_filepath = "img/eyeball-sheet4x.png";
+
 entity_id next_entity_id = 0;
 entity_id player_id = -1;
+
 TTF_Font *gFont = nullptr;
+
 SDL_Event e;
 SDL_Surface *text_surface = nullptr;
 SDL_Color textColor = {255, 255, 255};
@@ -63,10 +70,13 @@ SDL_Rect target_texture_dest;
 SDL_Rect debug_texture_src;
 SDL_Rect debug_texture_dest;
 SDL_Surface *debug_surface = nullptr;
+
 vector<entity_id> entities;
 vector<entity_id> entities_marked_for_deletion_tmp;
+
 unordered_map<entity_id, sprite_component> sprites;
 unordered_map<entity_id, transform_component> transforms;
+unordered_map<entity_id, generator_component> generators;
 unordered_map<entity_id, bool> inputs;
 unordered_map<int, bool> is_pressed;
 unordered_map<string, SDL_Texture *> textures;
@@ -74,12 +84,15 @@ unordered_map<entity_id, bool> is_rotating;
 unordered_map<entity_id, bool> is_collidable;
 unordered_map<entity_id, bool> is_enemy;
 unordered_map<entity_id, bool> is_knife;
+unordered_map<entity_id, bool> is_generator;
 unordered_map<entity_id, bool> is_marked_for_deletion;
-unordered_map<entity_id, generator_component> generators;
+
 // random number generator
 default_random_engine rng_generator;
 uniform_real_distribution<double> eyeball_vx_distribution;
 
+int init_target_texture();
+entity_id get_next_entity_id();
 double fps();
 double frame_time();
 double distance(int x1, int y1, int x2, int y2);
@@ -87,7 +100,7 @@ void render_sprites();
 void render_frame();
 void init_rng();
 void update_rotations();
-void spawn_generator(enemy_type type, int timer, int cooldown);
+void spawn_generator(enemy_type type, bool active, int cooldown);
 void update_transform_components();
 void update_generators();
 void update_animations();
@@ -95,14 +108,12 @@ void update_knife_collisions();
 void init_debug_texture_rects();
 void init_target_texture_rects();
 void render_debug_panel();
-entity_id get_next_entity_id();
 void handle_input_component();
 void cleanup();
 void cleanup_and_exit_with_failure();
 void cleanup_and_exit_with_failure_mprint(string message);
 void cleanup_textures();
 void cleanup_entities_marked_for_deletion();
-int init_target_texture();
 void create_window();
 void create_renderer();
 void handle_input();
@@ -119,6 +130,10 @@ void load_knife_sheet_texture();
 void spawn_eyeball();
 void spawn_knife();
 void spawn_skull();
+void generator_set_all_active_flip();
+void generator_set_active(entity_id id, bool active);
+void generator_set_all_active();
+void generator_set_all_inactive();
 
 int main() {
   srand(time(nullptr));
@@ -139,7 +154,7 @@ int main() {
   // get the width and height of the texture
   init_target_texture_rects();
   spawn_skull();
-  spawn_generator(ENEMY_TYPE_EYEBALL, 0, 120);
+  spawn_generator(ENEMY_TYPE_EYEBALL, true, 120);
 
   while (!quit) {
     handle_input();
