@@ -1,11 +1,13 @@
 
+#include "SDL_handler.h"
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "sprite_component.h"
+#include <random>
 #include <unordered_map>
 
-#include "SDL_handler.h"
-
+using std::default_random_engine;
+using std::uniform_real_distribution;
 using std::unordered_map;
 
 extern unordered_map<entity_id, sprite_component> sprites;
@@ -14,6 +16,10 @@ extern unordered_map<entity_id, bool> is_enemy;
 extern unordered_map<entity_id, bool> is_marked_for_deletion;
 extern unordered_map<enemy_type, int> enemies_killed;
 extern int num_collisions;
+extern default_random_engine rng_generator;
+extern uniform_real_distribution<double> coin_spawn_rate_distribution;
+
+extern void spawn_coin(int x, int y);
 
 void update_knife_collisions() {
   for (auto kv : is_knife) {
@@ -22,10 +28,10 @@ void update_knife_collisions() {
     // SDL_Rect &knife_rect = knife.dest;
     for (auto kv2 : is_enemy) {
       entity_id enemy_id = kv2.first;
-      bool is_enemy = kv2.second;
+      bool is_enemy_val = kv2.second;
       sprite_component enemy = sprites[enemy_id];
       // SDL_Rect &enemy_rect = enemy.dest;
-      if (!is_enemy) {
+      if (!is_enemy_val) {
         continue;
       }
       if (SDL_HasIntersection(&knife.dest, &enemy.dest)) {
@@ -36,6 +42,11 @@ void update_knife_collisions() {
         // mPrint("knife collision with enemy id " + std::to_string(enemy_id));
         num_collisions++;
         enemies_killed[ENEMY_TYPE_EYEBALL]++;
+
+        double roll = coin_spawn_rate_distribution(rng_generator);
+        if (roll < 0.25) {
+          spawn_coin(enemy.dest.x, enemy.dest.y);
+        }
       }
     }
   }

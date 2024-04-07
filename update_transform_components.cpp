@@ -17,6 +17,7 @@ extern unordered_map<entity_id, sprite_component> sprites;
 extern entity_id player_id;
 extern unordered_map<entity_id, bool> is_enemy;
 extern unordered_map<entity_id, bool> is_knife;
+extern unordered_map<entity_id, bool> is_coin;
 extern unordered_map<entity_id, bool> is_marked_for_deletion;
 extern int num_enemies_escaped;
 extern int window_width;
@@ -37,7 +38,7 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
       if (marked) {
         num_enemies_escaped++;
       }
-    } else if (is_knife[id]) {
+    } else if (is_knife[id] || is_coin[id]) {
       is_marked_for_deletion[id] =
           transform.x < -sprite.src.w || transform.x > window_width;
     }

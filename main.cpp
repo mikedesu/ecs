@@ -29,7 +29,7 @@ const int default_knife_cooldown = 60;
 char texture_text[1024] = "a bunch of random text";
 int target_texture_width = 1600;
 int target_texture_height = 960;
-int debug_font_size = 24;
+int debug_font_size = 12;
 
 int window_width = default_window_width;
 int window_height = default_window_height;
@@ -51,6 +51,7 @@ int num_enemies_escaped = 0;
 
 string skullsheet_filepath = "img/skull-sheet4x.png";
 string eyeballsheet_filepath = "img/eyeball-sheet4x.png";
+string coin_sheet_filepath = "img/coin-001-sheet4x.png";
 
 entity_id next_entity_id = 0;
 entity_id player_id = -1;
@@ -83,6 +84,7 @@ unordered_map<string, SDL_Texture *> textures;
 unordered_map<entity_id, bool> is_rotating;
 unordered_map<entity_id, bool> is_collidable;
 unordered_map<entity_id, bool> is_enemy;
+unordered_map<entity_id, bool> is_coin;
 unordered_map<entity_id, bool> is_knife;
 unordered_map<entity_id, bool> is_flipped;
 unordered_map<entity_id, bool> is_generator;
@@ -92,6 +94,7 @@ unordered_map<enemy_type, int> enemies_killed;
 // random number generator
 default_random_engine rng_generator;
 uniform_real_distribution<double> eyeball_vx_distribution;
+uniform_real_distribution<double> coin_spawn_rate_distribution;
 
 int init_target_texture();
 size_t get_num_enemies_killed();
@@ -130,9 +133,11 @@ void load_debug_text();
 void load_skull_sheet_texture();
 void load_eyeball_sheet_texture();
 void load_knife_sheet_texture();
+void load_coin_sheet_texture();
 void spawn_eyeball();
 void spawn_knife();
 void spawn_skull();
+void spawn_coin(int x, int y);
 void generator_set_all_active_flip();
 void generator_set_active(entity_id id, bool active);
 void generator_set_all_active();
@@ -151,6 +156,7 @@ int main() {
   load_skull_sheet_texture();
   load_eyeball_sheet_texture();
   load_knife_sheet_texture();
+  load_coin_sheet_texture();
   init_gfont();
   load_debug_text();
   init_debug_texture_rects();

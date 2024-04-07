@@ -24,6 +24,7 @@ OBJ_FILES=fps.o \
 					load_knife_sheet_texture.o \
 					load_eyeball_sheet_texture.o \
 					load_skull_sheet_texture.o \
+					load_coin_sheet_texture.o \
 					init_target_texture.o \
 					init_gfont.o \
 					init_ttf.o \
@@ -33,6 +34,7 @@ OBJ_FILES=fps.o \
 					handle_input.o \
 					spawn_knife.o \
 					spawn_eyeball.o \
+					spawn_coin.o \
 					load_debug_text.o \
 					generator_set_active.o \
 					get_num_enemies_killed.o \
@@ -77,9 +79,11 @@ create_window.o: create_window.cpp
 handle_input.o: handle_input.cpp
 spawn_knife.o: spawn_knife.cpp
 spawn_eyeball.o: spawn_eyeball.cpp
+spawn_coin.o: spawn_coin.cpp
 load_debug_text.o: load_debug_text.cpp
 generator_set_active.o: generator_set_active.cpp
 get_num_enemies_killed.o: get_num_enemies_killed.cpp
+load_coin_sheet_texture.o: load_coin_sheet_texture.cpp
 	$(CC) $(OBJ_FLAG) $^
 
 clean:
