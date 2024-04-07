@@ -16,7 +16,7 @@ extern void load_debug_text();
 void render_frame() {
   // clear the target texture
   SDL_SetRenderTarget(renderer, target_texture);
-  SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+  SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
   SDL_RenderClear(renderer);
   render_sprites();
   //  reset the render target

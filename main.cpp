@@ -34,7 +34,7 @@ const int debug_font_size = 24;
 const int default_window_width = 1600;
 const int default_window_height = 960;
 const int default_knife_speed = 4;
-const int default_knife_cooldown = 30;
+const int default_knife_cooldown = 10;
 int window_width = default_window_width;
 int window_height = default_window_height;
 static int knife_cooldown = 0;
@@ -150,7 +150,7 @@ int main() {
   // get the width and height of the texture
   init_target_texture_rects();
   spawn_skull();
-  spawn_generator(ENEMY_TYPE_EYEBALL, 0, 10);
+  spawn_generator(ENEMY_TYPE_EYEBALL, 0, 120);
 
   while (!quit) {
     handle_input();
