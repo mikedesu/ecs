@@ -3,3 +3,4 @@ game
 a.out
 *.o
 ttf
+*.asciinema

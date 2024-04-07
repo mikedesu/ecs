@@ -1,19 +1,17 @@
 #include "SDL_handler.h"
-// #include "collision_pair.h"
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "generator_component.h"
 #include "mPrint.h"
-// #include "rotation_pair.h"
 #include "sprite_component.h"
-#include "sprite_pair.h"
+// #include "sprite_pair.h"
 #include "transform_component.h"
-#include "transform_pair.h"
+// #include "transform_pair.h"
 
 #include <algorithm>
 #include <cstdio>
 #include <ctime>
-#include <functional>
+// #include <functional>
 #include <random>
 #include <string>
 #include <unordered_map>
@@ -21,58 +19,14 @@
 
 using std::default_random_engine;
 using std::exit;
-using std::for_each;
-using std::function;
-// using std::pair;
+// using std::for_each;
+// using std::function;
 using std::remove;
 using std::snprintf;
 using std::string;
 using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
-
-// externally defined
-double fps();
-double frame_time();
-double distance(int x1, int y1, int x2, int y2);
-
-// internally defined
-int init_target_texture();
-entity_id get_next_entity_id();
-void cleanup();
-void cleanup_and_exit_with_failure();
-void cleanup_and_exit_with_failure_mprint(string message);
-void cleanup_entities_marked_for_deletion();
-void cleanup_textures();
-void create_window();
-void create_renderer();
-void handle_input();
-void handle_init_target_texture();
-void handle_input_component();
-void handle_keydown();
-void handle_keyup();
-void update_transform_components();
-void init_gfont();
-void init_img();
-void init_ttf();
-void init_debug_texture_rects();
-void init_target_texture_rects();
-void load_debug_text();
-void load_skull_sheet_texture();
-void load_eyeball_sheet_texture();
-void load_knife_sheet_texture();
-void render_sprites();
-void render_debug_panel();
-void render_frame();
-void spawn_eyeball();
-void spawn_knife();
-void spawn_skull();
-void spawn_generator(enemy_type type, int timer, int cooldown);
-void update_animations();
-void update_rotations();
-void update_knife_collisions();
-void update_generators();
-void init_rng();
 
 const int DEBUG_TEXT_WRAP_LEN = 2048;
 const int MIN_SPAWN_DISTANCE = 100;
@@ -84,8 +38,8 @@ const int target_texture_height = 960;
 const int debug_font_size = 24;
 const int default_window_width = 1600;
 const int default_window_height = 960;
-const int window_width = default_window_width;
-const int window_height = default_window_height;
+int window_width = default_window_width;
+int window_height = default_window_height;
 const int default_knife_speed = 4;
 const int default_knife_cooldown = 30;
 static int knife_cooldown = 0;
@@ -139,38 +93,48 @@ unordered_map<entity_id, generator_component> generators;
 default_random_engine rng_generator;
 uniform_real_distribution<double> eyeball_vx_distribution;
 
-function<void(sprite_pair)> update_animation = [](const sprite_pair p) {
-  int id = p.first;
-  sprite_component sprite = sprites[id];
-  if (sprite.is_animating) {
-    sprite.current_clip = (sprite.current_clip + 1) % sprite.num_clips;
-    sprite.src.x = sprite.current_clip * sprite.src.w;
-    sprites[id] = sprite;
-  }
-};
+// externally defined
+double fps();
+double frame_time();
+double distance(int x1, int y1, int x2, int y2);
+void render_sprites();
+void render_frame();
+void init_rng();
+void update_rotations();
+void spawn_generator(enemy_type type, int timer, int cooldown);
+void update_transform_components();
 
-function<void(transform_pair)> handle_transform = [](const transform_pair t) {
-  entity_id id = t.first;
-  transform_component transform = t.second;
-  sprite_component sprite = sprites[id];
-  transform.x += transform.vx;
-  transform.y += transform.vy;
-  sprite.dest.x = transform.x;
-  sprite.dest.y = transform.y;
-  sprites[id] = sprite;
-  if (id != player_id) {
-    if (is_enemy[id]) {
-      bool marked = transform.x < -sprite.src.w;
-      is_marked_for_deletion[id] = marked;
-      if (marked) {
-        num_enemies_escaped++;
-      }
-    } else if (is_knife[id]) {
-      is_marked_for_deletion[id] = transform.x > window_width;
-    }
-  }
-  transforms[id] = transform;
-};
+// internally defined
+int init_target_texture();
+entity_id get_next_entity_id();
+void cleanup();
+void cleanup_and_exit_with_failure();
+void cleanup_and_exit_with_failure_mprint(string message);
+void cleanup_entities_marked_for_deletion();
+void cleanup_textures();
+void create_window();
+void create_renderer();
+void handle_input();
+void handle_init_target_texture();
+void handle_input_component();
+void handle_keydown();
+void handle_keyup();
+void init_gfont();
+void init_img();
+void init_ttf();
+void init_debug_texture_rects();
+void init_target_texture_rects();
+void load_debug_text();
+void load_skull_sheet_texture();
+void load_eyeball_sheet_texture();
+void load_knife_sheet_texture();
+void render_debug_panel();
+void spawn_eyeball();
+void spawn_knife();
+void spawn_skull();
+void update_animations();
+void update_knife_collisions();
+void update_generators();
 
 int main() {
   srand(time(nullptr));
@@ -627,23 +591,3 @@ void handle_input_component() {
     sprites[id] = sprite;
   }
 }
-
-void update_transform_components() {
-  for_each(transforms.begin(), transforms.end(), handle_transform);
-}
-
-void render_debug_panel() {
-  SDL_Color color = {0, 0, 0, 128};
-  SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-  SDL_RenderFillRect(renderer, &debug_texture_dest);
-  SDL_RenderCopy(renderer, debug_texture, &debug_texture_src,
-                 &debug_texture_dest);
-}
-
-void update_animations() {
-  for_each(sprites.begin(), sprites.end(), update_animation);
-}
-
-// void update_rotations() {
-//   for_each(is_rotating.begin(), is_rotating.end(), handle_rotation);
-// }
