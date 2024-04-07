@@ -22,6 +22,7 @@ extern unordered_map<entity_id, bool> is_knife;
 extern unordered_map<entity_id, bool> is_enemy;
 extern unordered_map<entity_id, bool> is_collidable;
 extern unordered_map<entity_id, bool> is_rotating;
+extern unordered_map<entity_id, bool> is_flipped;
 extern unordered_map<entity_id, sprite_component> sprites;
 extern unordered_map<entity_id, transform_component> transforms;
 extern vector<entity_id> entities;
@@ -34,16 +35,24 @@ void spawn_knife() {
     const int padding = 16;
     bool is_animating = false;
     entity_id id = get_next_entity_id();
+    sprite_component sprite = sprites[player_id];
+    double x = sprite.dest.x + sprite.dest.w + padding;
+    double y = sprite.dest.y + sprite.dest.h / 2.0 + 4;
+    double angle = 0.0;
+    double vx = current_knife_speed;
+    double vy = 0;
+
+    if (is_flipped[player_id]) {
+      x = sprite.dest.x - padding;
+      vx = -current_knife_speed;
+      angle = 180.0;
+    }
+
     // mPrint("spawning knife with id " + std::to_string(id));
     SDL_QueryTexture(textures["knife"], NULL, NULL, &w, &h);
     w = w / num_clips;
-    double x = sprites[player_id].dest.x + sprites[player_id].dest.w + padding;
-    double y = sprites[player_id].dest.y + sprites[player_id].dest.h / 2.0 + 4;
-    double angle = 0.0;
     sprites[id] = {is_animating, 0,           num_clips, textures["knife"],
                    {0, 0, w, h}, {0, 0, w, h}};
-    double vx = current_knife_speed;
-    double vy = 0;
     transforms[id] = {x, y, vx, vy, angle};
     is_knife[id] = true;
     is_enemy[id] = false;
