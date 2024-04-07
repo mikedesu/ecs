@@ -84,6 +84,7 @@ unordered_map<entity_id, bool> is_rotating;
 unordered_map<entity_id, bool> is_collidable;
 unordered_map<entity_id, bool> is_enemy;
 unordered_map<entity_id, bool> is_knife;
+unordered_map<entity_id, bool> is_flipped;
 unordered_map<entity_id, bool> is_generator;
 unordered_map<entity_id, bool> is_marked_for_deletion;
 

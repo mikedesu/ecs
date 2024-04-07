@@ -9,6 +9,7 @@ extern unordered_map<entity_id, bool> inputs;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, sprite_component> sprites;
 extern unordered_map<int, bool> is_pressed;
+extern unordered_map<int, bool> is_flipped;
 
 extern void spawn_knife();
 // extern void generator_set_all_active_flip();
@@ -21,12 +22,16 @@ void handle_input_component() {
 
     if (is_pressed[SDLK_LEFT] && is_pressed[SDLK_LSHIFT]) {
       transform.x -= 8;
+      is_flipped[id] = true;
     } else if (is_pressed[SDLK_RIGHT] && is_pressed[SDLK_LSHIFT]) {
       transform.x += 8;
+      is_flipped[id] = false;
     } else if (is_pressed[SDLK_LEFT]) {
       transform.x -= 4;
+      is_flipped[id] = true;
     } else if (is_pressed[SDLK_RIGHT]) {
       transform.x += 4;
+      is_flipped[id] = false;
     }
 
     if (is_pressed[SDLK_UP] && is_pressed[SDLK_LSHIFT]) {

@@ -16,10 +16,13 @@ using std::unordered_map;
 extern SDL_Renderer *renderer;
 extern unordered_map<entity_id, sprite_component> sprites;
 extern unordered_map<entity_id, transform_component> transforms;
+extern unordered_map<entity_id, bool> is_flipped;
 
 function<void(sprite_pair)> draw_sprite = [](const sprite_pair p) {
+  entity_id id = p.first;
   SDL_RenderCopyEx(renderer, p.second.texture, &p.second.src, &p.second.dest,
-                   transforms[p.first].angle, NULL, SDL_FLIP_NONE);
+                   transforms[id].angle, NULL,
+                   is_flipped[id] ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
 };
 
 void render_sprites() { for_each(sprites.begin(), sprites.end(), draw_sprite); }
