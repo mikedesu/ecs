@@ -1,9 +1,10 @@
 #include "SDL_handler.h"
+// #include "collision_pair.h"
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "generator_component.h"
 #include "mPrint.h"
-#include "rotation_pair.h"
+// #include "rotation_pair.h"
 #include "sprite_component.h"
 #include "sprite_pair.h"
 #include "transform_component.h"
@@ -22,17 +23,13 @@ using std::default_random_engine;
 using std::exit;
 using std::for_each;
 using std::function;
-using std::pair;
+// using std::pair;
 using std::remove;
 using std::snprintf;
 using std::string;
 using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
-
-// typedef pair<int, transform_component> transform_pair;
-//  typedef pair<int, bool> rotation_pair;
-typedef pair<int, bool> collision_pair;
 
 // externally defined
 double fps();
