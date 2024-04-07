@@ -17,6 +17,7 @@ OBJ_FILES=fps.o \
 					get_next_entity_id.o \
 					handle_input_component.o \
 					cleanup.o \
+					spawn_skull.o \
 					render_debug_panel.o
 MAIN_FILE=main.cpp
 SDL_FLAGS=-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
@@ -45,6 +46,7 @@ update_knife_collisions.o: update_knife_collisions.cpp
 update_transform_components.o: update_transform_components.cpp
 update_rotations.o: update_rotations.cpp
 update_animations.o: update_animations.cpp
+spawn_skull.o: spawn_skull.cpp
 	g++ -c $^
 
 clean:

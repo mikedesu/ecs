@@ -6,7 +6,7 @@
 #include "sprite_component.h"
 #include "transform_component.h"
 
-#include <algorithm>
+// #include <algorithm>
 #include <cstdio>
 #include <ctime>
 #include <random>
@@ -15,8 +15,8 @@
 #include <vector>
 
 using std::default_random_engine;
-using std::exit;
-using std::remove;
+// using std::exit;
+// using std::remove;
 using std::snprintf;
 using std::string;
 using std::uniform_real_distribution;
@@ -110,9 +110,9 @@ void cleanup();
 void cleanup_and_exit_with_failure();
 void cleanup_and_exit_with_failure_mprint(string message);
 void cleanup_textures();
+void cleanup_entities_marked_for_deletion();
 
 // internally defined
-void cleanup_entities_marked_for_deletion();
 int init_target_texture();
 void create_window();
 void create_renderer();
@@ -397,31 +397,4 @@ void load_knife_sheet_texture() {
                                          filepath);
   }
   textures["knife"] = t;
-}
-
-void spawn_skull() {
-  if (player_id == -1) {
-    const int num_clips = 2;
-    bool is_animating = false;
-    int src_x = 0;
-    int src_y = 0;
-    double dest_x = 0;
-    double dest_y = 0;
-    double vx = 0;
-    double vy = 0;
-    double angle = 0.0;
-    SDL_QueryTexture(textures["skull"], NULL, NULL, &w, &h);
-    w = w / num_clips;
-    entity_id id = get_next_entity_id();
-    sprites[id] = {is_animating,
-                   0,
-                   num_clips,
-                   textures["skull"],
-                   {src_x, src_y, w, h},
-                   {(int)dest_x, (int)dest_y, w, h}};
-    transforms[id] = {dest_x, dest_y, vx, vy, angle};
-    inputs[id] = true;
-    player_id = id;
-    entities.push_back(id);
-  }
 }
