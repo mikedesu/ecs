@@ -26,6 +26,9 @@ OBJ_FILES=fps.o \
 					init_ttf.o \
 					init_img.o \
 					create_renderer.o \
+					create_window.o \
+					handle_input.o \
+					spawn_knife.o \
 					render_debug_panel.o
 MAIN_FILE=main.cpp
 SDL_FLAGS=-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
@@ -63,6 +66,9 @@ init_gfont.o: init_gfont.cpp
 init_ttf.o: init_ttf.cpp
 init_img.o: init_img.cpp
 create_renderer.o: create_renderer.cpp
+create_window.o: create_window.cpp
+handle_input.o: handle_input.cpp
+spawn_knife.o: spawn_knife.cpp
 	g++ -c $^
 
 clean:

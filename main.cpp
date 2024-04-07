@@ -34,7 +34,7 @@ const int default_knife_speed = 4;
 const int default_knife_cooldown = 10;
 int window_width = default_window_width;
 int window_height = default_window_height;
-static int knife_cooldown = 0;
+int knife_cooldown = 0;
 bool quit = false;
 bool do_render_debug_panel = true;
 int current_knife_cooldown = default_knife_cooldown;
@@ -224,95 +224,4 @@ void spawn_eyeball() {
   is_collidable[id] = true;
   is_enemy[id] = true;
   entities.push_back(id);
-}
-
-void spawn_knife() {
-  if (!knife_cooldown) {
-    const int num_clips = 1;
-    const int padding = 16;
-    bool is_animating = false;
-    entity_id id = get_next_entity_id();
-    // mPrint("spawning knife with id " + std::to_string(id));
-    SDL_QueryTexture(textures["knife"], NULL, NULL, &w, &h);
-    w = w / num_clips;
-    double x = sprites[player_id].dest.x + sprites[player_id].dest.w + padding;
-    double y = sprites[player_id].dest.y + sprites[player_id].dest.h / 2.0 + 4;
-    double angle = 0.0;
-    sprites[id] = {is_animating, 0,           num_clips, textures["knife"],
-                   {0, 0, w, h}, {0, 0, w, h}};
-    double vx = current_knife_speed;
-    double vy = 0;
-    transforms[id] = {x, y, vx, vy, angle};
-    is_knife[id] = true;
-    is_enemy[id] = false;
-    is_collidable[id] = true;
-    is_rotating[id] = true;
-    entities.push_back(id);
-    knife_cooldown = current_knife_cooldown;
-    num_knives_fired++;
-  }
-}
-
-void handle_keydown() {
-  switch (e.key.keysym.sym) {
-  case SDLK_LEFT:
-  case SDLK_RIGHT:
-  case SDLK_UP:
-  case SDLK_DOWN:
-  case SDLK_a:
-  case SDLK_z:
-  case SDLK_x:
-  case SDLK_LSHIFT:
-  case SDLK_RSHIFT:
-    is_pressed[e.key.keysym.sym] = true;
-    break;
-  case SDLK_q:
-    quit = true;
-    break;
-  case SDLK_d:
-    do_render_debug_panel = !do_render_debug_panel;
-    break;
-  default:
-    break;
-  }
-}
-
-void handle_keyup() {
-  switch (e.key.keysym.sym) {
-  case SDLK_LEFT:
-  case SDLK_RIGHT:
-  case SDLK_UP:
-  case SDLK_DOWN:
-  case SDLK_a:
-  case SDLK_z:
-  case SDLK_x:
-  case SDLK_LSHIFT:
-  case SDLK_RSHIFT:
-    is_pressed[e.key.keysym.sym] = false;
-    break;
-  default:
-    break;
-  }
-}
-
-void handle_input() {
-  while (SDL_PollEvent(&e)) {
-    if (e.type == SDL_QUIT) {
-      quit = true;
-    } else if (e.type == SDL_KEYDOWN) {
-      handle_keydown();
-    } else if (e.type == SDL_KEYUP) {
-      handle_keyup();
-    }
-  }
-}
-
-void create_window() {
-  window =
-      SDL_CreateWindow("SDL2 Displaying Image", SDL_WINDOWPOS_UNDEFINED,
-                       SDL_WINDOWPOS_UNDEFINED, window_width, window_height, 0);
-  if (window == nullptr) {
-    cleanup_and_exit_with_failure_mprint("Failed to create window: " +
-                                         string(SDL_GetError()));
-  }
 }
