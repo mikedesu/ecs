@@ -2,11 +2,8 @@
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "generator_component.h"
-#include "mPrint.h"
 #include "sprite_component.h"
 #include "transform_component.h"
-
-#include <cstdio>
 #include <ctime>
 #include <random>
 #include <string>
@@ -14,13 +11,12 @@
 #include <vector>
 
 using std::default_random_engine;
-using std::snprintf;
 using std::string;
 using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
 
-const int DEBUG_TEXT_WRAP_LEN = 2048;
+int DEBUG_TEXT_WRAP_LEN = 2048;
 const int MIN_SPAWN_DISTANCE = 100;
 
 double zoom = 1.0; // has to appear
@@ -80,12 +76,10 @@ unordered_map<entity_id, bool> is_enemy;
 unordered_map<entity_id, bool> is_knife;
 unordered_map<entity_id, bool> is_marked_for_deletion;
 unordered_map<entity_id, generator_component> generators;
-
 // random number generator
 default_random_engine rng_generator;
 uniform_real_distribution<double> eyeball_vx_distribution;
 
-// externally defined
 double fps();
 double frame_time();
 double distance(int x1, int y1, int x2, int y2);
@@ -108,8 +102,6 @@ void cleanup_and_exit_with_failure();
 void cleanup_and_exit_with_failure_mprint(string message);
 void cleanup_textures();
 void cleanup_entities_marked_for_deletion();
-
-// internally defined
 int init_target_texture();
 void create_window();
 void create_renderer();
@@ -165,63 +157,4 @@ int main() {
   }
   cleanup();
   return EXIT_SUCCESS;
-}
-
-void load_debug_text() {
-  snprintf(texture_text, 1024,
-           "target texture: %dx%d\nwindow size: %dx%d\nframe_count: "
-           "%06d\nnum_entities: %ld\n"
-           "fps: %.02f\nzoom: %.02f\nnum_collisions: "
-           "%d\nknife_cooldown: %d\ncurrent_knife_cooldown: "
-           "%d\nnum_knives_fired: %d\nnum_enemies_escaped: %d\n",
-           target_texture_width, target_texture_height, window_width,
-           window_height, frame_count, entities.size(), fps(), zoom,
-           num_collisions, knife_cooldown, current_knife_cooldown,
-           num_knives_fired, num_enemies_escaped);
-  text_surface = TTF_RenderText_Blended_Wrapped(gFont, texture_text, textColor,
-                                                DEBUG_TEXT_WRAP_LEN);
-  if (text_surface == NULL) {
-    mPrint("text_surface == NULL");
-    // printf("textureText = %s\n", textureText);
-    printf("Unable to render text_surface! SDL_ttf Error: %s\n",
-           TTF_GetError());
-  } else {
-    // Create texture from surface pixels
-    if (debug_texture != nullptr) {
-      SDL_DestroyTexture(debug_texture);
-      debug_texture = nullptr;
-    }
-    debug_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
-    if (debug_texture == nullptr) {
-      mPrint("mTexture == NULL");
-      printf("Unable to create texture from rendered text! SDL Error: %s\n",
-             SDL_GetError());
-    }
-    // Get image dimensions
-    mWidth = text_surface->w;
-    mHeight = text_surface->h;
-    // Get rid of old surface
-    SDL_FreeSurface(text_surface);
-  }
-}
-
-void spawn_eyeball() {
-  const int num_clips = 18;
-  bool is_animating = true;
-  SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
-  w = w / num_clips;
-  entity_id id = get_next_entity_id();
-  double x = (target_texture_width - w);
-  double y = (rand() % (target_texture_height - h));
-  double vy = 0.0;
-  double vx = eyeball_vx_distribution(rng_generator);
-  // double vy = distribution(generator);
-  double angle = 0.0;
-  sprites[id] = {is_animating, 0,
-                 num_clips,    textures["eyeball"],
-                 {0, 0, w, h}, {(int)x, (int)y, w, h}};
-  transforms[id] = {x, y, vx, vy, angle};
-  is_collidable[id] = true;
-  is_enemy[id] = true;
-  entities.push_back(id);
 }

@@ -29,6 +29,8 @@ OBJ_FILES=fps.o \
 					create_window.o \
 					handle_input.o \
 					spawn_knife.o \
+					spawn_eyeball.o \
+					load_debug_text.o \
 					render_debug_panel.o
 MAIN_FILE=main.cpp
 SDL_FLAGS=-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
@@ -69,6 +71,8 @@ create_renderer.o: create_renderer.cpp
 create_window.o: create_window.cpp
 handle_input.o: handle_input.cpp
 spawn_knife.o: spawn_knife.cpp
+spawn_eyeball.o: spawn_eyeball.cpp
+load_debug_text.o: load_debug_text.cpp
 	g++ -c $^
 
 clean:
