@@ -105,19 +105,19 @@ void init_debug_texture_rects();
 void init_target_texture_rects();
 void render_debug_panel();
 entity_id get_next_entity_id();
-
-// internally defined
-int init_target_texture();
+void handle_input_component();
 void cleanup();
 void cleanup_and_exit_with_failure();
 void cleanup_and_exit_with_failure_mprint(string message);
-void cleanup_entities_marked_for_deletion();
 void cleanup_textures();
+
+// internally defined
+void cleanup_entities_marked_for_deletion();
+int init_target_texture();
 void create_window();
 void create_renderer();
 void handle_input();
 void handle_init_target_texture();
-void handle_input_component();
 void handle_keydown();
 void handle_keyup();
 void init_gfont();
@@ -168,28 +168,6 @@ int main() {
   }
   cleanup();
   return EXIT_SUCCESS;
-}
-
-void cleanup_entities_marked_for_deletion() {
-  for (auto kv : is_marked_for_deletion) {
-    entity_id id = kv.first;
-    if (kv.second) {
-      sprites.erase(id);
-      transforms.erase(id);
-      inputs.erase(id);
-      is_rotating.erase(id);
-      is_collidable.erase(id);
-      is_enemy.erase(id);
-      is_knife.erase(id);
-      entities.erase(remove(entities.begin(), entities.end(), id),
-                     entities.end());
-      entities_marked_for_deletion_tmp.push_back(id);
-    }
-  }
-  for (auto id : entities_marked_for_deletion_tmp) {
-    is_marked_for_deletion.erase(id);
-  }
-  entities_marked_for_deletion_tmp.clear();
 }
 
 void load_debug_text() {
