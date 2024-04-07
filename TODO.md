@@ -31,4 +31,23 @@
 - [ ] knife "catching" mechanic
 - [x] generic enemy generator
     - [x] eyeball generator
-- [ ] count number of knives fired
+- [x] count number of knives fired
+
+## 07 April 2024
+
+### 02:08 CST
+
+- [x] re-organized entire codebase into individual files for each function
+- [ ] need to make an Asset Manager in order to
+    - [ ] load textures, fonts, sounds, etc
+        - [ ] verify the file locations exist on disk
+        - [ ] be generic enough to handle key-value name-filepath pairs
+            - [ ] ex: "texture-dir", "img"
+            - [ ] ex: "skull-texture", "skull-sheet.png"
+            - [ ] ex: "font-dir", "fonts"
+            - [ ] ex: "gfont", "hack.ttf"
+            - [ ] ex: "eyeball-texture", "eyeball-sheet.png"
+
+
+
+
