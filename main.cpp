@@ -3,8 +3,11 @@
 #include "entity_id.h"
 #include "generator_component.h"
 #include "mPrint.h"
+#include "rotation_pair.h"
 #include "sprite_component.h"
+#include "sprite_pair.h"
 #include "transform_component.h"
+#include "transform_pair.h"
 
 #include <algorithm>
 #include <cstdio>
@@ -27,9 +30,8 @@ using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
 
-typedef pair<int, sprite_component> sprite_pair;
-typedef pair<int, transform_component> transform_pair;
-typedef pair<int, bool> rotation_pair;
+// typedef pair<int, transform_component> transform_pair;
+//  typedef pair<int, bool> rotation_pair;
 typedef pair<int, bool> collision_pair;
 
 // externally defined
@@ -140,11 +142,6 @@ unordered_map<entity_id, generator_component> generators;
 default_random_engine rng_generator;
 uniform_real_distribution<double> eyeball_vx_distribution;
 
-// function<void(sprite_pair)> draw_sprite = [](const sprite_pair p) {
-//   SDL_RenderCopyEx(renderer, p.second.texture, &p.second.src, &p.second.dest,
-//                    transforms[p.first].angle, NULL, SDL_FLIP_NONE);
-// };
-
 function<void(sprite_pair)> update_animation = [](const sprite_pair p) {
   int id = p.first;
   sprite_component sprite = sprites[id];
@@ -176,16 +173,6 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
     }
   }
   transforms[id] = transform;
-};
-
-function<void(rotation_pair)> handle_rotation = [](const rotation_pair p) {
-  entity_id id = p.first;
-  bool is_rotating = p.second;
-  if (is_rotating) {
-    transform_component transform = transforms[id];
-    transform.angle += 2.0;
-    transforms[id] = transform;
-  }
 };
 
 int main() {
@@ -335,11 +322,8 @@ void spawn_eyeball() {
   SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
   w = w / num_clips;
   entity_id id = get_next_entity_id();
-  // mPrint("spawning eyeball with id " + std::to_string(id));
-  //  double pad = target_texture_width / 4.0;
   double x = (target_texture_width - w);
   double y = (rand() % (target_texture_height - h));
-  // double vx = -4.0;
   double vy = 0.0;
   double vx = eyeball_vx_distribution(rng_generator);
   // double vy = distribution(generator);
@@ -399,9 +383,6 @@ void handle_keydown() {
   case SDLK_d:
     do_render_debug_panel = !do_render_debug_panel;
     break;
-  // case SDLK_i:
-  //   spawn_eyeball();
-  //   break;
   default:
     break;
   }
@@ -604,7 +585,6 @@ void spawn_skull() {
                    textures["skull"],
                    {src_x, src_y, w, h},
                    {(int)dest_x, (int)dest_y, w, h}};
-    // transforms[id] = {dest_x, dest_y, angle};
     transforms[id] = {dest_x, dest_y, vx, vy, angle};
     inputs[id] = true;
     player_id = id;
@@ -655,9 +635,6 @@ void update_transform_components() {
   for_each(transforms.begin(), transforms.end(), handle_transform);
 }
 
-// void render_sprites() { for_each(sprites.begin(), sprites.end(),
-// draw_sprite); }
-
 void render_debug_panel() {
   SDL_Color color = {0, 0, 0, 128};
   SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
@@ -670,49 +647,6 @@ void update_animations() {
   for_each(sprites.begin(), sprites.end(), update_animation);
 }
 
-void update_rotations() {
-  for_each(is_rotating.begin(), is_rotating.end(), handle_rotation);
-}
-
-void render_frame() {
-  // clear the target texture
-  SDL_SetRenderTarget(renderer, target_texture);
-  SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-  SDL_RenderClear(renderer);
-  render_sprites();
-  //  reset the render target
-  SDL_SetRenderTarget(renderer, NULL);
-  SDL_RenderCopy(renderer, target_texture, &target_texture_src,
-                 &target_texture_dest);
-  // render debug text
-  if (do_render_debug_panel) {
-    render_debug_panel();
-    load_debug_text();
-  }
-  SDL_RenderPresent(renderer);
-  frame_count++;
-}
-
-void spawn_generator(enemy_type type, int timer, int cooldown) {
-  if (type > ENEMY_TYPE_COUNT) {
-    mPrint("invalid enemy type");
-    return;
-  }
-
-  if (cooldown < 1) {
-    mPrint("invalid cooldown");
-    return;
-  }
-
-  for (auto kv : generators) {
-    generator_component generator = kv.second;
-    if (generator.type == type) {
-      mPrint("generator for type " + std::to_string(type) + " already exists");
-      return;
-    }
-  }
-
-  entity_id id = get_next_entity_id();
-  generators[id] = {type, timer, cooldown};
-  entities.push_back(id);
-}
+// void update_rotations() {
+//   for_each(is_rotating.begin(), is_rotating.end(), handle_rotation);
+// }
