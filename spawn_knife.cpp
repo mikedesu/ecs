@@ -51,8 +51,12 @@ void spawn_knife() {
     // mPrint("spawning knife with id " + std::to_string(id));
     SDL_QueryTexture(textures["knife"], NULL, NULL, &w, &h);
     w = w / num_clips;
-    sprites[id] = {is_animating, 0,           num_clips, textures["knife"],
-                   {0, 0, w, h}, {0, 0, w, h}};
+
+    double scale = 1;
+
+    sprites[id] = {is_animating, 0,
+                   num_clips,    textures["knife"],
+                   {0, 0, w, h}, {0, 0, (int)scale * w, (int)scale * h}};
     transforms[id] = {x, y, vx, vy, angle};
     is_knife[id] = true;
     is_enemy[id] = false;
