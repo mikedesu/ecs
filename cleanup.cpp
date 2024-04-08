@@ -6,11 +6,14 @@
 #include "sprite_component.h"
 #include "transform_component.h"
 #include <algorithm>
+#include <functional>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 using std::exit;
+using std::for_each;
+using std::function;
 using std::remove;
 using std::string;
 using std::unordered_map;
@@ -49,9 +52,8 @@ void cleanup_and_exit_with_failure_mprint(string message);
 void cleanup_entities_marked_for_deletion();
 
 void cleanup_textures() {
-  for (auto kv : textures) {
-    SDL_DestroyTexture(kv.second);
-  }
+  for_each(textures.begin(), textures.end(),
+           [](auto kv) { SDL_DestroyTexture(kv.second); });
   textures.clear();
 }
 
@@ -131,24 +133,44 @@ void cleanup_and_exit_with_failure_mprint(string message) {
 }
 
 void cleanup_entities_marked_for_deletion() {
-  for (auto kv : is_marked_for_deletion) {
-    entity_id id = kv.first;
-    if (kv.second) {
-      sprites.erase(id);
-      transforms.erase(id);
-      inputs.erase(id);
-      is_rotating.erase(id);
-      is_collidable.erase(id);
-      is_enemy.erase(id);
-      is_knife.erase(id);
-      is_coin.erase(id);
-      entities.erase(remove(entities.begin(), entities.end(), id),
-                     entities.end());
-      entities_marked_for_deletion_tmp.push_back(id);
-    }
-  }
-  for (auto id : entities_marked_for_deletion_tmp) {
-    is_marked_for_deletion.erase(id);
-  }
+  // for (auto kv : is_marked_for_deletion) {
+  //   entity_id id = kv.first;
+  //   if (kv.second) {
+  //     sprites.erase(id);
+  //     transforms.erase(id);
+  //     inputs.erase(id);
+  //     is_rotating.erase(id);
+  //     is_collidable.erase(id);
+  //     is_enemy.erase(id);
+  //     is_knife.erase(id);
+  //     is_coin.erase(id);
+  //     entities.erase(remove(entities.begin(), entities.end(), id),
+  //                    entities.end());
+  //     entities_marked_for_deletion_tmp.push_back(id);
+  //   }
+  // }
+
+  for_each(is_marked_for_deletion.begin(), is_marked_for_deletion.end(),
+           [](auto kv) {
+             entity_id id = kv.first;
+             if (kv.second) {
+               sprites.erase(id);
+               transforms.erase(id);
+               inputs.erase(id);
+               is_rotating.erase(id);
+               is_collidable.erase(id);
+               is_enemy.erase(id);
+               is_knife.erase(id);
+               is_coin.erase(id);
+               entities.erase(remove(entities.begin(), entities.end(), id),
+                              entities.end());
+               entities_marked_for_deletion_tmp.push_back(id);
+             }
+           });
+
+  for_each(entities_marked_for_deletion_tmp.begin(),
+           entities_marked_for_deletion_tmp.end(),
+           [](entity_id id) { is_marked_for_deletion.erase(id); });
+
   entities_marked_for_deletion_tmp.clear();
 }
