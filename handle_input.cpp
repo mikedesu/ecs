@@ -22,6 +22,7 @@ extern int target_texture_height;
 extern SDL_Rect target_texture_dest;
 
 extern void generator_set_all_active_flip();
+extern void toggle_fullscreen();
 
 void handle_keyup() {
   switch (e.key.keysym.sym) {
@@ -66,28 +67,8 @@ void handle_keydown() {
     generator_set_all_active_flip();
     break;
   case SDLK_f:
-    is_fullscreen = !is_fullscreen;
-    SDL_SetWindowFullscreen(window,
-                            is_fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
 
-    if (is_fullscreen) {
-      // what does the below line do?
-      // SDL_SetWindowGrab(window, SDL_TRUE);
-      SDL_GetWindowSize(window, &fullscreen_width, &fullscreen_height);
-
-      mPrint("fullscreen width: " + to_string(fullscreen_width));
-      mPrint("fullscreen height: " + to_string(fullscreen_height));
-      mPrint("window width: " + to_string(window_width));
-      mPrint("window height: " + to_string(window_height));
-      mPrint("texture width: " + to_string(target_texture_width));
-      mPrint("texture height: " + to_string(target_texture_height));
-
-      target_texture_dest.w = fullscreen_width;
-      target_texture_dest.h = fullscreen_height;
-    } else {
-      target_texture_dest.w = window_width;
-      target_texture_dest.h = window_height;
-    }
+    toggle_fullscreen();
 
     break;
 

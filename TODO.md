@@ -60,9 +60,18 @@
     - [ ] knife spread increase (shotgun)
 - [ ] enemy spawn wave pressure
     - [ ] increasing the generator rate
+        - [ ] increasing the eyeball generation rate every N kills
+        - [ ] increasing the eyeball generation rate every powerup activation
     - [ ] spawning from both sides of the screen
 - [ ] eyeball up/down bounce
 - [ ] eyeballs bouncing off each other
 - [ ] there is a bug where eyeballs disappear when colliding with coins
+
+### 22:13 CDT
+
+- [ ] re-factor generators to take a generic `entity_type` parameter
+    - `ENTITY_TYPE_ENEMY_EYEBALL`
+    - `ENTITY_TYPE_KNIFE`
+    - `ENTITY_TYPE_COIN`
 
 
