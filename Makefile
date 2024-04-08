@@ -33,7 +33,6 @@ OBJ_FILES=distance.o \
 					render_sprites.o \
 					spawn_generator.o \
 					spawn.o \
-					spawn_eyeball.o \
 					spawn_powerup.o \
 					toggle_fullscreen.o \
 					update_animations.o \
@@ -106,8 +105,6 @@ render_frame.o: render_frame.cpp
 render_sprites.o: render_sprites.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 render_debug_panel.o: render_debug_panel.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-spawn_eyeball.o: spawn_eyeball.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 spawn_generator.o: spawn_generator.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
