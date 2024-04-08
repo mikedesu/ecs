@@ -49,6 +49,8 @@ int mWidth = -1;
 int mHeight = -1;
 int num_knives_fired = 0;
 int num_enemies_escaped = 0;
+int fullscreen_width = -1;
+int fullscreen_height = -1;
 
 string skullsheet_filepath = "img/skull-sheet4x.png";
 string eyeballsheet_filepath = "img/eyeball-sheet4x.png";
