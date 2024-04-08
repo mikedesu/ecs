@@ -1,5 +1,6 @@
 #include "SDL_handler.h"
 #include "entity_id.h"
+#include "mPrint.h"
 #include "sprite_component.h"
 #include "transform_component.h"
 #include <string>
@@ -7,6 +8,7 @@
 #include <vector>
 
 using std::string;
+using std::to_string;
 using std::unordered_map;
 using std::vector;
 
@@ -35,6 +37,9 @@ void spawn_knife() {
     const int padding = 16;
     bool is_animating = false;
     entity_id id = get_next_entity_id();
+
+    mPrint("spawning knife with id " + to_string(id));
+
     sprite_component sprite = sprites[player_id];
     double x = sprite.dest.x + sprite.dest.w + padding;
     double y = sprite.dest.y + sprite.dest.h / 2.0 + 4;
@@ -59,8 +64,8 @@ void spawn_knife() {
                    {0, 0, w, h}, {0, 0, (int)scale * w, (int)scale * h}};
     transforms[id] = {x, y, vx, vy, angle};
     is_knife[id] = true;
-    is_enemy[id] = false;
-    is_collidable[id] = true;
+    // is_enemy[id] = false;
+    // is_collidable[id] = true;
     is_rotating[id] = true;
     entities.push_back(id);
     knife_cooldown = current_knife_cooldown;

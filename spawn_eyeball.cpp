@@ -23,6 +23,8 @@ extern unordered_map<entity_id, transform_component> transforms;
 extern vector<entity_id> entities;
 extern unordered_map<entity_id, bool> is_collidable;
 extern unordered_map<entity_id, bool> is_enemy;
+extern unordered_map<entity_id, bool> is_coin;
+extern unordered_map<entity_id, bool> is_knife;
 extern unordered_map<entity_id, bool> is_rotating;
 extern int target_texture_width;
 extern int target_texture_height;
@@ -49,5 +51,7 @@ void spawn_eyeball() {
   transforms[id] = {x, y, vx, vy, angle};
   is_collidable[id] = true;
   is_enemy[id] = true;
+  // is_knife[id] = false;
+  // is_coin[id] = false;
   entities.push_back(id);
 }

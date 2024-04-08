@@ -2,11 +2,15 @@
 #include "SDL_handler.h"
 #include "enemy_type.h"
 #include "entity_id.h"
+#include "mPrint.h"
 #include "sprite_component.h"
 #include <random>
+#include <string>
 #include <unordered_map>
 
 using std::default_random_engine;
+using std::string;
+using std::to_string;
 using std::uniform_real_distribution;
 using std::unordered_map;
 
@@ -21,25 +25,33 @@ extern uniform_real_distribution<double> coin_spawn_rate_distribution;
 
 extern void spawn_coin(int x, int y);
 
-#define COIN_SPAWN_RATE 0.25
+#define COIN_SPAWN_RATE 1
 
 void update_knife_collisions() {
+  // instead of iterating over the knife map, we might consider iterating the
+  // entities instead
   for (auto kv : is_knife) {
     entity_id id = kv.first;
     sprite_component knife = sprites[id];
+
+    if (!is_knife[id]) {
+      continue;
+    }
+
     for (auto kv2 : is_enemy) {
       entity_id enemy_id = kv2.first;
       bool is_enemy_val = kv2.second;
       sprite_component enemy = sprites[enemy_id];
+
       if (!is_enemy_val) {
         continue;
-      }
-      if (SDL_HasIntersection(&knife.dest, &enemy.dest)) {
+      } else if (SDL_HasIntersection(&knife.dest, &enemy.dest)) {
         // at some point we will have to distinguish enemies by type
         // if (enemy_type_for_id[id] == ENEMY_TYPE_EYEBALL) {
         is_marked_for_deletion[enemy_id] = true;
         is_marked_for_deletion[id] = true;
-        // mPrint("knife collision with enemy id " + std::to_string(enemy_id));
+        mPrint("knife collision - id: " + to_string(id) +
+               " enemy_id: " + to_string(enemy_id));
         num_collisions++;
         enemies_killed[ENEMY_TYPE_EYEBALL]++;
         double roll = coin_spawn_rate_distribution(rng_generator);

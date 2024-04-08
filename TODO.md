@@ -55,9 +55,9 @@
 - [ ] power-ups
     - [ ] knife cooldown reduction
     - [ ] knife speed increase
-    - [ ] knife damage increase
     - [ ] knife size increase
     - [ ] knife spread increase (shotgun)
+    - [ ] knife angular rotation (damage)
 - [ ] enemy spawn wave pressure
     - [ ] increasing the generator rate
         - [ ] increasing the eyeball generation rate every N kills
@@ -65,7 +65,7 @@
     - [ ] spawning from both sides of the screen
 - [ ] eyeball up/down bounce
 - [ ] eyeballs bouncing off each other
-- [ ] there is a bug where eyeballs disappear when colliding with coins
+- [x] there is a bug where eyeballs disappear when colliding with coins **fixed 08 April 2024 11:35 CST**
 
 ### 22:13 CDT
 
