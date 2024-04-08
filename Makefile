@@ -26,6 +26,7 @@ OBJ_FILES=distance.o \
 					load_eyeball_sheet_texture.o \
 					load_skull_sheet_texture.o \
 					load_coin_sheet_texture.o \
+					load_powerup_sheet_texture.o \
 					load_debug_text.o \
 					render_debug_panel.o \
 					render_frame.o \
@@ -98,6 +99,8 @@ load_eyeball_sheet_texture.o: load_eyeball_sheet_texture.cpp
 load_knife_sheet_texture.o: load_knife_sheet_texture.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 load_skull_sheet_texture.o: load_skull_sheet_texture.cpp
+	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
+load_powerup_sheet_texture.o: load_powerup_sheet_texture.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 render_frame.o: render_frame.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^

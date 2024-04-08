@@ -2,7 +2,7 @@
 
 ## 03 April 2024
 
-### 15:01 CST
+### 15:01 CDT
 
 - [ ] Find a way to make the debug_texture into an entity 
     - [ ] May not be necessary?
@@ -12,7 +12,7 @@
 
 ## 04 April 2024
 
-### 13:56 CST
+### 13:56 CDT
 
 - [ ] knives
     - [x] spawning
@@ -35,7 +35,7 @@
 
 ## 07 April 2024
 
-### 02:08 CST
+### 02:08 CDT
 
 - [x] re-organized entire codebase into individual files for each function
 - [ ] need to make an Asset Manager in order to
@@ -48,7 +48,7 @@
             - [ ] ex: "gfont", "hack.ttf"
             - [ ] ex: "eyeball-texture", "eyeball-sheet.png"
 
-### 19:28 CST
+### 19:28 CDT
 
 - [ ] coins
     - [x] spawn on eyeball kill with 25% chance
@@ -74,4 +74,12 @@
     - `ENTITY_TYPE_KNIFE`
     - `ENTITY_TYPE_COIN`
 
+## 08 April 2024
+
+### 16:21 CDT 
+
+- [ ] realizing we can probably combine functions from multiple files into individual function-group files
+    - [ ] ex: `spawn_skull`, `spawn_knife`, etc. can probably go in `spawn.c`
+    - [ ] this would achieve faster compile time with the same organizational benefit while also reducing LOC
+- [ ] group `load_texture` functions into their own `load.c` file
 

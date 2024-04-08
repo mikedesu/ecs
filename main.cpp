@@ -130,6 +130,7 @@ void load_skull_sheet_texture();
 void load_eyeball_sheet_texture();
 void load_knife_sheet_texture();
 void load_coin_sheet_texture();
+void load_powerup_sheet_texture();
 void spawn_skull();
 
 int main() {
@@ -147,6 +148,7 @@ int main() {
   load_eyeball_sheet_texture();
   load_knife_sheet_texture();
   load_coin_sheet_texture();
+  load_powerup_sheet_texture();
   load_debug_text();
   init_debug_texture_rects();
   // get the width and height of the texture
