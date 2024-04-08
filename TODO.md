@@ -63,3 +63,6 @@
     - [ ] spawning from both sides of the screen
 - [ ] eyeball up/down bounce
 - [ ] eyeballs bouncing off each other
+- [ ] there is a bug where eyeballs disappear when colliding with coins
+
+

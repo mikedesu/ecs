@@ -111,6 +111,7 @@ void update_transform_components();
 void update_generators();
 void update_animations();
 void update_knife_collisions();
+void update_collisions();
 void init_debug_texture_rects();
 void init_target_texture_rects();
 void render_debug_panel();
@@ -172,7 +173,7 @@ int main() {
     update_transform_components();
     update_animations();
     update_rotations();
-    update_knife_collisions();
+    update_collisions();
     update_generators();
     render_frame();
     knife_cooldown = (knife_cooldown > 0) ? knife_cooldown - 1 : 0;

@@ -3,42 +3,44 @@ all: game
 CC=g++
 OBJ_FLAG=-c
 
-OBJ_FILES=fps.o \
-					distance.o \
+OBJ_FILES=distance.o \
+					cleanup.o \
+					create_renderer.o \
+					create_window.o \
+					fps.o \
 					frame_time.o \
+					get_next_entity_id.o \
+					get_num_enemies_killed.o \
+					generator_set_active.o \
+					handle_input_component.o \
+					handle_input.o \
 					init_rng.o \
-					render_sprites.o \
-					spawn_generator.o \
-					render_frame.o \
-					update_rotations.o \
-					update_animations.o \
-					update_transform_components.o \
-					update_knife_collisions.o \
-					update_generators.o \
 					init_debug_texture_rects.o \
 					init_target_texture_rects.o \
-					get_next_entity_id.o \
-					handle_input_component.o \
-					cleanup.o \
-					spawn_skull.o \
-					load_knife_sheet_texture.o \
-					load_eyeball_sheet_texture.o \
-					load_skull_sheet_texture.o \
-					load_coin_sheet_texture.o \
 					init_target_texture.o \
 					init_gfont.o \
 					init_ttf.o \
 					init_img.o \
-					create_renderer.o \
-					create_window.o \
-					handle_input.o \
+					load_knife_sheet_texture.o \
+					load_eyeball_sheet_texture.o \
+					load_skull_sheet_texture.o \
+					load_coin_sheet_texture.o \
+					load_debug_text.o \
+					render_debug_panel.o \
+					render_frame.o \
+					render_sprites.o \
+					spawn_generator.o \
+					spawn_skull.o \
 					spawn_knife.o \
 					spawn_eyeball.o \
 					spawn_coin.o \
-					load_debug_text.o \
-					generator_set_active.o \
-					get_num_enemies_killed.o \
-					render_debug_panel.o
+					update_animations.o \
+					update_collisions.o \
+					update_generators.o \
+					update_knife_collisions.o \
+					update_rotations.o \
+					update_transform_components.o 
+
 MAIN_FILE=main.cpp
 SDL_FLAGS=-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 BINARY=game
@@ -84,6 +86,7 @@ load_debug_text.o: load_debug_text.cpp
 generator_set_active.o: generator_set_active.cpp
 get_num_enemies_killed.o: get_num_enemies_killed.cpp
 load_coin_sheet_texture.o: load_coin_sheet_texture.cpp
+update_collisions.o: update_collisions.cpp
 	$(CC) $(OBJ_FLAG) $^
 
 clean:

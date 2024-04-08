@@ -47,7 +47,7 @@ void load_debug_text() {
            "fps: %.02f\nzoom: %.02f\nnum_collisions: "
            "%d\nknife_cooldown: %d\ncurrent_knife_cooldown: "
            "%d\nnum_knives_fired: %d\nnum_enemies_escaped: "
-           "%d\nnum_enemies_killed: %ld\n",
+           "%d\nnum_enemies_killed: %ld\ncoins_collected: 0\n",
            target_texture_width, target_texture_height, window_width,
            window_height, frame_count, entities.size(), fps(), zoom,
            num_collisions, knife_cooldown, current_knife_cooldown,

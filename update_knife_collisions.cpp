@@ -21,16 +21,16 @@ extern uniform_real_distribution<double> coin_spawn_rate_distribution;
 
 extern void spawn_coin(int x, int y);
 
+#define COIN_SPAWN_RATE 0.25
+
 void update_knife_collisions() {
   for (auto kv : is_knife) {
     entity_id id = kv.first;
     sprite_component knife = sprites[id];
-    // SDL_Rect &knife_rect = knife.dest;
     for (auto kv2 : is_enemy) {
       entity_id enemy_id = kv2.first;
       bool is_enemy_val = kv2.second;
       sprite_component enemy = sprites[enemy_id];
-      // SDL_Rect &enemy_rect = enemy.dest;
       if (!is_enemy_val) {
         continue;
       }
@@ -42,9 +42,8 @@ void update_knife_collisions() {
         // mPrint("knife collision with enemy id " + std::to_string(enemy_id));
         num_collisions++;
         enemies_killed[ENEMY_TYPE_EYEBALL]++;
-
         double roll = coin_spawn_rate_distribution(rng_generator);
-        if (roll < 0.25) {
+        if (roll < COIN_SPAWN_RATE) {
           spawn_coin(enemy.dest.x, enemy.dest.y);
         }
       }
