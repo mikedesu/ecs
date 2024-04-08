@@ -11,7 +11,7 @@ extern void spawn_eyeball();
 
 void update_generators() {
   for (auto kv : generators) {
-    entity_id id = kv.first;
+    // entity_id id = kv.first;
     generator_component generator = kv.second;
     if (generator.active && frame_count % generator.cooldown == 0) {
       switch (generator.type) {

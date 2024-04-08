@@ -21,6 +21,8 @@ extern unordered_map<entity_id, bool> is_coin;
 extern unordered_map<entity_id, bool> is_marked_for_deletion;
 extern int num_enemies_escaped;
 extern int window_width;
+extern int target_texture_width;
+extern int target_texture_height;
 
 function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   entity_id id = t.first;
@@ -29,6 +31,23 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
 
   transform.x += transform.vx;
   transform.y += transform.vy;
+
+  if (id == player_id) {
+    // bounds checking
+    // player cannot move beyond texture
+
+    if (transform.x < 0) {
+      transform.x = 0;
+    } else if (transform.x > target_texture_width - sprite.dest.w) {
+      transform.x = target_texture_width - sprite.dest.w;
+    }
+
+    if (transform.y < 0) {
+      transform.y = 0;
+    } else if (transform.y > target_texture_height - sprite.dest.h) {
+      transform.y = target_texture_height - sprite.dest.h;
+    }
+  }
 
   sprite.dest.x = transform.x;
   sprite.dest.y = transform.y;

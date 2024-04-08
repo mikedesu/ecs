@@ -17,7 +17,6 @@ using std::unordered_map;
 using std::vector;
 
 int DEBUG_TEXT_WRAP_LEN = 2048;
-const int MIN_SPAWN_DISTANCE = 100;
 
 double zoom = 1.0; // has to appear
 
@@ -29,7 +28,7 @@ const int default_knife_cooldown = 60;
 char texture_text[1024] = "a bunch of random text";
 int target_texture_width = 1600;
 int target_texture_height = 960;
-int debug_font_size = 12;
+int debug_font_size = 16;
 
 bool quit = false;
 bool do_render_debug_panel = true;
@@ -51,6 +50,9 @@ int num_knives_fired = 0;
 int num_enemies_escaped = 0;
 int fullscreen_width = -1;
 int fullscreen_height = -1;
+int player_health = 3;
+int player_max_health = 3;
+int player_money = 0;
 
 string skullsheet_filepath = "img/skull-sheet4x.png";
 string eyeballsheet_filepath = "img/eyeball-sheet4x.png";
@@ -63,7 +65,7 @@ TTF_Font *gFont = nullptr;
 
 SDL_Event e;
 SDL_Surface *text_surface = nullptr;
-SDL_Color textColor = {255, 255, 255};
+SDL_Color textColor = {255, 255, 255, 255};
 SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
 SDL_Texture *target_texture = nullptr;
@@ -102,12 +104,7 @@ uniform_real_distribution<double> eyeball_vx_distribution;
 uniform_real_distribution<double> coin_spawn_rate_distribution;
 
 int init_target_texture();
-size_t get_num_enemies_killed();
 entity_id get_next_entity_id();
-double fps();
-double frame_time();
-double distance(int x1, int y1, int x2, int y2);
-void render_sprites();
 void render_frame();
 void init_rng();
 void update_rotations();
@@ -144,12 +141,12 @@ int main() {
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
   init_img();
   init_ttf();
+  init_gfont();
   handle_init_target_texture();
   load_skull_sheet_texture();
   load_eyeball_sheet_texture();
   load_knife_sheet_texture();
   load_coin_sheet_texture();
-  init_gfont();
   load_debug_text();
   init_debug_texture_rects();
   // get the width and height of the texture
@@ -167,7 +164,14 @@ int main() {
     update_collisions();
     update_generators();
     render_frame();
-    knife_cooldown = (knife_cooldown > 0) ? knife_cooldown - 1 : 0;
+
+    // knife_cooldown = (knife_cooldown > 0) ? knife_cooldown - 1 : 0;
+
+    knife_cooldown--;
+    if (knife_cooldown <= 0) {
+      knife_cooldown = 0;
+    }
+
     // remove entities that are marked for deletion
     cleanup_entities_marked_for_deletion();
   }

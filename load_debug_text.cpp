@@ -22,6 +22,9 @@ extern int knife_cooldown;
 extern int current_knife_cooldown;
 extern int num_knives_fired;
 extern int num_enemies_escaped;
+extern int player_health;
+extern int player_max_health;
+extern int player_money;
 extern double zoom;
 
 extern char texture_text[1024];
@@ -47,11 +50,13 @@ void load_debug_text() {
            "fps: %.02f\nzoom: %.02f\nnum_collisions: "
            "%d\nknife_cooldown: %d\ncurrent_knife_cooldown: "
            "%d\nnum_knives_fired: %d\nnum_enemies_escaped: "
-           "%d\nnum_enemies_killed: %ld\ncoins_collected: 0\n",
+           "%d\nnum_enemies_killed: %ld\nplayer_health: "
+           "%d/%d\ncoins_collected: %d\n",
            target_texture_width, target_texture_height, window_width,
            window_height, frame_count, entities.size(), fps(), zoom,
            num_collisions, knife_cooldown, current_knife_cooldown,
-           num_knives_fired, num_enemies_escaped, get_num_enemies_killed());
+           num_knives_fired, num_enemies_escaped, get_num_enemies_killed(),
+           player_health, player_max_health, player_money);
   text_surface = TTF_RenderText_Blended_Wrapped(gFont, texture_text, textColor,
                                                 DEBUG_TEXT_WRAP_LEN);
   if (text_surface == nullptr) {

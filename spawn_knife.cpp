@@ -57,10 +57,10 @@ void spawn_knife() {
     SDL_QueryTexture(textures["knife"], NULL, NULL, &w, &h);
     w = w / num_clips;
 
-    double scale = 2;
+    double scale = 1.2;
 
-    int kw = scale * w;
-    int kh = scale * h;
+    // int kw = scale * w;
+    // int kh = scale * h;
 
     sprites[id] = {is_animating, 0,           num_clips, textures["knife"],
                    {0, 0, w, h}, {0, 0, w, h}};
