@@ -3,7 +3,9 @@
 
 using std::unordered_map;
 
+extern SDL_Window *window;
 extern bool quit;
+extern bool is_fullscreen;
 extern bool do_render_debug_panel;
 extern SDL_Event e;
 extern unordered_map<int, bool> is_pressed;
@@ -52,6 +54,10 @@ void handle_keydown() {
   case SDLK_g:
     generator_set_all_active_flip();
     break;
+  case SDLK_f:
+    is_fullscreen = !is_fullscreen;
+    SDL_SetWindowFullscreen(window,
+                            is_fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
   default:
     break;
   }

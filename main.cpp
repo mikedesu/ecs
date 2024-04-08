@@ -31,11 +31,12 @@ int target_texture_width = 1600;
 int target_texture_height = 960;
 int debug_font_size = 12;
 
+bool quit = false;
+bool do_render_debug_panel = true;
+bool is_fullscreen = false;
 int window_width = default_window_width;
 int window_height = default_window_height;
 int knife_cooldown = 0;
-bool quit = false;
-bool do_render_debug_panel = true;
 int current_knife_cooldown = default_knife_cooldown;
 int num_collisions = 0;
 int current_knife_speed = default_knife_speed;
