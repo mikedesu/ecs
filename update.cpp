@@ -1,12 +1,10 @@
-#include "SDL_handler.h"
 #include "enemy_type.h"
 #include "entity_id.h"
-// #include "mPrint.h"
 #include "sprite_component.h"
+#include "sprite_pair.h"
 #include <algorithm>
 #include <functional>
 #include <random>
-#include <string>
 #include <unordered_map>
 #include <vector>
 
@@ -15,23 +13,25 @@
 using std::default_random_engine;
 using std::for_each;
 using std::function;
-using std::string;
 using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
 
+extern int frame_count;
 extern int num_collisions;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> coin_spawn_rate_distribution;
 
 extern unordered_map<entity_id, sprite_component> sprites;
+extern unordered_map<entity_id, bool> is_coin;
 extern unordered_map<entity_id, bool> is_knife;
 extern unordered_map<entity_id, bool> is_enemy;
 extern unordered_map<entity_id, bool> is_marked_for_deletion;
 extern unordered_map<enemy_type, int> enemies_killed;
 extern vector<entity_id> entities;
 
-// functions
+extern void update_knife_collisions();
+extern void update_skull_collisions();
 extern void spawn_coin(int x, int y);
 
 function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
@@ -62,6 +62,32 @@ function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
     }
   }
 };
+
+function<void(sprite_pair)> update_animation = [](const sprite_pair p) {
+  entity_id id = p.first;
+  sprite_component sprite = sprites[id];
+
+  if (is_coin[id]) {
+    if (frame_count % 10 == 0) {
+      sprite.current_clip = (sprite.current_clip + 1) % sprite.num_clips;
+      sprite.src.x = sprite.current_clip * sprite.src.w;
+      sprites[id] = sprite;
+    }
+  } else if (sprite.is_animating) {
+    sprite.current_clip = (sprite.current_clip + 1) % sprite.num_clips;
+    sprite.src.x = sprite.current_clip * sprite.src.w;
+    sprites[id] = sprite;
+  }
+};
+
+void update_animations() {
+  for_each(sprites.begin(), sprites.end(), update_animation);
+}
+
+void update_collisions() {
+  update_knife_collisions();
+  update_skull_collisions();
+}
 
 void update_knife_collisions() {
   for_each(entities.begin(), entities.end(), check_for_knife_collision);

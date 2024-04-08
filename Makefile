@@ -28,10 +28,8 @@ OBJ_FILES=distance.o \
 					render_sprites.o \
 					spawn.o \
 					toggle_fullscreen.o \
-					update_animations.o \
-					update_collisions.o \
+					update.o \
 					update_generators.o \
-					update_knife_collisions.o \
 					update_rotations.o \
 					update_skull_collisions.o \
 					update_transform_components.o 
@@ -95,13 +93,9 @@ toggle_fullscreen.o: toggle_fullscreen.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 update_generators.o: update_generators.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-update_knife_collisions.o: update_knife_collisions.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 update_transform_components.o: update_transform_components.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-update_animations.o: update_animations.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-update_collisions.o: update_collisions.cpp
+update.o: update.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 update_rotations.o: update_rotations.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
