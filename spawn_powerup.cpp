@@ -34,13 +34,16 @@ extern uniform_real_distribution<double> eyeball_vx_distribution;
 
 extern entity_id get_next_entity_id();
 
-void spawn_coin(int x, int y) {
-  const int num_clips = 4;
+void spawn_powerup(int x, int y) {
+  const int num_clips = 12;
   bool is_animating = true;
-  SDL_QueryTexture(textures["coin"], NULL, NULL, &w, &h);
+
+  SDL_Texture *t = textures["powerup"];
+
+  SDL_QueryTexture(t, NULL, NULL, &w, &h);
   w = w / num_clips;
   entity_id id = get_next_entity_id();
-  mPrint("Spawning coin with id: " + to_string(id));
+  mPrint("Spawning powerup with id: " + to_string(id));
   // double x = (target_texture_width - w);
   // double y = (rand() % (target_texture_height - h));
   double vy = 0.0;
@@ -49,8 +52,7 @@ void spawn_coin(int x, int y) {
   double scale = 1.0;
   double dx = x;
   double dy = y;
-  sprites[id] = {is_animating, 0,           num_clips, textures["coin"],
-                 {0, 0, w, h}, {x, y, w, h}};
+  sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {x, y, w, h}};
   transforms[id] = {dx, dy, vx, vy, angle, scale};
   // is_collidable[id] = true;
   // is_enemy[id] = false;

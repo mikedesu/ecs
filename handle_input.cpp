@@ -19,10 +19,12 @@ extern int window_width;
 extern int window_height;
 extern int target_texture_width;
 extern int target_texture_height;
+extern int player_money;
 extern SDL_Rect target_texture_dest;
 
 extern void generator_set_all_active_flip();
 extern void toggle_fullscreen();
+extern void spawn_powerup(int x, int y);
 
 void handle_keyup() {
   switch (e.key.keysym.sym) {
@@ -67,9 +69,14 @@ void handle_keydown() {
     generator_set_all_active_flip();
     break;
   case SDLK_f:
-
     toggle_fullscreen();
+    break;
+  case SDLK_u:
 
+    if (player_money > 10) {
+      player_money -= 10;
+      spawn_powerup(target_texture_width / 2, target_texture_height / 2);
+    }
     break;
 
   default:

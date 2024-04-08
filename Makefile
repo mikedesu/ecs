@@ -32,10 +32,9 @@ OBJ_FILES=distance.o \
 					render_frame.o \
 					render_sprites.o \
 					spawn_generator.o \
-					spawn_skull.o \
-					spawn_knife.o \
+					spawn.o \
 					spawn_eyeball.o \
-					spawn_coin.o \
+					spawn_powerup.o \
 					toggle_fullscreen.o \
 					update_animations.o \
 					update_collisions.o \
@@ -108,15 +107,13 @@ render_sprites.o: render_sprites.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 render_debug_panel.o: render_debug_panel.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-spawn_coin.o: spawn_coin.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 spawn_eyeball.o: spawn_eyeball.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 spawn_generator.o: spawn_generator.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-spawn_knife.o: spawn_knife.cpp
+spawn.o: spawn.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-spawn_skull.o: spawn_skull.cpp
+spawn_powerup.o: spawn_powerup.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 toggle_fullscreen.o: toggle_fullscreen.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^

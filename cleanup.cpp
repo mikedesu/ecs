@@ -78,12 +78,12 @@ void cleanup_textures() {
 }
 
 void cleanup() {
-  mPrint("cleaning up");
-  mPrint("cleaning up entities");
+  // mPrint("cleaning up");
+  // mPrint("cleaning up entities");
   entities.clear();
-  mPrint("cleaning up entities_marked_for_deletion");
+  // mPrint("cleaning up entities_marked_for_deletion");
   entities_marked_for_deletion_tmp.clear();
-  mPrint("cleaning up maps");
+  // mPrint("cleaning up maps");
   is_pressed.clear();
   is_rotating.clear();
   is_collidable.clear();
@@ -98,24 +98,24 @@ void cleanup() {
   transforms.clear();
   generators.clear();
   inputs.clear();
-  mPrint("cleaning up SDL");
-  mPrint("cleaning up SDL textures");
+  // mPrint("cleaning up SDL");
+  // mPrint("cleaning up SDL textures");
   cleanup_textures();
-  mPrint("cleaning up debug texture");
+  // mPrint("cleaning up debug texture");
   SDL_DestroyTexture(debug_texture);
-  mPrint("cleaning up debug bg texture");
+  // mPrint("cleaning up debug bg texture");
   SDL_DestroyTexture(debug_bg_texture);
-  mPrint("cleaning up target texture");
+  // mPrint("cleaning up target texture");
   SDL_DestroyTexture(target_texture);
-  mPrint("cleaning up renderer");
+  // mPrint("cleaning up renderer");
   SDL_DestroyRenderer(renderer);
   if (text_surface != nullptr) {
-    mPrint("cleaning up text surface");
+    // mPrint("cleaning up text surface");
     SDL_FreeSurface(text_surface);
   }
-  mPrint("cleaning up window");
+  // mPrint("cleaning up window");
   SDL_DestroyWindow(window);
-  mPrint("cleaning up TTF");
+  // mPrint("cleaning up TTF");
   TTF_CloseFont(gFont);
   TTF_Quit();
   IMG_Quit();
