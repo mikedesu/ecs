@@ -6,4 +6,5 @@ typedef struct {
   double vx;
   double vy;
   double angle;
+  double scale;
 } transform_component;
