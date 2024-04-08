@@ -22,12 +22,7 @@ OBJ_FILES=distance.o \
 					init_gfont.o \
 					init_ttf.o \
 					init_img.o \
-					load_knife_sheet_texture.o \
-					load_eyeball_sheet_texture.o \
-					load_skull_sheet_texture.o \
-					load_coin_sheet_texture.o \
-					load_powerup_sheet_texture.o \
-					load_debug_text.o \
+					load.o \
 					render_debug_panel.o \
 					render_frame.o \
 					render_sprites.o \
@@ -86,17 +81,7 @@ init_img.o: init_img.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 init_ttf.o: init_ttf.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-load_coin_sheet_texture.o: load_coin_sheet_texture.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-load_debug_text.o: load_debug_text.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-load_eyeball_sheet_texture.o: load_eyeball_sheet_texture.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-load_knife_sheet_texture.o: load_knife_sheet_texture.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-load_skull_sheet_texture.o: load_skull_sheet_texture.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-load_powerup_sheet_texture.o: load_powerup_sheet_texture.cpp
+load.o: load.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 render_frame.o: render_frame.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^

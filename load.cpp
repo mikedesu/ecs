@@ -1,17 +1,20 @@
 
 #include "SDL_handler.h"
 
-#include <cstdio>
-// #include <string>
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "mPrint.h"
+#include <cstdio>
+#include <string>
+#include <unordered_map>
 #include <vector>
 
 using std::snprintf;
-// using std::string;
+using std::string;
+using std::unordered_map;
 using std::vector;
 
+extern string skullsheet_filepath;
 extern int target_texture_width;
 extern int target_texture_height;
 extern int window_width;
@@ -26,7 +29,7 @@ extern int player_health;
 extern int player_max_health;
 extern int player_money;
 extern double zoom;
-
+extern string coin_sheet_filepath;
 extern char texture_text[1024];
 extern SDL_Texture *debug_texture;
 extern SDL_Surface *text_surface;
@@ -36,11 +39,11 @@ extern SDL_Renderer *renderer;
 extern int mWidth;
 extern int mHeight;
 extern int DEBUG_TEXT_WRAP_LEN;
-
 extern vector<entity_id> entities;
+extern unordered_map<string, SDL_Texture *> textures;
+extern string eyeballsheet_filepath;
 
 extern double fps();
-
 extern size_t get_num_enemies_killed();
 
 void load_debug_text() {
@@ -83,4 +86,53 @@ void load_debug_text() {
     SDL_FreeSurface(text_surface);
     text_surface = nullptr;
   }
+}
+
+extern void cleanup_and_exit_with_failure_mprint(string msg);
+
+void load_coin_sheet_texture() {
+  SDL_Texture *t = IMG_LoadTexture(renderer, coin_sheet_filepath.c_str());
+  if (t == nullptr) {
+    cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
+                                         coin_sheet_filepath);
+  }
+  textures["coin"] = t;
+}
+
+void load_eyeball_sheet_texture() {
+  SDL_Texture *t = IMG_LoadTexture(renderer, eyeballsheet_filepath.c_str());
+  if (t == nullptr) {
+    cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
+                                         eyeballsheet_filepath);
+  }
+  textures["eyeball"] = t;
+}
+
+void load_skull_sheet_texture() {
+  SDL_Texture *t = IMG_LoadTexture(renderer, skullsheet_filepath.c_str());
+  if (t == nullptr) {
+    cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
+                                         skullsheet_filepath);
+  }
+  textures["skull"] = t;
+}
+
+void load_knife_sheet_texture() {
+  string filepath = "img/knife4x.png";
+  SDL_Texture *t = IMG_LoadTexture(renderer, filepath.c_str());
+  if (t == nullptr) {
+    cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
+                                         filepath);
+  }
+  textures["knife"] = t;
+}
+
+void load_powerup_sheet_texture() {
+  string path = "img/powerup-sheet4x.png";
+  SDL_Texture *t = IMG_LoadTexture(renderer, path.c_str());
+  if (t == nullptr) {
+    cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
+                                         path);
+  }
+  textures["powerup"] = t;
 }
