@@ -73,7 +73,6 @@ SDL_Rect target_texture_src;
 SDL_Rect target_texture_dest;
 SDL_Rect debug_texture_src;
 SDL_Rect debug_texture_dest;
-SDL_Surface *debug_surface = nullptr;
 
 vector<entity_id> entities;
 vector<entity_id> entities_marked_for_deletion_tmp;
@@ -82,8 +81,8 @@ unordered_map<entity_id, sprite_component> sprites;
 unordered_map<entity_id, transform_component> transforms;
 unordered_map<entity_id, generator_component> generators;
 unordered_map<entity_id, bool> inputs;
+
 unordered_map<int, bool> is_pressed;
-unordered_map<string, SDL_Texture *> textures;
 unordered_map<entity_id, bool> is_rotating;
 unordered_map<entity_id, bool> is_collidable;
 unordered_map<entity_id, bool> is_enemy;
@@ -92,7 +91,10 @@ unordered_map<entity_id, bool> is_knife;
 unordered_map<entity_id, bool> is_flipped;
 unordered_map<entity_id, bool> is_generator;
 unordered_map<entity_id, bool> is_marked_for_deletion;
+
 unordered_map<enemy_type, int> enemies_killed;
+
+unordered_map<string, SDL_Texture *> textures;
 
 // random number generator
 default_random_engine rng_generator;
@@ -113,27 +115,16 @@ void spawn_generator(enemy_type type, bool active, int cooldown);
 void update_transform_components();
 void update_generators();
 void update_animations();
-// void update_knife_collisions();
 void update_collisions();
 void init_debug_texture_rects();
 void init_target_texture_rects();
-// void render_debug_panel();
 void handle_input_component();
 void cleanup();
-// void cleanup_and_exit_with_failure();
-// void cleanup_and_exit_with_failure_mprint(string message);
-// void cleanup_textures();
 void cleanup_entities_marked_for_deletion();
 void create_window();
 void create_renderer();
-// void generator_set_all_active_flip();
-// void generator_set_active(entity_id id, bool active);
-// void generator_set_all_active();
-// void generator_set_all_inactive();
 void handle_input();
 void handle_init_target_texture();
-// void handle_keydown();
-// void handle_keyup();
 void init_gfont();
 void init_img();
 void init_ttf();
@@ -142,10 +133,7 @@ void load_skull_sheet_texture();
 void load_eyeball_sheet_texture();
 void load_knife_sheet_texture();
 void load_coin_sheet_texture();
-// void spawn_eyeball();
-//  void spawn_knife();
 void spawn_skull();
-// void spawn_coin(int x, int y);
 
 int main() {
   srand(time(nullptr));

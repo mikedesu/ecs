@@ -1,6 +1,7 @@
 #include "SDL_handler.h"
 #include "enemy_type.h"
 #include "entity_id.h"
+#include "generator_component.h"
 #include "mPrint.h"
 #include "sprite_component.h"
 #include "transform_component.h"
@@ -20,16 +21,20 @@ extern SDL_Texture *debug_texture;
 extern SDL_Texture *debug_bg_texture;
 extern SDL_Texture *target_texture;
 extern SDL_Window *window;
+extern SDL_Surface *text_surface;
 extern TTF_Font *gFont;
 
 extern unordered_map<string, SDL_Texture *> textures;
 extern unordered_map<entity_id, sprite_component> sprites;
 extern unordered_map<entity_id, transform_component> transforms;
+extern unordered_map<entity_id, generator_component> generators;
 extern unordered_map<entity_id, bool> inputs;
 extern unordered_map<entity_id, bool> is_rotating;
 extern unordered_map<entity_id, bool> is_collidable;
 extern unordered_map<entity_id, bool> is_enemy;
 extern unordered_map<entity_id, bool> is_knife;
+extern unordered_map<entity_id, bool> is_flipped;
+extern unordered_map<entity_id, bool> is_generator;
 extern unordered_map<entity_id, bool> is_marked_for_deletion;
 extern unordered_map<enemy_type, int> enemies_killed;
 extern unordered_map<int, bool> is_pressed;
@@ -51,25 +56,62 @@ void cleanup_textures() {
 
 void cleanup() {
   mPrint("cleaning up");
-  sprites.clear();
-  transforms.clear();
-  inputs.clear();
+
+  mPrint("cleaning up entities");
   entities.clear();
+
+  mPrint("cleaning up entities_marked_for_deletion");
   entities_marked_for_deletion_tmp.clear();
+
+  mPrint("cleaning up maps");
+
   is_pressed.clear();
   is_rotating.clear();
   is_collidable.clear();
   is_enemy.clear();
   is_knife.clear();
   is_marked_for_deletion.clear();
+  is_generator.clear();
+  is_flipped.clear();
+
   enemies_killed.clear();
+
+  sprites.clear();
+  transforms.clear();
+  generators.clear();
+  inputs.clear();
+
+  mPrint("cleaning up SDL");
+  mPrint("cleaning up SDL textures");
   cleanup_textures();
+
+  mPrint("cleaning up debug texture");
   SDL_DestroyTexture(debug_texture);
+
+  mPrint("cleaning up debug bg texture");
   SDL_DestroyTexture(debug_bg_texture);
+
+  mPrint("cleaning up target texture");
   SDL_DestroyTexture(target_texture);
+
+  mPrint("cleaning up renderer");
   SDL_DestroyRenderer(renderer);
+
+  if (text_surface != nullptr) {
+    mPrint("cleaning up text surface");
+    SDL_FreeSurface(text_surface);
+  }
+  mPrint("cleaning up window");
   SDL_DestroyWindow(window);
+
+  mPrint("cleaning up TTF");
   TTF_CloseFont(gFont);
+  // gFont = nullptr;
+  // window = nullptr;
+  // renderer = nullptr;
+  // debug_texture = nullptr;
+  // debug_bg_texture = nullptr;
+  // target_texture = nullptr;
   TTF_Quit();
   IMG_Quit();
   SDL_Quit();

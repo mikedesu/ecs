@@ -54,8 +54,8 @@ void load_debug_text() {
            num_knives_fired, num_enemies_escaped, get_num_enemies_killed());
   text_surface = TTF_RenderText_Blended_Wrapped(gFont, texture_text, textColor,
                                                 DEBUG_TEXT_WRAP_LEN);
-  if (text_surface == NULL) {
-    mPrint("text_surface == NULL");
+  if (text_surface == nullptr) {
+    mPrint("text_surface == nullptr");
     // printf("textureText = %s\n", textureText);
     printf("Unable to render text_surface! SDL_ttf Error: %s\n",
            TTF_GetError());
@@ -76,5 +76,6 @@ void load_debug_text() {
     mHeight = text_surface->h;
     // Get rid of old surface
     SDL_FreeSurface(text_surface);
+    text_surface = nullptr;
   }
 }
