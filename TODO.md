@@ -48,6 +48,18 @@
             - [ ] ex: "gfont", "hack.ttf"
             - [ ] ex: "eyeball-texture", "eyeball-sheet.png"
 
+### 19:28 CST
 
-
-
+- [ ] coins
+    - [x] spawn on eyeball kill with 25% chance
+- [ ] power-ups
+    - [ ] knife cooldown reduction
+    - [ ] knife speed increase
+    - [ ] knife damage increase
+    - [ ] knife size increase
+    - [ ] knife spread increase (shotgun)
+- [ ] enemy spawn wave pressure
+    - [ ] increasing the generator rate
+    - [ ] spawning from both sides of the screen
+- [ ] eyeball up/down bounce
+- [ ] eyeballs bouncing off each other
