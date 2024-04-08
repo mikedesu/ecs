@@ -33,6 +33,7 @@ void spawn_skull() {
     double vx = 0;
     double vy = 0;
     double angle = 0.0;
+    double scale = 1.0;
     SDL_QueryTexture(textures["skull"], NULL, NULL, &w, &h);
     w = w / num_clips;
     entity_id id = get_next_entity_id();
@@ -42,7 +43,7 @@ void spawn_skull() {
                    textures["skull"],
                    {src_x, src_y, w, h},
                    {(int)dest_x, (int)dest_y, w, h}};
-    transforms[id] = {dest_x, dest_y, vx, vy, angle};
+    transforms[id] = {dest_x, dest_y, vx, vy, angle, scale};
     inputs[id] = true;
     player_id = id;
     entities.push_back(id);

@@ -57,12 +57,14 @@ void spawn_knife() {
     SDL_QueryTexture(textures["knife"], NULL, NULL, &w, &h);
     w = w / num_clips;
 
-    double scale = 1;
+    double scale = 2;
 
-    sprites[id] = {is_animating, 0,
-                   num_clips,    textures["knife"],
-                   {0, 0, w, h}, {0, 0, (int)scale * w, (int)scale * h}};
-    transforms[id] = {x, y, vx, vy, angle};
+    int kw = scale * w;
+    int kh = scale * h;
+
+    sprites[id] = {is_animating, 0,           num_clips, textures["knife"],
+                   {0, 0, w, h}, {0, 0, w, h}};
+    transforms[id] = {x, y, vx, vy, angle, scale};
     is_knife[id] = true;
     // is_enemy[id] = false;
     // is_collidable[id] = true;

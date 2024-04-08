@@ -45,10 +45,11 @@ void spawn_eyeball() {
   double vx = eyeball_vx_distribution(rng_generator);
   // double vy = distribution(generator);
   double angle = 0.0;
+  double scale = 1.0;
   sprites[id] = {is_animating, 0,
                  num_clips,    textures["eyeball"],
                  {0, 0, w, h}, {(int)x, (int)y, w, h}};
-  transforms[id] = {x, y, vx, vy, angle};
+  transforms[id] = {x, y, vx, vy, angle, scale};
   is_collidable[id] = true;
   is_enemy[id] = true;
   // is_knife[id] = false;

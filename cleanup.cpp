@@ -9,11 +9,13 @@
 #include <functional>
 #include <string>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 using std::exit;
 using std::for_each;
 using std::function;
+using std::pair;
 using std::remove;
 using std::string;
 using std::unordered_map;
@@ -46,6 +48,24 @@ extern unordered_map<int, bool> is_pressed;
 extern vector<entity_id> entities;
 extern vector<entity_id> entities_marked_for_deletion_tmp;
 
+function<void(pair<entity_id, bool>)> cleanup_entity_marked_for_deletion =
+    [](auto kv) {
+      entity_id id = kv.first;
+      if (kv.second) {
+        sprites.erase(id);
+        transforms.erase(id);
+        inputs.erase(id);
+        is_rotating.erase(id);
+        is_collidable.erase(id);
+        is_enemy.erase(id);
+        is_knife.erase(id);
+        is_coin.erase(id);
+        entities.erase(remove(entities.begin(), entities.end(), id),
+                       entities.end());
+        entities_marked_for_deletion_tmp.push_back(id);
+      }
+    };
+
 void cleanup_textures();
 void cleanup_and_exit_with_failure();
 void cleanup_and_exit_with_failure_mprint(string message);
@@ -59,15 +79,11 @@ void cleanup_textures() {
 
 void cleanup() {
   mPrint("cleaning up");
-
   mPrint("cleaning up entities");
   entities.clear();
-
   mPrint("cleaning up entities_marked_for_deletion");
   entities_marked_for_deletion_tmp.clear();
-
   mPrint("cleaning up maps");
-
   is_pressed.clear();
   is_rotating.clear();
   is_collidable.clear();
@@ -77,45 +93,30 @@ void cleanup() {
   is_generator.clear();
   is_flipped.clear();
   is_coin.clear();
-
   enemies_killed.clear();
-
   sprites.clear();
   transforms.clear();
   generators.clear();
   inputs.clear();
-
   mPrint("cleaning up SDL");
   mPrint("cleaning up SDL textures");
   cleanup_textures();
-
   mPrint("cleaning up debug texture");
   SDL_DestroyTexture(debug_texture);
-
   mPrint("cleaning up debug bg texture");
   SDL_DestroyTexture(debug_bg_texture);
-
   mPrint("cleaning up target texture");
   SDL_DestroyTexture(target_texture);
-
   mPrint("cleaning up renderer");
   SDL_DestroyRenderer(renderer);
-
   if (text_surface != nullptr) {
     mPrint("cleaning up text surface");
     SDL_FreeSurface(text_surface);
   }
   mPrint("cleaning up window");
   SDL_DestroyWindow(window);
-
   mPrint("cleaning up TTF");
   TTF_CloseFont(gFont);
-  // gFont = nullptr;
-  // window = nullptr;
-  // renderer = nullptr;
-  // debug_texture = nullptr;
-  // debug_bg_texture = nullptr;
-  // target_texture = nullptr;
   TTF_Quit();
   IMG_Quit();
   SDL_Quit();
@@ -133,40 +134,8 @@ void cleanup_and_exit_with_failure_mprint(string message) {
 }
 
 void cleanup_entities_marked_for_deletion() {
-  // for (auto kv : is_marked_for_deletion) {
-  //   entity_id id = kv.first;
-  //   if (kv.second) {
-  //     sprites.erase(id);
-  //     transforms.erase(id);
-  //     inputs.erase(id);
-  //     is_rotating.erase(id);
-  //     is_collidable.erase(id);
-  //     is_enemy.erase(id);
-  //     is_knife.erase(id);
-  //     is_coin.erase(id);
-  //     entities.erase(remove(entities.begin(), entities.end(), id),
-  //                    entities.end());
-  //     entities_marked_for_deletion_tmp.push_back(id);
-  //   }
-  // }
-
   for_each(is_marked_for_deletion.begin(), is_marked_for_deletion.end(),
-           [](auto kv) {
-             entity_id id = kv.first;
-             if (kv.second) {
-               sprites.erase(id);
-               transforms.erase(id);
-               inputs.erase(id);
-               is_rotating.erase(id);
-               is_collidable.erase(id);
-               is_enemy.erase(id);
-               is_knife.erase(id);
-               is_coin.erase(id);
-               entities.erase(remove(entities.begin(), entities.end(), id),
-                              entities.end());
-               entities_marked_for_deletion_tmp.push_back(id);
-             }
-           });
+           cleanup_entity_marked_for_deletion);
 
   for_each(entities_marked_for_deletion_tmp.begin(),
            entities_marked_for_deletion_tmp.end(),

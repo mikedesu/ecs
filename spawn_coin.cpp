@@ -46,10 +46,12 @@ void spawn_coin(int x, int y) {
   double vy = 0.0;
   double vx = -1.0;
   double angle = 0.0;
-  sprites[id] = {is_animating, 0,
-                 num_clips,    textures["coin"],
-                 {0, 0, w, h}, {(int)x, (int)y, w, h}};
-  transforms[id] = {(double)x, (double)y, vx, vy, angle};
+  double scale = 1.0;
+  double dx = x;
+  double dy = y;
+  sprites[id] = {is_animating, 0,           num_clips, textures["coin"],
+                 {0, 0, w, h}, {x, y, w, h}};
+  transforms[id] = {dx, dy, vx, vy, angle, scale};
   // is_collidable[id] = true;
   // is_enemy[id] = false;
   is_coin[id] = true;

@@ -26,11 +26,17 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   entity_id id = t.first;
   transform_component transform = t.second;
   sprite_component sprite = sprites[id];
+
   transform.x += transform.vx;
   transform.y += transform.vy;
+
   sprite.dest.x = transform.x;
   sprite.dest.y = transform.y;
+  sprite.dest.w = sprite.src.w * transform.scale;
+  sprite.dest.h = sprite.src.h * transform.scale;
+
   sprites[id] = sprite;
+
   if (id != player_id) {
     if (is_enemy[id]) {
       bool marked = transform.x < -sprite.src.w;
