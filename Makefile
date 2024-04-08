@@ -31,9 +31,7 @@ OBJ_FILES=distance.o \
 					render_debug_panel.o \
 					render_frame.o \
 					render_sprites.o \
-					spawn_generator.o \
 					spawn.o \
-					spawn_powerup.o \
 					toggle_fullscreen.o \
 					update_animations.o \
 					update_collisions.o \
@@ -106,11 +104,7 @@ render_sprites.o: render_sprites.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 render_debug_panel.o: render_debug_panel.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-spawn_generator.o: spawn_generator.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 spawn.o: spawn.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-spawn_powerup.o: spawn_powerup.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 toggle_fullscreen.o: toggle_fullscreen.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^

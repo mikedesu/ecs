@@ -1,10 +1,13 @@
 #include "SDL_handler.h"
-#include "mPrint.h"
+// #include "mPrint.h"
+#include "sprite_component.h"
 #include <string>
 #include <unordered_map>
+// #include <vector>
+#include "entity_id.h"
 
 using std::string;
-using std::to_string;
+// using std::to_string;
 using std::unordered_map;
 
 extern SDL_Window *window;
@@ -13,6 +16,7 @@ extern bool is_fullscreen;
 extern bool do_render_debug_panel;
 extern SDL_Event e;
 extern unordered_map<int, bool> is_pressed;
+extern unordered_map<entity_id, sprite_component> sprite_components;
 extern int fullscreen_width;
 extern int fullscreen_height;
 extern int window_width;
@@ -24,7 +28,7 @@ extern SDL_Rect target_texture_dest;
 
 extern void generator_set_all_active_flip();
 extern void toggle_fullscreen();
-extern void spawn_powerup(int x, int y);
+extern void spawn_powerup();
 
 void handle_keyup() {
   switch (e.key.keysym.sym) {
@@ -73,9 +77,10 @@ void handle_keydown() {
     break;
   case SDLK_u:
 
-    if (player_money > 10) {
-      player_money -= 10;
-      spawn_powerup(target_texture_width / 2, target_texture_height / 2);
+    if (player_money > 1) {
+      player_money -= 1;
+      // spawn_powerup(target_texture_width * 5 / 6, target_texture_height / 2);
+      spawn_powerup();
     }
     break;
 

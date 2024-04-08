@@ -1,6 +1,7 @@
 
 #include "SDL_handler.h"
 #include "entity_id.h"
+#include "generator_component.h"
 #include "sprite_component.h"
 #include "transform_component.h"
 #include <random>
@@ -30,12 +31,14 @@ extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> eyeball_vx_distribution;
 extern unordered_map<entity_id, sprite_component> sprites;
 extern unordered_map<entity_id, transform_component> transforms;
+extern unordered_map<entity_id, generator_component> generators;
 extern unordered_map<entity_id, bool> is_coin;
 extern unordered_map<entity_id, bool> is_flipped;
 extern unordered_map<entity_id, bool> is_knife;
 extern unordered_map<entity_id, bool> is_rotating;
 extern unordered_map<entity_id, bool> is_collidable;
 extern unordered_map<entity_id, bool> is_enemy;
+extern unordered_map<entity_id, bool> is_generator;
 extern vector<entity_id> entities;
 
 extern entity_id get_next_entity_id();
@@ -137,5 +140,47 @@ void spawn_eyeball() {
   transforms[id] = {dx, dy, vx, vy, angle, scale};
   is_collidable[id] = true;
   is_enemy[id] = true;
+  entities.push_back(id);
+}
+
+void spawn_generator(enemy_type type, bool active, int cooldown) {
+  if (type > ENEMY_TYPE_COUNT) {
+    return;
+  }
+  if (cooldown < 1) {
+    return;
+  }
+  for (auto kv : generators) {
+    generator_component generator = kv.second;
+    if (generator.type == type) {
+      return;
+    }
+  }
+  entity_id id = get_next_entity_id();
+  generators[id] = {type, active, cooldown};
+  is_generator[id] = true;
+  entities.push_back(id);
+}
+
+void spawn_powerup() {
+  const int num_clips = 1;
+  bool is_animating = true;
+  SDL_Texture *t = textures["powerup"];
+  SDL_QueryTexture(t, NULL, NULL, &w, &h);
+  w = w / num_clips;
+  entity_id id = get_next_entity_id();
+  // mPrint("Spawning powerup with id: " + to_string(id));
+  double vy = 0.0;
+  double vx = -1.0;
+  double angle = 0.0;
+  double scale = 1.0;
+  double dx = target_texture_width - w;
+  double dy = target_texture_height / 2.0;
+  int x = (int)dx;
+  int y = (int)dy;
+  sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {x, y, w, h}};
+  transforms[id] = {dx, dy, vx, vy, angle, scale};
+  is_coin[id] = true;
+  is_rotating[id] = true;
   entities.push_back(id);
 }

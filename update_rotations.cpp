@@ -11,6 +11,8 @@ using std::function;
 using std::unordered_map;
 
 extern unordered_map<entity_id, bool> is_rotating;
+extern unordered_map<entity_id, bool> is_knife;
+extern unordered_map<entity_id, bool> is_powerup;
 extern unordered_map<entity_id, transform_component> transforms;
 
 function<void(rotation_pair)> handle_rotation = [](const rotation_pair p) {
@@ -18,7 +20,12 @@ function<void(rotation_pair)> handle_rotation = [](const rotation_pair p) {
   bool is_rotating = p.second;
   if (is_rotating) {
     transform_component transform = transforms[id];
-    transform.angle += 4.0;
+
+    if (is_knife[id]) {
+      transform.angle += 4.0;
+    } else {
+      transform.angle += 1.0;
+    }
     transforms[id] = transform;
   }
 };
