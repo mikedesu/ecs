@@ -2,6 +2,7 @@
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "generator_component.h"
+#include "powerup_type.h"
 #include "sprite_component.h"
 #include "transform_component.h"
 #include <random>
@@ -79,6 +80,7 @@ vector<entity_id> entities;
 vector<entity_id> entities_marked_for_deletion_tmp;
 
 unordered_map<int, bool> is_pressed;
+unordered_map<entity_id, powerup_type> powerup_types;
 unordered_map<entity_id, sprite_component> sprites;
 unordered_map<entity_id, transform_component> transforms;
 unordered_map<entity_id, generator_component> generators;
@@ -88,10 +90,12 @@ unordered_map<entity_id, bool> is_collidable;
 unordered_map<entity_id, bool> is_enemy;
 unordered_map<entity_id, bool> is_coin;
 unordered_map<entity_id, bool> is_knife;
+unordered_map<entity_id, bool> is_powerup;
 unordered_map<entity_id, bool> is_flipped;
 unordered_map<entity_id, bool> is_generator;
 unordered_map<entity_id, bool> is_marked_for_deletion;
 unordered_map<enemy_type, int> enemies_killed;
+unordered_map<powerup_type, int> powerups_collected;
 unordered_map<string, SDL_Texture *> textures;
 
 // random number generator

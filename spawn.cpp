@@ -2,6 +2,7 @@
 #include "SDL_handler.h"
 #include "entity_id.h"
 #include "generator_component.h"
+#include "powerup_type.h"
 #include "sprite_component.h"
 #include "transform_component.h"
 #include <random>
@@ -29,6 +30,7 @@ extern int target_texture_width;
 extern int target_texture_height;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> eyeball_vx_distribution;
+extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, sprite_component> sprites;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, generator_component> generators;
@@ -38,7 +40,9 @@ extern unordered_map<entity_id, bool> is_knife;
 extern unordered_map<entity_id, bool> is_rotating;
 extern unordered_map<entity_id, bool> is_collidable;
 extern unordered_map<entity_id, bool> is_enemy;
+extern unordered_map<entity_id, bool> is_powerup;
 extern unordered_map<entity_id, bool> is_generator;
+extern unordered_map<powerup_type, int> powerups_collected;
 extern vector<entity_id> entities;
 
 extern entity_id get_next_entity_id();
@@ -109,7 +113,12 @@ void spawn_knife() {
     }
     SDL_QueryTexture(textures["knife"], NULL, NULL, &w, &h);
     w = w / num_clips;
-    double scale = 1.2;
+
+    // knives may be scaled according to how many LARGNESS powerups we've
+    // collected
+    int largeness = powerups_collected[POWERUP_TYPE_LARGENESS];
+    double scale = 1.0 + (0.1 * largeness);
+
     sprites[id] = {is_animating, 0,           num_clips, textures["knife"],
                    {0, 0, w, h}, {0, 0, w, h}};
     transforms[id] = {x, y, vx, vy, angle, scale};
@@ -180,7 +189,9 @@ void spawn_powerup() {
   int y = (int)dy;
   sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {x, y, w, h}};
   transforms[id] = {dx, dy, vx, vy, angle, scale};
-  is_coin[id] = true;
+  is_coin[id] = false;
+  is_powerup[id] = true;
   is_rotating[id] = true;
+  powerup_types[id] = POWERUP_TYPE_LARGENESS; // hardcoded for now
   entities.push_back(id);
 }

@@ -1,6 +1,7 @@
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "generator_component.h"
+#include "powerup_type.h"
 #include "rotation_pair.h"
 #include "sprite_component.h"
 #include "sprite_pair.h"
@@ -33,6 +34,7 @@ extern entity_id player_id;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> coin_spawn_rate_distribution;
 
+extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, generator_component> generators;
 extern unordered_map<entity_id, sprite_component> sprites;
 extern unordered_map<entity_id, transform_component> transforms;
@@ -40,8 +42,10 @@ extern unordered_map<entity_id, bool> is_coin;
 extern unordered_map<entity_id, bool> is_rotating;
 extern unordered_map<entity_id, bool> is_knife;
 extern unordered_map<entity_id, bool> is_enemy;
+extern unordered_map<entity_id, bool> is_powerup;
 extern unordered_map<entity_id, bool> is_marked_for_deletion;
 extern unordered_map<enemy_type, int> enemies_killed;
+extern unordered_map<powerup_type, int> powerups_collected;
 extern vector<entity_id> entities;
 
 extern void update_knife_collisions();
@@ -175,6 +179,20 @@ void update_skull_collisions() {
         is_marked_for_deletion[id] = true;
         num_collisions++;
         player_health--;
+        break;
+      }
+    } else if (is_powerup[id]) {
+      sprite_component powerup = sprites[id];
+      powerup_type type = powerup_types[id];
+      if (SDL_HasIntersection(&skull.dest, &powerup.dest)) {
+        is_marked_for_deletion[id] = true;
+        num_collisions++;
+
+        if (type == POWERUP_TYPE_LARGENESS) {
+          powerups_collected[type]++;
+        }
+
+        // player_health++;
         break;
       }
     }
