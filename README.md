@@ -15,6 +15,13 @@ make clean && make
 
 If you happen to have the graphics, you can run the game with: `./game`
 
+If you want to build with either `g++` or `clang++`, you can change the `CC` variable in the `Makefile`.
+
+```
+CC=g++
+CC=clang++
+```
+
 ## Motivations
 
 I am looking to create a very tight development feedback loop, so building as fast as possible is important. Everything currently sits inside of `main.cpp` at the moment for this reason. I feel like if the source code is kept extremely clean and tight and as few LOC as possible, it will be easier to refactor and build upon in the future. This is a very experimental approach, but I am excited to see where it goes.
