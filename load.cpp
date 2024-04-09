@@ -115,7 +115,14 @@ void load_skull_sheet_texture() {
                                          skullsheet_filepath);
   }
 
-  SDL_SetTextureColorMod(t, 255, 0, 0);
+  // SDL_Texture *copy_t = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888,
+  //                                         SDL_TEXTUREACCESS_TARGET,
+  //                                         target_texture_width,
+  //                                         target_texture_height);
+  // SDL_SetRenderTarget(renderer, copy_t);
+  // SDL_RenderCopy(renderer, t, NULL, NULL);
+  // SDL_SetRenderTarget(renderer, nullptr);
+  // SDL_SetTextureColorMod(t, 255, 0, 0);
 
   textures["skull"] = t;
 }
@@ -127,7 +134,7 @@ void load_knife_sheet_texture() {
     cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
                                          filepath);
   }
-  SDL_SetTextureColorMod(t, 255, 0, 0);
+  // SDL_SetTextureColorMod(t, 255, 0, 0);
   textures["knife"] = t;
 }
 
