@@ -55,6 +55,7 @@ int player_max_health = 3;
 int player_money = 0;
 
 string skullsheet_filepath = "img/skull-sheet4x.png";
+// string skullsheet_filepath = "img/blackskull-sheet4x.png";
 string eyeballsheet_filepath = "img/eyeball-sheet4x.png";
 string coin_sheet_filepath = "img/coin-001-sheet4x.png";
 
@@ -102,6 +103,7 @@ unordered_map<string, SDL_Texture *> textures;
 default_random_engine rng_generator;
 uniform_real_distribution<double> eyeball_vx_distribution;
 uniform_real_distribution<double> coin_spawn_rate_distribution;
+uniform_real_distribution<double> texture_height_distribution;
 
 int init_target_texture();
 entity_id get_next_entity_id();
@@ -146,6 +148,18 @@ int main() {
     if (knife_cooldown <= 0) {
       knife_cooldown = 0;
     }
+
+    // playing around with speeding up eyeball generation on a timer
+    // every 30 seconds or 1800 frames, cut it in half
+    // prob need a realistic cap on this...
+    if (frame_count > 0 && frame_count % 1800 == 0) {
+      for (auto id : entities) {
+        if (is_generator[id]) {
+          generators[id].cooldown = generators[id].cooldown / 2;
+        }
+      }
+    }
+
     cleanup_entities_marked_for_deletion();
   }
   cleanup();

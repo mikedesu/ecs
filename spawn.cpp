@@ -30,6 +30,7 @@ extern int target_texture_width;
 extern int target_texture_height;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> eyeball_vx_distribution;
+extern uniform_real_distribution<double> texture_height_distribution;
 extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, sprite_component> sprites;
 extern unordered_map<entity_id, transform_component> transforms;
@@ -184,7 +185,7 @@ void spawn_powerup() {
   double angle = 0.0;
   double scale = 1.0;
   double dx = target_texture_width - w;
-  double dy = target_texture_height / 2.0;
+  double dy = texture_height_distribution(rng_generator) - h;
   int x = (int)dx;
   int y = (int)dy;
   sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {x, y, w, h}};

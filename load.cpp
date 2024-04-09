@@ -114,6 +114,9 @@ void load_skull_sheet_texture() {
     cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
                                          skullsheet_filepath);
   }
+
+  SDL_SetTextureColorMod(t, 255, 0, 0);
+
   textures["skull"] = t;
 }
 
@@ -124,6 +127,7 @@ void load_knife_sheet_texture() {
     cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
                                          filepath);
   }
+  SDL_SetTextureColorMod(t, 255, 0, 0);
   textures["knife"] = t;
 }
 

@@ -77,11 +77,10 @@ void handle_keydown() {
   case SDLK_f:
     toggle_fullscreen();
     break;
-  case SDLK_u:
-
-    if (player_money > 1) {
-      player_money -= 1;
+  case SDLK_s:
+    if (player_money > 0) {
       spawn_powerup();
+      player_money -= 1;
     }
     break;
 
