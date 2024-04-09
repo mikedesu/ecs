@@ -6,8 +6,7 @@ CFLAGS=-Wall -Wextra -Werror -Wpedantic -std=c++17
 
 OBJ_FILES=distance.o \
 					cleanup.o \
-					create_renderer.o \
-					create_window.o \
+					create.o \
 					fps.o \
 					frame_time.o \
 					get_next_entity_id.o \
@@ -23,9 +22,7 @@ OBJ_FILES=distance.o \
 					init_ttf.o \
 					init_img.o \
 					load.o \
-					render_debug_panel.o \
-					render_frame.o \
-					render_sprites.o \
+					render.o \
 					spawn.o \
 					toggle_fullscreen.o \
 					update.o \
@@ -41,9 +38,7 @@ $(BINARY): $(MAIN_FILE) $(OBJ_FILES)
 # object files
 cleanup.o: cleanup.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-create_renderer.o: create_renderer.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-create_window.o: create_window.cpp
+create.o: create.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 distance.o: distance.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
@@ -77,11 +72,7 @@ init_ttf.o: init_ttf.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 load.o: load.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-render_frame.o: render_frame.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-render_sprites.o: render_sprites.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-render_debug_panel.o: render_debug_panel.cpp
+render.o: render.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 spawn.o: spawn.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
