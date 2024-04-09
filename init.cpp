@@ -91,3 +91,10 @@ void init_ttf() {
                                          string(TTF_GetError()));
   }
 }
+
+void init() {
+  init_img();
+  init_ttf();
+  init_gfont();
+  init_rng();
+}

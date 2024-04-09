@@ -220,3 +220,11 @@ void update_skull_collisions() {
 void update_transform_components() {
   for_each(transforms.begin(), transforms.end(), handle_transform);
 }
+
+void update() {
+  update_transform_components();
+  update_animations();
+  update_rotations();
+  update_collisions();
+  update_generators();
+}

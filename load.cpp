@@ -136,3 +136,11 @@ void load_powerup_sheet_texture() {
   }
   textures["powerup"] = t;
 }
+
+void load_textures() {
+  load_skull_sheet_texture();
+  load_eyeball_sheet_texture();
+  load_knife_sheet_texture();
+  load_coin_sheet_texture();
+  load_powerup_sheet_texture();
+}

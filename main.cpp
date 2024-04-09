@@ -4,7 +4,6 @@
 #include "generator_component.h"
 #include "sprite_component.h"
 #include "transform_component.h"
-#include <ctime>
 #include <random>
 #include <string>
 #include <unordered_map>
@@ -106,75 +105,46 @@ uniform_real_distribution<double> coin_spawn_rate_distribution;
 int init_target_texture();
 entity_id get_next_entity_id();
 void render_frame();
-void init_rng();
-void update_rotations();
-void spawn_generator(enemy_type type, bool active, int cooldown);
-void update_transform_components();
-void update_generators();
-void update_animations();
-void update_collisions();
-void init_debug_texture_rects();
-void init_target_texture_rects();
-void handle_input_component();
 void cleanup();
 void cleanup_entities_marked_for_deletion();
 void create_window();
 void create_renderer();
 void handle_input();
+void handle_input_component();
 void handle_init_target_texture();
-void init_gfont();
-void init_img();
-void init_ttf();
+void init_debug_texture_rects();
+void init_target_texture_rects();
+void init();
 void load_debug_text();
-void load_skull_sheet_texture();
-void load_eyeball_sheet_texture();
-void load_knife_sheet_texture();
-void load_coin_sheet_texture();
-void load_powerup_sheet_texture();
+void load_textures();
 void spawn_skull();
+void spawn_generator(enemy_type type, bool active, int cooldown);
+void update();
 
 int main() {
-  srand(time(nullptr));
-  init_rng();
   SDL_Init(SDL_INIT_VIDEO);
   create_window();
   create_renderer();
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-  init_img();
-  init_ttf();
-  init_gfont();
+  init();
   handle_init_target_texture();
-  load_skull_sheet_texture();
-  load_eyeball_sheet_texture();
-  load_knife_sheet_texture();
-  load_coin_sheet_texture();
-  load_powerup_sheet_texture();
+  load_textures();
   load_debug_text();
   init_debug_texture_rects();
   // get the width and height of the texture
   init_target_texture_rects();
   spawn_skull();
   spawn_generator(ENEMY_TYPE_EYEBALL, true, 120);
-
   while (!quit) {
     handle_input();
     handle_input_component();
-    // update game state
-    update_transform_components();
-    update_animations();
-    update_rotations();
-    update_collisions();
-    update_generators();
+    update();
     render_frame();
-
     // knife_cooldown = (knife_cooldown > 0) ? knife_cooldown - 1 : 0;
-
     knife_cooldown--;
     if (knife_cooldown <= 0) {
       knife_cooldown = 0;
     }
-
-    // remove entities that are marked for deletion
     cleanup_entities_marked_for_deletion();
   }
   cleanup();
