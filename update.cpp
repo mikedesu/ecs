@@ -1,8 +1,10 @@
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "generator_component.h"
+#include "rotation_pair.h"
 #include "sprite_component.h"
 #include "sprite_pair.h"
+#include "transform_component.h"
 #include <algorithm>
 #include <functional>
 #include <random>
@@ -23,8 +25,11 @@ extern int num_collisions;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> coin_spawn_rate_distribution;
 
+extern unordered_map<entity_id, generator_component> generators;
 extern unordered_map<entity_id, sprite_component> sprites;
+extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, bool> is_coin;
+extern unordered_map<entity_id, bool> is_rotating;
 extern unordered_map<entity_id, bool> is_knife;
 extern unordered_map<entity_id, bool> is_enemy;
 extern unordered_map<entity_id, bool> is_marked_for_deletion;
@@ -35,6 +40,21 @@ extern void update_knife_collisions();
 extern void update_skull_collisions();
 extern void spawn_coin(int x, int y);
 extern void spawn_eyeball();
+
+function<void(rotation_pair)> handle_rotation = [](const rotation_pair p) {
+  entity_id id = p.first;
+  bool is_rotating = p.second;
+  if (is_rotating) {
+    transform_component transform = transforms[id];
+
+    if (is_knife[id]) {
+      transform.angle += 4.0;
+    } else {
+      transform.angle += 1.0;
+    }
+    transforms[id] = transform;
+  }
+};
 
 function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
   if (!is_knife[id]) {
@@ -94,7 +114,6 @@ void update_collisions() {
 void update_knife_collisions() {
   for_each(entities.begin(), entities.end(), check_for_knife_collision);
 }
-extern unordered_map<entity_id, generator_component> generators;
 
 void update_generators() {
   for (auto kv : generators) {
@@ -110,4 +129,8 @@ void update_generators() {
       }
     }
   }
+}
+
+void update_rotations() {
+  for_each(is_rotating.begin(), is_rotating.end(), handle_rotation);
 }
