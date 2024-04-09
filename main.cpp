@@ -152,10 +152,13 @@ int main() {
     // playing around with speeding up eyeball generation on a timer
     // every 30 seconds or 1800 frames, cut it in half
     // prob need a realistic cap on this...
-    if (frame_count > 0 && frame_count % 1800 == 0) {
+    if (frame_count > 0 && frame_count % 3600 == 0) {
       for (auto id : entities) {
         if (is_generator[id]) {
           generators[id].cooldown = generators[id].cooldown / 2;
+          if (generators[id].cooldown < 15) {
+            generators[id].cooldown = 15;
+          }
         }
       }
     }

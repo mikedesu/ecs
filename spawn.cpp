@@ -28,6 +28,7 @@ extern int current_knife_cooldown;
 extern int num_knives_fired;
 extern int target_texture_width;
 extern int target_texture_height;
+extern int player_money;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> eyeball_vx_distribution;
 extern uniform_real_distribution<double> texture_height_distribution;
@@ -117,7 +118,7 @@ void spawn_knife() {
 
     // knives may be scaled according to how many LARGNESS powerups we've
     // collected
-    int largeness = powerups_collected[POWERUP_TYPE_LARGENESS];
+    int largeness = powerups_collected[POWERUP_TYPE_KNIFE_LARGENESS];
     double scale = 1.0 + (0.1 * largeness);
 
     sprites[id] = {is_animating, 0,           num_clips, textures["knife"],
@@ -193,6 +194,10 @@ void spawn_powerup() {
   is_coin[id] = false;
   is_powerup[id] = true;
   is_rotating[id] = true;
-  powerup_types[id] = POWERUP_TYPE_LARGENESS; // hardcoded for now
+
+  powerup_type poweruptype = rand() % 2 == 0 ? POWERUP_TYPE_KNIFE_COOLDOWN
+                                             : POWERUP_TYPE_KNIFE_LARGENESS;
+  powerup_types[id] = poweruptype;
+
   entities.push_back(id);
 }

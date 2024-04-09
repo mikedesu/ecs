@@ -31,6 +31,7 @@ extern int target_texture_height;
 extern int num_enemies_escaped;
 extern int window_width;
 extern entity_id player_id;
+extern int current_knife_cooldown;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> coin_spawn_rate_distribution;
 
@@ -52,6 +53,7 @@ extern void update_knife_collisions();
 extern void update_skull_collisions();
 extern void spawn_coin(int x, int y);
 extern void spawn_eyeball();
+extern void spawn_powerup();
 
 function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   entity_id id = t.first;
@@ -171,6 +173,12 @@ void update_skull_collisions() {
         is_marked_for_deletion[id] = true;
         num_collisions++;
         player_money++;
+
+        if (player_money >= 5) {
+          spawn_powerup();
+          player_money -= 5;
+        }
+
         break;
       }
     } else if (is_enemy[id]) {
@@ -188,9 +196,13 @@ void update_skull_collisions() {
         is_marked_for_deletion[id] = true;
         num_collisions++;
 
-        if (type == POWERUP_TYPE_LARGENESS) {
-          powerups_collected[type]++;
+        if (type == POWERUP_TYPE_KNIFE_COOLDOWN) {
+          current_knife_cooldown -= 5;
+          if (current_knife_cooldown < 5) {
+            current_knife_cooldown = 5;
+          }
         }
+        powerups_collected[type]++;
 
         // player_health++;
         break;

@@ -122,7 +122,7 @@ void load_skull_sheet_texture() {
   // SDL_SetRenderTarget(renderer, copy_t);
   // SDL_RenderCopy(renderer, t, NULL, NULL);
   // SDL_SetRenderTarget(renderer, nullptr);
-  // SDL_SetTextureColorMod(t, 255, 0, 0);
+  SDL_SetTextureColorMod(t, 255, 255, 0);
 
   textures["skull"] = t;
 }

@@ -31,7 +31,7 @@ extern unordered_map<entity_id, sprite_component> sprite_components;
 
 extern void generator_set_all_active_flip();
 extern void toggle_fullscreen();
-extern void spawn_powerup();
+// extern void spawn_powerup();
 extern void spawn_knife();
 
 void handle_keyup() {
@@ -77,12 +77,12 @@ void handle_keydown() {
   case SDLK_f:
     toggle_fullscreen();
     break;
-  case SDLK_s:
-    if (player_money > 0) {
-      spawn_powerup();
-      player_money -= 1;
-    }
-    break;
+    // case SDLK_s:
+    //   if (player_money > 0) {
+    //     spawn_powerup();
+    //     player_money -= 1;
+    //   }
+    //   break;
 
   default:
     break;
