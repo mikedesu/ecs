@@ -1,5 +1,6 @@
 #include "enemy_type.h"
 #include "entity_id.h"
+#include "generator_component.h"
 #include "sprite_component.h"
 #include "sprite_pair.h"
 #include <algorithm>
@@ -33,6 +34,7 @@ extern vector<entity_id> entities;
 extern void update_knife_collisions();
 extern void update_skull_collisions();
 extern void spawn_coin(int x, int y);
+extern void spawn_eyeball();
 
 function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
   if (!is_knife[id]) {
@@ -91,4 +93,21 @@ void update_collisions() {
 
 void update_knife_collisions() {
   for_each(entities.begin(), entities.end(), check_for_knife_collision);
+}
+extern unordered_map<entity_id, generator_component> generators;
+
+void update_generators() {
+  for (auto kv : generators) {
+    // entity_id id = kv.first;
+    generator_component generator = kv.second;
+    if (generator.active && frame_count % generator.cooldown == 0) {
+      switch (generator.type) {
+      case ENEMY_TYPE_EYEBALL:
+        spawn_eyeball();
+        break;
+      default:
+        break;
+      }
+    }
+  }
 }

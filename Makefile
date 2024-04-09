@@ -29,7 +29,6 @@ OBJ_FILES=distance.o \
 					spawn.o \
 					toggle_fullscreen.o \
 					update.o \
-					update_generators.o \
 					update_rotations.o \
 					update_skull_collisions.o \
 					update_transform_components.o 
@@ -90,8 +89,6 @@ render_debug_panel.o: render_debug_panel.cpp
 spawn.o: spawn.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 toggle_fullscreen.o: toggle_fullscreen.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-update_generators.o: update_generators.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 update_transform_components.o: update_transform_components.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
