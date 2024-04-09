@@ -24,7 +24,7 @@ CC=clang++
 
 ## Motivations
 
-I am looking to create a very tight development feedback loop, so building as fast as possible is important. Everything currently sits inside of `main.cpp` at the moment for this reason. I feel like if the source code is kept extremely clean and tight and as few LOC as possible, it will be easier to refactor and build upon in the future. This is a very experimental approach, but I am excited to see where it goes.
+I am looking to create a very tight development feedback loop, so building as fast as possible is important. Everything currently sits inside of groups of `*.cpp` for this reason. I feel like if the source code is kept extremely clean and tight and as few LOC as possible, it will be easier to refactor and build upon in the future. At first, everything sat inside `main.cpp`, and this built extremely fast, but quickly began to become cumbersome to build on. So, I moved every function into its own file, and this felt fine, but build times were fast increasing with every new function. Plus, many functions shared globals, so I moved everything into relevant files groups by prefixes. So, for instance, all of the `spawn_` functions are in `spawn.cpp`, all of the `init_` are in `init.cpp`, and etc.
 
 I also seek to offer an alternative method to gamedev. There are many existing engines out there, and plenty of others have "rolled-their-own" engine in C++, Java, Python, rust, and other languages, so why do it in C++ all over again?
 
