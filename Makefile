@@ -29,7 +29,6 @@ OBJ_FILES=distance.o \
 					spawn.o \
 					toggle_fullscreen.o \
 					update.o \
-					update_transform_components.o 
 
 MAIN_FILE=main.cpp
 SDL_FLAGS=-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
@@ -87,8 +86,6 @@ render_debug_panel.o: render_debug_panel.cpp
 spawn.o: spawn.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 toggle_fullscreen.o: toggle_fullscreen.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-update_transform_components.o: update_transform_components.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 update.o: update.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^

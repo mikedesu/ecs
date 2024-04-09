@@ -5,6 +5,7 @@
 #include "sprite_component.h"
 #include "sprite_pair.h"
 #include "transform_component.h"
+#include "transform_pair.h"
 #include <algorithm>
 #include <functional>
 #include <random>
@@ -24,6 +25,10 @@ extern int frame_count;
 extern int num_collisions;
 extern int player_money;
 extern int player_health;
+extern int target_texture_width;
+extern int target_texture_height;
+extern int num_enemies_escaped;
+extern int window_width;
 extern entity_id player_id;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> coin_spawn_rate_distribution;
@@ -43,6 +48,53 @@ extern void update_knife_collisions();
 extern void update_skull_collisions();
 extern void spawn_coin(int x, int y);
 extern void spawn_eyeball();
+
+function<void(transform_pair)> handle_transform = [](const transform_pair t) {
+  entity_id id = t.first;
+  transform_component transform = t.second;
+  sprite_component sprite = sprites[id];
+
+  transform.x += transform.vx;
+  transform.y += transform.vy;
+
+  if (id == player_id) {
+    // bounds checking
+    // player cannot move beyond texture
+
+    if (transform.x < 0) {
+      transform.x = 0;
+    } else if (transform.x > target_texture_width - sprite.dest.w) {
+      transform.x = target_texture_width - sprite.dest.w;
+    }
+
+    if (transform.y < 0) {
+      transform.y = 0;
+    } else if (transform.y > target_texture_height - sprite.dest.h) {
+      transform.y = target_texture_height - sprite.dest.h;
+    }
+  }
+
+  sprite.dest.x = transform.x;
+  sprite.dest.y = transform.y;
+  sprite.dest.w = sprite.src.w * transform.scale;
+  sprite.dest.h = sprite.src.h * transform.scale;
+
+  sprites[id] = sprite;
+
+  if (id != player_id) {
+    if (is_enemy[id]) {
+      bool marked = transform.x < -sprite.src.w;
+      is_marked_for_deletion[id] = marked;
+      if (marked) {
+        num_enemies_escaped++;
+      }
+    } else if (is_knife[id] || is_coin[id]) {
+      is_marked_for_deletion[id] =
+          transform.x < -sprite.src.w || transform.x > window_width;
+    }
+  }
+  transforms[id] = transform;
+};
 
 function<void(rotation_pair)> handle_rotation = [](const rotation_pair p) {
   entity_id id = p.first;
@@ -163,4 +215,8 @@ void update_skull_collisions() {
       }
     }
   }
+}
+
+void update_transform_components() {
+  for_each(transforms.begin(), transforms.end(), handle_transform);
 }
