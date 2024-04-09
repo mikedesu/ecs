@@ -7,16 +7,12 @@ CFLAGS=-Wall -Wextra -Werror -Wpedantic -std=c++17
 OBJ_FILES=cleanup.o \
 					create.o \
 					fps.o \
-					frame_time.o \
-					get_next_entity_id.o \
-					get_num_enemies_killed.o \
-					generator_set_active.o \
 					handle_input.o \
 					init.o \
 					load.o \
 					render.o \
 					spawn.o \
-					toggle_fullscreen.o \
+					tools.o \
 					update.o \
 
 MAIN_FILE=main.cpp
@@ -34,14 +30,6 @@ create.o: create.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 fps.o: fps.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-frame_time.o: frame_time.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-generator_set_active.o: generator_set_active.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-get_next_entity_id.o: get_next_entity_id.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-get_num_enemies_killed.o: get_num_enemies_killed.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 handle_input.o: handle_input.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 init.o: init.cpp
@@ -52,7 +40,7 @@ render.o: render.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 spawn.o: spawn.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-toggle_fullscreen.o: toggle_fullscreen.cpp
+tools.o: tools.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 update.o: update.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^

@@ -62,28 +62,27 @@ entity_id player_id = -1;
 
 TTF_Font *gFont = nullptr;
 
-SDL_Event e;
-SDL_Surface *text_surface = nullptr;
 SDL_Color textColor = {255, 255, 255, 255};
+SDL_Event e;
+SDL_Rect debug_texture_src;
+SDL_Rect debug_texture_dest;
+SDL_Rect target_texture_src;
+SDL_Rect target_texture_dest;
 SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
+SDL_Surface *text_surface = nullptr;
 SDL_Texture *target_texture = nullptr;
 SDL_Texture *debug_texture = nullptr;
 SDL_Texture *debug_bg_texture = nullptr;
-SDL_Rect target_texture_src;
-SDL_Rect target_texture_dest;
-SDL_Rect debug_texture_src;
-SDL_Rect debug_texture_dest;
 
 vector<entity_id> entities;
 vector<entity_id> entities_marked_for_deletion_tmp;
 
+unordered_map<int, bool> is_pressed;
 unordered_map<entity_id, sprite_component> sprites;
 unordered_map<entity_id, transform_component> transforms;
 unordered_map<entity_id, generator_component> generators;
 unordered_map<entity_id, bool> inputs;
-
-unordered_map<int, bool> is_pressed;
 unordered_map<entity_id, bool> is_rotating;
 unordered_map<entity_id, bool> is_collidable;
 unordered_map<entity_id, bool> is_enemy;
@@ -92,9 +91,7 @@ unordered_map<entity_id, bool> is_knife;
 unordered_map<entity_id, bool> is_flipped;
 unordered_map<entity_id, bool> is_generator;
 unordered_map<entity_id, bool> is_marked_for_deletion;
-
 unordered_map<enemy_type, int> enemies_killed;
-
 unordered_map<string, SDL_Texture *> textures;
 
 // random number generator
@@ -104,7 +101,6 @@ uniform_real_distribution<double> coin_spawn_rate_distribution;
 
 int init_target_texture();
 entity_id get_next_entity_id();
-void render_frame();
 void cleanup();
 void cleanup_entities_marked_for_deletion();
 void create_window();
@@ -117,6 +113,7 @@ void init_target_texture_rects();
 void init();
 void load_debug_text();
 void load_textures();
+void render_frame();
 void spawn_skull();
 void spawn_generator(enemy_type type, bool active, int cooldown);
 void update();
