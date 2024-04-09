@@ -22,6 +22,9 @@ using std::vector;
 
 extern int frame_count;
 extern int num_collisions;
+extern int player_money;
+extern int player_health;
+extern entity_id player_id;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> coin_spawn_rate_distribution;
 
@@ -133,4 +136,31 @@ void update_generators() {
 
 void update_rotations() {
   for_each(is_rotating.begin(), is_rotating.end(), handle_rotation);
+}
+
+void update_skull_collisions() {
+  sprite_component skull = sprites[player_id];
+  for (auto id : entities) {
+    if (id == player_id) {
+      continue;
+    } else if (is_knife[id]) {
+      continue;
+    } else if (is_coin[id]) {
+      sprite_component coin = sprites[id];
+      if (SDL_HasIntersection(&skull.dest, &coin.dest)) {
+        is_marked_for_deletion[id] = true;
+        num_collisions++;
+        player_money++;
+        break;
+      }
+    } else if (is_enemy[id]) {
+      sprite_component enemy = sprites[id];
+      if (SDL_HasIntersection(&skull.dest, &enemy.dest)) {
+        is_marked_for_deletion[id] = true;
+        num_collisions++;
+        player_health--;
+        break;
+      }
+    }
+  }
 }

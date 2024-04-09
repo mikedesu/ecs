@@ -29,7 +29,6 @@ OBJ_FILES=distance.o \
 					spawn.o \
 					toggle_fullscreen.o \
 					update.o \
-					update_skull_collisions.o \
 					update_transform_components.o 
 
 MAIN_FILE=main.cpp
@@ -92,8 +91,6 @@ toggle_fullscreen.o: toggle_fullscreen.cpp
 update_transform_components.o: update_transform_components.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 update.o: update.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-update_skull_collisions.o: update_skull_collisions.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 
 clean:
