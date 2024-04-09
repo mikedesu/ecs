@@ -14,13 +14,7 @@ OBJ_FILES=distance.o \
 					generator_set_active.o \
 					handle_input_component.o \
 					handle_input.o \
-					init_rng.o \
-					init_debug_texture_rects.o \
-					init_target_texture_rects.o \
-					init_target_texture.o \
-					init_gfont.o \
-					init_ttf.o \
-					init_img.o \
+					init.o \
 					load.o \
 					render.o \
 					spawn.o \
@@ -56,19 +50,7 @@ handle_input_component.o: handle_input_component.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 handle_input.o: handle_input.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-init_debug_texture_rects.o: init_debug_texture_rects.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-init_rng.o: init_rng.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-init_target_texture.o: init_target_texture.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-init_target_texture_rects.o: init_target_texture_rects.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-init_gfont.o: init_gfont.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-init_img.o: init_img.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-init_ttf.o: init_ttf.cpp
+init.o: init.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 load.o: load.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
