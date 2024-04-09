@@ -1,22 +1,16 @@
 #include "SDL_handler.h"
-// #include "mPrint.h"
+#include "entity_id.h"
 #include "sprite_component.h"
+#include "transform_component.h"
 #include <string>
 #include <unordered_map>
-// #include <vector>
-#include "entity_id.h"
 
 using std::string;
-// using std::to_string;
 using std::unordered_map;
 
-extern SDL_Window *window;
 extern bool quit;
 extern bool is_fullscreen;
 extern bool do_render_debug_panel;
-extern SDL_Event e;
-extern unordered_map<int, bool> is_pressed;
-extern unordered_map<entity_id, sprite_component> sprite_components;
 extern int fullscreen_width;
 extern int fullscreen_height;
 extern int window_width;
@@ -24,11 +18,21 @@ extern int window_height;
 extern int target_texture_width;
 extern int target_texture_height;
 extern int player_money;
+extern SDL_Event e;
 extern SDL_Rect target_texture_dest;
+extern SDL_Window *window;
+extern unordered_map<entity_id, bool> inputs;
+extern unordered_map<entity_id, transform_component> transforms;
+extern unordered_map<entity_id, sprite_component> sprites;
+extern unordered_map<int, bool> is_pressed;
+extern unordered_map<int, bool> is_flipped;
+extern unordered_map<int, bool> is_pressed;
+extern unordered_map<entity_id, sprite_component> sprite_components;
 
 extern void generator_set_all_active_flip();
 extern void toggle_fullscreen();
 extern void spawn_powerup();
+extern void spawn_knife();
 
 void handle_keyup() {
   switch (e.key.keysym.sym) {
@@ -37,7 +41,6 @@ void handle_keyup() {
   case SDLK_UP:
   case SDLK_DOWN:
   case SDLK_a:
-  // case SDLK_g:
   case SDLK_x:
   case SDLK_z:
   case SDLK_LSHIFT:
@@ -56,7 +59,6 @@ void handle_keydown() {
   case SDLK_UP:
   case SDLK_DOWN:
   case SDLK_a:
-  // case SDLK_g:
   case SDLK_x:
   case SDLK_z:
   case SDLK_LSHIFT:
@@ -79,7 +81,6 @@ void handle_keydown() {
 
     if (player_money > 1) {
       player_money -= 1;
-      // spawn_powerup(target_texture_width * 5 / 6, target_texture_height / 2);
       spawn_powerup();
     }
     break;
@@ -98,5 +99,49 @@ void handle_input() {
     } else if (e.type == SDL_KEYUP) {
       handle_keyup();
     }
+  }
+}
+
+void handle_input_component() {
+  for (auto kv : inputs) {
+    entity_id id = kv.first;
+    transform_component transform = transforms[id];
+    sprite_component sprite = sprites[id];
+
+    if (is_pressed[SDLK_LEFT] && is_pressed[SDLK_LSHIFT]) {
+      transform.x -= 8;
+      is_flipped[id] = true;
+    } else if (is_pressed[SDLK_RIGHT] && is_pressed[SDLK_LSHIFT]) {
+      transform.x += 8;
+      is_flipped[id] = false;
+    } else if (is_pressed[SDLK_LEFT]) {
+      transform.x -= 4;
+      is_flipped[id] = true;
+    } else if (is_pressed[SDLK_RIGHT]) {
+      transform.x += 4;
+      is_flipped[id] = false;
+    }
+
+    if (is_pressed[SDLK_UP] && is_pressed[SDLK_LSHIFT]) {
+      transform.y -= 8;
+    } else if (is_pressed[SDLK_DOWN] && is_pressed[SDLK_LSHIFT]) {
+      transform.y += 8;
+    } else if (is_pressed[SDLK_UP]) {
+      transform.y -= 4;
+    } else if (is_pressed[SDLK_DOWN]) {
+      transform.y += 4;
+    }
+
+    if (is_pressed[SDLK_a]) {
+      spawn_knife();
+      sprite.current_clip = 1;
+      sprite.src.x = sprite.current_clip * sprite.src.w;
+    } else {
+      sprite.current_clip = 0;
+      sprite.src.x = sprite.current_clip * sprite.src.w;
+    }
+
+    transforms[id] = transform;
+    sprites[id] = sprite;
   }
 }

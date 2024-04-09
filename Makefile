@@ -4,15 +4,13 @@ CC=clang++
 OBJ_FLAG=-c
 CFLAGS=-Wall -Wextra -Werror -Wpedantic -std=c++17
 
-OBJ_FILES=distance.o \
-					cleanup.o \
+OBJ_FILES=cleanup.o \
 					create.o \
 					fps.o \
 					frame_time.o \
 					get_next_entity_id.o \
 					get_num_enemies_killed.o \
 					generator_set_active.o \
-					handle_input_component.o \
 					handle_input.o \
 					init.o \
 					load.o \
@@ -34,8 +32,6 @@ cleanup.o: cleanup.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 create.o: create.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-distance.o: distance.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 fps.o: fps.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 frame_time.o: frame_time.cpp
@@ -45,8 +41,6 @@ generator_set_active.o: generator_set_active.cpp
 get_next_entity_id.o: get_next_entity_id.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 get_num_enemies_killed.o: get_num_enemies_killed.cpp
-	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
-handle_input_component.o: handle_input_component.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 handle_input.o: handle_input.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
