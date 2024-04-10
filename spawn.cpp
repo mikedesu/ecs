@@ -102,14 +102,14 @@ void spawn_coin(int x, int y) {
 void spawn_knife() {
   if (!knife_cooldown) {
     const int num_clips = 1;
-    // const int padding = 16;
+    const int padding = 16;
     bool is_animating = false;
     entity_id id = get_next_entity_id();
     sprite_component sprite = sprites[player_id];
-    // double x = sprite.dest.x + sprite.dest.w + padding;
-    double x = sprite.dest.x + sprite.dest.w;
-    double y = sprite.dest.y;
-    // double y = sprite.dest.y + sprite.dest.h / 2.0 + 4;
+    double x = sprite.dest.x + sprite.dest.w + padding;
+    // double x = sprite.dest.x + sprite.dest.w;
+    // double y = sprite.dest.y;
+    double y = sprite.dest.y + sprite.dest.h / 4.0;
     double angle = 0.0;
     double vx = current_knife_speed;
     double vy = 0;

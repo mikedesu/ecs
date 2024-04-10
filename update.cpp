@@ -13,8 +13,6 @@
 #include <unordered_map>
 #include <vector>
 
-#define COIN_SPAWN_RATE 1
-
 using std::default_random_engine;
 using std::for_each;
 using std::function;
@@ -30,6 +28,7 @@ extern int target_texture_width;
 extern int target_texture_height;
 extern int num_enemies_escaped;
 extern int window_width;
+extern int coin_spawn_rate;
 extern entity_id player_id;
 extern int current_knife_cooldown;
 extern default_random_engine rng_generator;
@@ -123,7 +122,7 @@ function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
       num_collisions++;
       enemies_killed[ENEMY_TYPE_EYEBALL]++;
       double roll = coin_spawn_rate_distribution(rng_generator);
-      if (roll < COIN_SPAWN_RATE) {
+      if (roll < coin_spawn_rate) {
         spawn_coin(enemy.dest.x, enemy.dest.y);
       }
       break;

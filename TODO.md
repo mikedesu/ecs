@@ -114,4 +114,24 @@
 - [ ] powerup that increases the knife velocity
 - [ ] game over screen
 
+## 10 April 2024
+
+### 11:24 CDT
+
+- [ ] knife-limit mechanic
+- [ ] knife-catching mechanic
+- [ ] game-over screen with debug stats
+    - [ ] enemies killed
+    - [ ] enemies escaped
+    - [ ] damaged by # of enemies
+- [ ] restart game after game-over
+- [ ] pause game
+- [ ] un-pause game
+- [ ] powerup that increases movement speed
+- [ ] negative-powerup that increases enemy movement speed
+- [ ] negative-powerup that increases enemy spawn rate
+- [ ] negative-powerup that increases enemy size
+- [ ] negative-powerup that increases enemy health
+
+
 

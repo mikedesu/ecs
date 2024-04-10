@@ -29,6 +29,7 @@ char texture_text[1024] = "a bunch of random text";
 int target_texture_width = 1600;
 int target_texture_height = 960;
 int debug_font_size = 16;
+int coin_spawn_rate = 25.0;
 
 bool quit = false;
 bool do_render_debug_panel = true;
@@ -143,7 +144,7 @@ int main() {
   spawn_skull();
 
   // spawn_generator(ENEMY_TYPE_EYEBALL, true, 120);
-  spawn_generator(ENEMY_TYPE_BAT, true, 120);
+  spawn_generator(ENEMY_TYPE_BAT, true, 128);
 
   while (!quit) {
     handle_input();
@@ -159,12 +160,13 @@ int main() {
     // playing around with speeding up eyeball generation on a timer
     // every 30 seconds or 1800 frames, cut it in half
     // prob need a realistic cap on this...
+    const int cooldown_min = 10;
     if (frame_count > 0 && frame_count % 3600 == 0) {
       for (auto id : entities) {
         if (is_generator[id]) {
           generators[id].cooldown = generators[id].cooldown / 2;
-          if (generators[id].cooldown < 15) {
-            generators[id].cooldown = 15;
+          if (generators[id].cooldown < cooldown_min) {
+            generators[id].cooldown = cooldown_min;
           }
         }
       }

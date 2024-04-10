@@ -12,6 +12,7 @@ extern SDL_Rect target_texture_src;
 extern SDL_Rect target_texture_dest;
 extern int mWidth;
 extern int mHeight;
+extern int coin_spawn_rate;
 extern int debug_font_size;
 extern int img_flags;
 extern int result;
@@ -53,7 +54,7 @@ void init_img() {
 
 void init_rng() {
   eyeball_vx_distribution = uniform_real_distribution<double>(-4.0, -2.0);
-  coin_spawn_rate_distribution = uniform_real_distribution<double>(0.0, 1.0);
+  coin_spawn_rate_distribution = uniform_real_distribution<double>(0.0, 100.0);
 
   if (target_texture_width > 0) {
     texture_height_distribution =
