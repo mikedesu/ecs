@@ -118,7 +118,7 @@
 
 ### 11:24 CDT
 
-- [ ] knife-limit mechanic
+- [x] knife-limit mechanic
 - [ ] knife-catching mechanic
 - [ ] game-over screen with debug stats
     - [ ] enemies killed
@@ -135,7 +135,33 @@
 
 ## 15:35 CDT
 
-- [ ] knives should be able to collide with multiple enemies at the same time
-    - [ ] for each knife, check each other entity and mark all entities it collides with, as well as marking the knife itself
+- [x] knives should be able to collide with multiple enemies at the same time
+    - [x] for each knife, check each other entity and mark all entities it collides with, as well as marking the knife itself
+
+
+## 16:06 CDT
+
+- [ ] powerup that decreases skull size
+- [ ] enemy bullets
+- [ ] bullet-grazing mechanic
+- [ ] different-colored power-up textures to distinguish them
+    - [ ] some texture besides the 'scroll'
+- [ ] HUD
+    - [ ] knife count
+    - [ ] powerup count
+    - [ ] score
+    - [ ] health
+    - [ ] time played
+- [ ] background textures
+    - [ ] moon
+    - [ ] candles
+    - [ ] lightning
+    - [ ] clouds
+    - [ ] gravestones
+    - [ ] trees
+    - [ ] parallax scrolling
+
+
+
 
 
