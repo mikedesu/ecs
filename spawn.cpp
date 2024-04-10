@@ -25,6 +25,8 @@ extern int h;
 extern int knife_cooldown;
 extern int current_knife_speed;
 extern int current_knife_cooldown;
+extern int num_knives;
+extern int max_num_knives;
 extern int num_knives_fired;
 extern int target_texture_width;
 extern int target_texture_height;
@@ -100,7 +102,7 @@ void spawn_coin(int x, int y) {
 }
 
 void spawn_knife() {
-  if (!knife_cooldown) {
+  if (!knife_cooldown && num_knives) {
     const int num_clips = 1;
     const int padding = 16;
     bool is_animating = false;
@@ -136,6 +138,7 @@ void spawn_knife() {
     entities.push_back(id);
     knife_cooldown = current_knife_cooldown;
     num_knives_fired++;
+    num_knives--;
   }
 }
 
@@ -168,8 +171,8 @@ void spawn_bat() {
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
   w = w / num_clips;
   entity_id id = get_next_entity_id();
-  int x = (target_texture_width - w);
-  int y = (rand() % (target_texture_height - h));
+  int x = target_texture_width - w;
+  int y = rand() % (target_texture_height - (h * 2));
   double vy = 0.0;
   double vx = eyeball_vx_distribution(rng_generator);
   double angle = 0.0;

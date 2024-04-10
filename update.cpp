@@ -22,6 +22,8 @@ using std::vector;
 
 extern int frame_count;
 extern int num_collisions;
+extern int num_knives;
+extern int max_num_knives;
 extern int player_money;
 extern int player_health;
 extern int target_texture_width;
@@ -86,8 +88,14 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
       num_enemies_escaped++;
     }
   } else if (id != player_id && (is_knife[id] || is_coin[id])) {
-    is_marked_for_deletion[id] =
-        transform.x < -sprite.src.w || transform.x > window_width;
+
+    bool is_marked = transform.x < -sprite.src.w || transform.x > window_width;
+    is_marked_for_deletion[id] = is_marked;
+
+    if (is_knife[id] && is_marked) {
+      num_knives =
+          num_knives + 1 > max_num_knives ? max_num_knives : num_knives + 1;
+    }
   }
   transforms[id] = transform;
 };
@@ -119,6 +127,10 @@ function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
     if (SDL_HasIntersection(&knife.dest, &enemy.dest)) {
       is_marked_for_deletion[enemy_id] = true;
       is_marked_for_deletion[id] = true;
+
+      num_knives =
+          num_knives + 1 > max_num_knives ? max_num_knives : num_knives + 1;
+
       num_collisions++;
       enemies_killed[ENEMY_TYPE_EYEBALL]++;
       double roll = coin_spawn_rate_distribution(rng_generator);
