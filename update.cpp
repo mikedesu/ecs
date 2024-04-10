@@ -51,7 +51,7 @@ extern unordered_map<enemy_type, int> enemies_killed;
 extern unordered_map<powerup_type, int> powerups_collected;
 extern vector<entity_id> entities;
 
-extern void update_knife_collisions();
+// extern void update_knife_collisions();
 extern void update_skull_collisions();
 extern void spawn_coin(int x, int y);
 extern void spawn_eyeball();
@@ -128,16 +128,18 @@ function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
       is_marked_for_deletion[enemy_id] = true;
       is_marked_for_deletion[id] = true;
 
-      num_knives =
-          num_knives + 1 > max_num_knives ? max_num_knives : num_knives + 1;
-
       num_collisions++;
       enemies_killed[ENEMY_TYPE_EYEBALL]++;
       double roll = coin_spawn_rate_distribution(rng_generator);
       if (roll < coin_spawn_rate) {
         spawn_coin(enemy.dest.x, enemy.dest.y);
       }
-      break;
+      // break;
+    }
+
+    if (is_marked_for_deletion[id]) {
+      num_knives =
+          num_knives + 1 > max_num_knives ? max_num_knives : num_knives + 1;
     }
   }
 };
@@ -198,9 +200,10 @@ void update_skull_collisions() {
         num_collisions++;
         player_money++;
 
-        if (player_money >= 5) {
+#define POWERUP_COST 3
+        if (player_money >= POWERUP_COST) {
           spawn_powerup();
-          player_money -= 5;
+          player_money -= POWERUP_COST;
         }
 
         break;
@@ -225,7 +228,14 @@ void update_skull_collisions() {
           if (current_knife_cooldown < 5) {
             current_knife_cooldown = 5;
           }
+        } else if (type == POWERUP_TYPE_KNIFE_QUANTITY) {
+          num_knives++;
+          max_num_knives++;
+          if (num_knives > max_num_knives) {
+            num_knives = max_num_knives;
+          }
         }
+
         powerups_collected[type]++;
 
         // player_health++;

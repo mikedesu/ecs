@@ -133,5 +133,9 @@
 - [ ] negative-powerup that increases enemy size
 - [ ] negative-powerup that increases enemy health
 
+## 15:35 CDT
+
+- [ ] knives should be able to collide with multiple enemies at the same time
+    - [ ] for each knife, check each other entity and mark all entities it collides with, as well as marking the knife itself
 
 

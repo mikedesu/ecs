@@ -209,7 +209,23 @@ void spawn_generator(enemy_type type, bool active, int cooldown) {
 void spawn_powerup() {
   const int num_clips = 1;
   bool is_animating = true;
-  SDL_Texture *t = textures["powerup"];
+  powerup_type poweruptype = (powerup_type)(rand() % POWERUP_TYPE_COUNT);
+  SDL_Texture *t = nullptr; // textures["powerup"];
+  switch (poweruptype) {
+  case POWERUP_TYPE_KNIFE_LARGENESS:
+    t = textures["powerup"];
+    break;
+  case POWERUP_TYPE_KNIFE_COOLDOWN:
+    t = textures["powerup"];
+    break;
+  case POWERUP_TYPE_KNIFE_QUANTITY:
+    t = textures["knife"];
+    break;
+  default:
+    t = textures["powerup"];
+    break;
+  }
+
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
   w = w / num_clips;
   entity_id id = get_next_entity_id();
@@ -217,6 +233,11 @@ void spawn_powerup() {
   double vy = 0.0;
   double vx = -1.0;
   double angle = 0.0;
+
+  if (poweruptype == POWERUP_TYPE_KNIFE_QUANTITY) {
+    angle = 90.0;
+  }
+
   double scale = 1.0;
   double dx = target_texture_width - w;
   double dy = texture_height_distribution(rng_generator) - h;
@@ -228,8 +249,6 @@ void spawn_powerup() {
   is_powerup[id] = true;
   is_rotating[id] = true;
 
-  powerup_type poweruptype = rand() % 2 == 0 ? POWERUP_TYPE_KNIFE_COOLDOWN
-                                             : POWERUP_TYPE_KNIFE_LARGENESS;
   powerup_types[id] = poweruptype;
 
   entities.push_back(id);

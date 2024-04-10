@@ -126,27 +126,27 @@ void handle_input_component() {
     sprite_component sprite = sprites[id];
 
     if (is_pressed[SDLK_LEFT] && is_pressed[SDLK_LSHIFT]) {
-      transform.x -= 8;
-      is_flipped[id] = true;
-    } else if (is_pressed[SDLK_RIGHT] && is_pressed[SDLK_LSHIFT]) {
-      transform.x += 8;
-      is_flipped[id] = false;
-    } else if (is_pressed[SDLK_LEFT]) {
       transform.x -= 4;
       is_flipped[id] = true;
-    } else if (is_pressed[SDLK_RIGHT]) {
+    } else if (is_pressed[SDLK_RIGHT] && is_pressed[SDLK_LSHIFT]) {
       transform.x += 4;
+      is_flipped[id] = false;
+    } else if (is_pressed[SDLK_LEFT]) {
+      transform.x -= 8;
+      is_flipped[id] = true;
+    } else if (is_pressed[SDLK_RIGHT]) {
+      transform.x += 8;
       is_flipped[id] = false;
     }
 
     if (is_pressed[SDLK_UP] && is_pressed[SDLK_LSHIFT]) {
-      transform.y -= 8;
-    } else if (is_pressed[SDLK_DOWN] && is_pressed[SDLK_LSHIFT]) {
-      transform.y += 8;
-    } else if (is_pressed[SDLK_UP]) {
       transform.y -= 4;
-    } else if (is_pressed[SDLK_DOWN]) {
+    } else if (is_pressed[SDLK_DOWN] && is_pressed[SDLK_LSHIFT]) {
       transform.y += 4;
+    } else if (is_pressed[SDLK_UP]) {
+      transform.y -= 8;
+    } else if (is_pressed[SDLK_DOWN]) {
+      transform.y += 8;
     }
 
     if (is_pressed[SDLK_z]) {

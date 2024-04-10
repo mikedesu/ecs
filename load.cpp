@@ -158,7 +158,8 @@ void load_skull_sheet_texture() {
 }
 
 void load_knife_sheet_texture() {
-  string filepath = "img/knife4x.png";
+  // string filepath = "img/knife4x.png";
+  string filepath = "img/knife-alt4x.png";
   SDL_Texture *t = IMG_LoadTexture(renderer, filepath.c_str());
   if (t == nullptr) {
     cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
