@@ -11,6 +11,9 @@ using std::unordered_map;
 extern bool quit;
 extern bool is_fullscreen;
 extern bool do_render_debug_panel;
+extern entity_id player_id;
+extern int color_index;
+extern int num_color_indices;
 extern int fullscreen_width;
 extern int fullscreen_height;
 extern int window_width;
@@ -28,6 +31,7 @@ extern unordered_map<int, bool> is_pressed;
 extern unordered_map<int, bool> is_flipped;
 extern unordered_map<int, bool> is_pressed;
 extern unordered_map<entity_id, sprite_component> sprite_components;
+extern unordered_map<string, SDL_Texture *> textures;
 
 extern void generator_set_all_active_flip();
 extern void toggle_fullscreen();
@@ -40,9 +44,9 @@ void handle_keyup() {
   case SDLK_RIGHT:
   case SDLK_UP:
   case SDLK_DOWN:
-  case SDLK_a:
-  case SDLK_x:
   case SDLK_z:
+  case SDLK_x:
+  // case SDLK_z:
   case SDLK_LSHIFT:
   case SDLK_RSHIFT:
     is_pressed[e.key.keysym.sym] = false;
@@ -58,9 +62,9 @@ void handle_keydown() {
   case SDLK_RIGHT:
   case SDLK_UP:
   case SDLK_DOWN:
-  case SDLK_a:
-  case SDLK_x:
   case SDLK_z:
+  case SDLK_x:
+  // case SDLK_z:
   case SDLK_LSHIFT:
   case SDLK_RSHIFT:
     is_pressed[e.key.keysym.sym] = true;
@@ -76,6 +80,20 @@ void handle_keydown() {
     break;
   case SDLK_f:
     toggle_fullscreen();
+    break;
+  case SDLK_a:
+    // change the player's sprite texture to a hard-coded selection
+    color_index++;
+    if (color_index >= num_color_indices) {
+      color_index = 0;
+    }
+
+    if (color_index == 0)
+      sprites[player_id].texture = textures["skull-red"];
+    else if (color_index == 1)
+      sprites[player_id].texture = textures["skull-green"];
+    else if (color_index == 2)
+      sprites[player_id].texture = textures["skull-blue"];
     break;
     // case SDLK_s:
     //   if (player_money > 0) {
@@ -131,7 +149,7 @@ void handle_input_component() {
       transform.y += 4;
     }
 
-    if (is_pressed[SDLK_a]) {
+    if (is_pressed[SDLK_z]) {
       spawn_knife();
       sprite.current_clip = 1;
       sprite.src.x = sprite.current_clip * sprite.src.w;

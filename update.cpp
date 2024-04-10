@@ -36,6 +36,7 @@ extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> coin_spawn_rate_distribution;
 
 extern unordered_map<entity_id, powerup_type> powerup_types;
+extern unordered_map<entity_id, enemy_type> enemy_types;
 extern unordered_map<entity_id, generator_component> generators;
 extern unordered_map<entity_id, sprite_component> sprites;
 extern unordered_map<entity_id, transform_component> transforms;
@@ -54,6 +55,7 @@ extern void update_skull_collisions();
 extern void spawn_coin(int x, int y);
 extern void spawn_eyeball();
 extern void spawn_powerup();
+extern void spawn_bat();
 
 function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   entity_id id = t.first;
@@ -138,7 +140,15 @@ function<void(sprite_pair)> update_animation = [](const sprite_pair p) {
       sprite.src.x = sprite.current_clip * sprite.src.w;
       sprites[id] = sprite;
     }
-  } else if (sprite.is_animating) {
+  } else if (enemy_types[id] == ENEMY_TYPE_BAT) {
+    if (frame_count % 10 == 0) {
+      sprite.current_clip = (sprite.current_clip + 1) % sprite.num_clips;
+      sprite.src.x = sprite.current_clip * sprite.src.w;
+      sprites[id] = sprite;
+    }
+  }
+
+  else if (sprite.is_animating) {
     sprite.current_clip = (sprite.current_clip + 1) % sprite.num_clips;
     sprite.src.x = sprite.current_clip * sprite.src.w;
     sprites[id] = sprite;
@@ -152,6 +162,9 @@ void update_generators() {
       switch (generator.type) {
       case ENEMY_TYPE_EYEBALL:
         spawn_eyeball();
+        break;
+      case ENEMY_TYPE_BAT:
+        spawn_bat();
         break;
       default:
         break;

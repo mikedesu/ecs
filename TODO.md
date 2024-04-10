@@ -25,7 +25,7 @@
         - [x] capturing the player's `entity_id` on `spawn_skull()`
     - [x] enemies
     - [x] knives
-    - [ ] power-ups
+    - [x] power-ups
 - [x] scaling up graphics to make 4x the new 'default' 1x
 - [x] faster movement using the SHIFT key
 - [ ] knife "catching" mechanic
@@ -52,17 +52,20 @@
 
 - [ ] coins
     - [x] spawn on eyeball kill with 25% chance
+    - [x] spawn on every bat kill 
 - [ ] power-ups
-    - [ ] knife cooldown reduction
+    - [x] knife cooldown reduction
     - [ ] knife speed increase
-    - [ ] knife size increase
+    - [x] knife size increase
     - [ ] knife spread increase (shotgun)
     - [ ] knife angular rotation (damage)
 - [ ] enemy spawn wave pressure
-    - [ ] increasing the generator rate
+    - [x] increasing the generator rate
         - [ ] increasing the eyeball generation rate every N kills
         - [ ] increasing the eyeball generation rate every powerup activation
+        - [ ] increasing the eyeball generation rate every N frames
     - [ ] spawning from both sides of the screen
+        - [ ] do we need another generator data field?
 - [ ] eyeball up/down bounce
 - [ ] eyeballs bouncing off each other
 - [x] there is a bug where eyeballs disappear when colliding with coins **fixed 08 April 2024 11:35 CST**
@@ -73,13 +76,42 @@
     - `ENTITY_TYPE_ENEMY_EYEBALL`
     - `ENTITY_TYPE_KNIFE`
     - `ENTITY_TYPE_COIN`
+    - [-] may not be necessary
 
 ## 08 April 2024
 
 ### 16:21 CDT 
 
-- [ ] realizing we can probably combine functions from multiple files into individual function-group files
-    - [ ] ex: `spawn_skull`, `spawn_knife`, etc. can probably go in `spawn.c`
-    - [ ] this would achieve faster compile time with the same organizational benefit while also reducing LOC
-- [ ] group `load_texture` functions into their own `load.c` file
+- [x] realizing we can probably combine functions from multiple files into individual function-group files
+    - [x] ex: `spawn_skull`, `spawn_knife`, etc. can probably go in `spawn.c`
+    - [x] this would achieve faster compile time with the same organizational benefit while also reducing LOC
+- [x] group `load_texture` functions into their own `load.c` file
+
+## 09 April 2024
+
+### 18:21 CDT
+
+- [ ] the game crashed several 10k+ frames in
+    - [ ] spawn rate may have been too high
+    - [ ] need to build some debug logging infrastructure for when this happens 
+        - [ ] need to write out stats to a file
+    - [x] appears to not be crashing, survived 100k frame renders
+- [ ] we can do cool things with colors such as
+    - [ ] load the skull texture once, then color it differently and save as a separate texture
+        - [ ] this would allow us to hot-swap sprite textures on-the-fly
+
+### 22:02 CDT
+
+- [ ] popup texts for various messages
+- [ ] handle getting hit by an enemy
+    - [ ] colliding with enemy
+        - [x] one-damage 
+        - [ ] lose all powerups
+- [ ] enemy death animation texture
+    - [ ] eyeball
+    - [ ] bat
+- [ ] cap on size multiplier for knives
+- [ ] powerup that increases the knife velocity
+- [ ] game over screen
+
 

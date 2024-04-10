@@ -33,6 +33,7 @@ extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> eyeball_vx_distribution;
 extern uniform_real_distribution<double> texture_height_distribution;
 extern unordered_map<entity_id, powerup_type> powerup_types;
+extern unordered_map<entity_id, enemy_type> enemy_types;
 extern unordered_map<entity_id, sprite_component> sprites;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, generator_component> generators;
@@ -61,13 +62,15 @@ void spawn_skull() {
     double vy = 0;
     double angle = 0.0;
     double scale = 1.0;
-    SDL_QueryTexture(textures["skull"], NULL, NULL, &w, &h);
+
+    SDL_Texture *t = textures["skull-red"];
+    SDL_QueryTexture(t, NULL, NULL, &w, &h);
     w = w / num_clips;
     entity_id id = get_next_entity_id();
     sprites[id] = {is_animating,
                    0,
                    num_clips,
-                   textures["skull"],
+                   t,
                    {src_x, src_y, w, h},
                    {(int)dest_x, (int)dest_y, w, h}};
     transforms[id] = {dest_x, dest_y, vx, vy, angle, scale};
@@ -99,20 +102,24 @@ void spawn_coin(int x, int y) {
 void spawn_knife() {
   if (!knife_cooldown) {
     const int num_clips = 1;
-    const int padding = 16;
+    // const int padding = 16;
     bool is_animating = false;
     entity_id id = get_next_entity_id();
     sprite_component sprite = sprites[player_id];
-    double x = sprite.dest.x + sprite.dest.w + padding;
-    double y = sprite.dest.y + sprite.dest.h / 2.0 + 4;
+    // double x = sprite.dest.x + sprite.dest.w + padding;
+    double x = sprite.dest.x + sprite.dest.w;
+    double y = sprite.dest.y;
+    // double y = sprite.dest.y + sprite.dest.h / 2.0 + 4;
     double angle = 0.0;
     double vx = current_knife_speed;
     double vy = 0;
     if (is_flipped[player_id]) {
-      x = sprite.dest.x - padding;
+      x = sprite.dest.x;
+      // x = sprite.dest.x - padding;
       vx = -current_knife_speed;
       angle = 180.0;
     }
+
     SDL_QueryTexture(textures["knife"], NULL, NULL, &w, &h);
     w = w / num_clips;
 
@@ -151,6 +158,29 @@ void spawn_eyeball() {
   transforms[id] = {dx, dy, vx, vy, angle, scale};
   is_collidable[id] = true;
   is_enemy[id] = true;
+  entities.push_back(id);
+}
+
+void spawn_bat() {
+  const int num_clips = 2;
+  bool is_animating = true;
+  SDL_Texture *t = textures["bat"];
+  SDL_QueryTexture(t, NULL, NULL, &w, &h);
+  w = w / num_clips;
+  entity_id id = get_next_entity_id();
+  int x = (target_texture_width - w);
+  int y = (rand() % (target_texture_height - h));
+  double vy = 0.0;
+  double vx = eyeball_vx_distribution(rng_generator);
+  double angle = 0.0;
+  double scale = 1.0;
+  double dx = x;
+  double dy = y;
+  sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {x, y, w, h}};
+  transforms[id] = {dx, dy, vx, vy, angle, scale};
+  is_collidable[id] = true;
+  is_enemy[id] = true;
+  enemy_types[id] = ENEMY_TYPE_BAT;
   entities.push_back(id);
 }
 

@@ -46,7 +46,7 @@ void render_sprites() { for_each(sprites.begin(), sprites.end(), draw_sprite); }
 void render_frame() {
   // clear the target texture
   SDL_SetRenderTarget(renderer, target_texture);
-  SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+  SDL_SetRenderDrawColor(renderer, 20, 20, 20, 255);
   SDL_RenderClear(renderer);
   render_sprites();
   //  reset the render target

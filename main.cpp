@@ -54,6 +54,9 @@ int player_health = 3;
 int player_max_health = 3;
 int player_money = 0;
 
+int color_index = 0;
+int num_color_indices = 3;
+
 string skullsheet_filepath = "img/skull-sheet4x.png";
 // string skullsheet_filepath = "img/blackskull-sheet4x.png";
 string eyeballsheet_filepath = "img/eyeball-sheet4x.png";
@@ -82,6 +85,7 @@ vector<entity_id> entities_marked_for_deletion_tmp;
 
 unordered_map<int, bool> is_pressed;
 unordered_map<entity_id, powerup_type> powerup_types;
+unordered_map<entity_id, enemy_type> enemy_types;
 unordered_map<entity_id, sprite_component> sprites;
 unordered_map<entity_id, transform_component> transforms;
 unordered_map<entity_id, generator_component> generators;
@@ -137,7 +141,10 @@ int main() {
   // get the width and height of the texture
   init_target_texture_rects();
   spawn_skull();
-  spawn_generator(ENEMY_TYPE_EYEBALL, true, 120);
+
+  // spawn_generator(ENEMY_TYPE_EYEBALL, true, 120);
+  spawn_generator(ENEMY_TYPE_BAT, true, 120);
+
   while (!quit) {
     handle_input();
     handle_input_component();

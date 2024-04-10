@@ -4,6 +4,7 @@
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "mPrint.h"
+#include <SDL2/SDL_render.h>
 #include <cstdio>
 #include <string>
 #include <unordered_map>
@@ -28,6 +29,7 @@ extern int num_enemies_escaped;
 extern int player_health;
 extern int player_max_health;
 extern int player_money;
+extern int w, h;
 extern double zoom;
 extern string coin_sheet_filepath;
 extern char texture_text[1024];
@@ -108,23 +110,49 @@ void load_eyeball_sheet_texture() {
   textures["eyeball"] = t;
 }
 
+void load_bat_sheet_texture() {
+  string filepath = "img/bat-sheet4x.png";
+  SDL_Texture *t = IMG_LoadTexture(renderer, filepath.c_str());
+  if (t == nullptr) {
+    cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
+                                         filepath);
+  }
+  textures["bat"] = t;
+}
+
 void load_skull_sheet_texture() {
-  SDL_Texture *t = IMG_LoadTexture(renderer, skullsheet_filepath.c_str());
+
+  SDL_Surface *s = IMG_Load(skullsheet_filepath.c_str());
+  if (s == nullptr) {
+    cleanup_and_exit_with_failure_mprint("Failed to load image: " +
+                                         skullsheet_filepath);
+  }
+
+  SDL_Texture *t = SDL_CreateTextureFromSurface(renderer, s);
+  // SDL_Texture *t = IMG_LoadTexture(renderer, skullsheet_filepath.c_str());
   if (t == nullptr) {
     cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
                                          skullsheet_filepath);
   }
 
-  // SDL_Texture *copy_t = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888,
-  //                                         SDL_TEXTUREACCESS_TARGET,
-  //                                         target_texture_width,
-  //                                         target_texture_height);
-  // SDL_SetRenderTarget(renderer, copy_t);
-  // SDL_RenderCopy(renderer, t, NULL, NULL);
-  // SDL_SetRenderTarget(renderer, nullptr);
-  SDL_SetTextureColorMod(t, 255, 255, 0);
+  SDL_Texture *tmp_t[3] = {nullptr, nullptr, nullptr};
+  for (int i = 0; i < 3; i++) {
+    tmp_t[i] = SDL_CreateTextureFromSurface(renderer, s);
+    if (tmp_t[i] == nullptr) {
+      cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
+                                           skullsheet_filepath);
+    }
+  }
+
+  SDL_SetTextureColorMod(tmp_t[0], 255, 0, 0);
+  SDL_SetTextureColorMod(tmp_t[1], 0, 255, 0);
+  SDL_SetTextureColorMod(tmp_t[2], 0, 0, 255);
 
   textures["skull"] = t;
+  textures["skull-red"] = tmp_t[0];
+  textures["skull-green"] = tmp_t[1];
+  textures["skull-blue"] = tmp_t[2];
+  SDL_FreeSurface(s);
 }
 
 void load_knife_sheet_texture() {
@@ -154,4 +182,5 @@ void load_textures() {
   load_knife_sheet_texture();
   load_coin_sheet_texture();
   load_powerup_sheet_texture();
+  load_bat_sheet_texture();
 }
