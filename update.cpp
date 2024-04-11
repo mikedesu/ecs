@@ -1,7 +1,8 @@
-#include "bg_entity_type.h"
+// #include "bg_entity_type.h"
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "generator_component.h"
+// #include "mPrint.h"
 #include "powerup_type.h"
 #include "rotation_pair.h"
 #include "sprite_component.h"
@@ -165,13 +166,14 @@ function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
 function<void(sprite_pair)> update_animation = [](const sprite_pair p) {
   entity_id id = p.first;
   sprite_component sprite = sprites[id];
-  if (is_coin[id]) {
+  if (sprite.is_animating && is_coin[id]) {
     if (frame_count % 10 == 0) {
+      // mPrint("coin animation");
       sprite.current_clip = (sprite.current_clip + 1) % sprite.num_clips;
       sprite.src.x = sprite.current_clip * sprite.src.w;
       sprites[id] = sprite;
     }
-  } else if (enemy_types[id] == ENEMY_TYPE_BAT) {
+  } else if (sprite.is_animating && enemy_types[id] == ENEMY_TYPE_BAT) {
     if (frame_count % 10 == 0) {
       sprite.current_clip = (sprite.current_clip + 1) % sprite.num_clips;
       sprite.src.x = sprite.current_clip * sprite.src.w;

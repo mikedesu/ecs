@@ -1,4 +1,3 @@
-
 #include "SDL_handler.h"
 #include "entity_id.h"
 #include "generator_component.h"
@@ -17,7 +16,6 @@ using std::unordered_map;
 using std::vector;
 
 extern entity_id player_id;
-
 extern unordered_map<entity_id, bool> inputs;
 extern unordered_map<string, SDL_Texture *> textures;
 extern int w;
@@ -52,53 +50,30 @@ extern vector<entity_id> entities;
 
 extern entity_id get_next_entity_id();
 
+entity_id spawn_entity(string key, bool is_animating, int num_clips, int x,
+                       int y) {
+  SDL_Texture *t = textures[key];
+  SDL_QueryTexture(t, NULL, NULL, &w, &h);
+  w = w / num_clips;
+  entity_id id = get_next_entity_id();
+  sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {x, y, w, h}};
+  transforms[id] = {(double)x, (double)y, 0, 0, 0, 1};
+  entities.push_back(id);
+  return id;
+}
+
 void spawn_skull() {
   if (player_id == -1) {
-    const int num_clips = 2;
-    bool is_animating = false;
-    int src_x = 0;
-    int src_y = 0;
-    double dest_x = 0;
-    double dest_y = 0;
-    double vx = 0;
-    double vy = 0;
-    double angle = 0.0;
-    double scale = 1.0;
-
-    SDL_Texture *t = textures["skull-red"];
-    SDL_QueryTexture(t, NULL, NULL, &w, &h);
-    w = w / num_clips;
-    entity_id id = get_next_entity_id();
-    sprites[id] = {is_animating,
-                   0,
-                   num_clips,
-                   t,
-                   {src_x, src_y, w, h},
-                   {(int)dest_x, (int)dest_y, w, h}};
-    transforms[id] = {dest_x, dest_y, vx, vy, angle, scale};
+    entity_id id = spawn_entity("skull", false, 2, 0, 0);
     inputs[id] = true;
     player_id = id;
-    entities.push_back(id);
   }
 }
 
 void spawn_coin(int x, int y) {
-  const int num_clips = 4;
-  bool is_animating = true;
-  SDL_QueryTexture(textures["coin"], NULL, NULL, &w, &h);
-  w = w / num_clips;
-  entity_id id = get_next_entity_id();
-  double vy = 0.0;
-  double vx = -1.0;
-  double angle = 0.0;
-  double scale = 1.0;
-  double dx = x;
-  double dy = y;
-  sprites[id] = {is_animating, 0,           num_clips, textures["coin"],
-                 {0, 0, w, h}, {x, y, w, h}};
-  transforms[id] = {dx, dy, vx, vy, angle, scale};
+  entity_id id = spawn_entity("coin", true, 4, x, y);
   is_coin[id] = true;
-  entities.push_back(id);
+  transforms[id].vx = -1.0;
 }
 
 void spawn_knife() {
@@ -109,8 +84,6 @@ void spawn_knife() {
     entity_id id = get_next_entity_id();
     sprite_component sprite = sprites[player_id];
     double x = sprite.dest.x + sprite.dest.w + padding;
-    // double x = sprite.dest.x + sprite.dest.w;
-    // double y = sprite.dest.y;
     double y = sprite.dest.y + sprite.dest.h / 4.0;
     double angle = 0.0;
     double vx = current_knife_speed;
@@ -121,17 +94,14 @@ void spawn_knife() {
       vx = -current_knife_speed;
       angle = 180.0;
     }
-
-    SDL_QueryTexture(textures["knife"], NULL, NULL, &w, &h);
+    SDL_Texture *t = textures["knife"];
+    SDL_QueryTexture(t, NULL, NULL, &w, &h);
     w = w / num_clips;
-
     // knives may be scaled according to how many LARGNESS powerups we've
     // collected
     int largeness = powerups_collected[POWERUP_TYPE_KNIFE_LARGENESS];
     double scale = 1.0 + (0.1 * largeness);
-
-    sprites[id] = {is_animating, 0,           num_clips, textures["knife"],
-                   {0, 0, w, h}, {0, 0, w, h}};
+    sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {0, 0, w, h}};
     transforms[id] = {x, y, vx, vy, angle, scale};
     is_knife[id] = true;
     is_rotating[id] = true;
@@ -145,7 +115,9 @@ void spawn_knife() {
 void spawn_eyeball() {
   const int num_clips = 18;
   bool is_animating = true;
-  SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
+  string key = "eyeball";
+  SDL_Texture *t = textures[key];
+  SDL_QueryTexture(t, NULL, NULL, &w, &h);
   w = w / num_clips;
   entity_id id = get_next_entity_id();
   int x = (target_texture_width - w);
@@ -156,8 +128,7 @@ void spawn_eyeball() {
   double scale = 1.0;
   double dx = x;
   double dy = y;
-  sprites[id] = {is_animating, 0,           num_clips, textures["eyeball"],
-                 {0, 0, w, h}, {x, y, w, h}};
+  sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {x, y, w, h}};
   transforms[id] = {dx, dy, vx, vy, angle, scale};
   is_collidable[id] = true;
   is_enemy[id] = true;
@@ -167,7 +138,8 @@ void spawn_eyeball() {
 void spawn_bat() {
   const int num_clips = 2;
   bool is_animating = true;
-  SDL_Texture *t = textures["bat"];
+  string key = "bat";
+  SDL_Texture *t = textures[key];
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
   w = w / num_clips;
   entity_id id = get_next_entity_id();
@@ -209,35 +181,36 @@ void spawn_generator(enemy_type type, bool active, int cooldown) {
 void spawn_powerup() {
   const int num_clips = 1;
   bool is_animating = true;
+  string key = "powerup";
   powerup_type poweruptype = (powerup_type)(rand() % POWERUP_TYPE_COUNT);
   SDL_Texture *t = nullptr; // textures["powerup"];
   switch (poweruptype) {
   case POWERUP_TYPE_KNIFE_LARGENESS:
-    t = textures["powerup"];
+    key = "powerup";
+    t = textures[key];
     break;
   case POWERUP_TYPE_KNIFE_COOLDOWN:
-    t = textures["powerup"];
+    key = "powerup";
+    t = textures[key];
     break;
   case POWERUP_TYPE_KNIFE_QUANTITY:
-    t = textures["knife"];
+    key = "knife";
+    t = textures[key];
     break;
   default:
-    t = textures["powerup"];
+    key = "powerup";
+    t = textures[key];
     break;
   }
-
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
   w = w / num_clips;
   entity_id id = get_next_entity_id();
-  // mPrint("Spawning powerup with id: " + to_string(id));
   double vy = 0.0;
   double vx = -1.0;
   double angle = 0.0;
-
   if (poweruptype == POWERUP_TYPE_KNIFE_QUANTITY) {
     angle = 90.0;
   }
-
   double scale = 1.0;
   double dx = target_texture_width - w;
   double dy = texture_height_distribution(rng_generator) - h;
@@ -248,8 +221,6 @@ void spawn_powerup() {
   is_coin[id] = false;
   is_powerup[id] = true;
   is_rotating[id] = true;
-
   powerup_types[id] = poweruptype;
-
   entities.push_back(id);
 }
