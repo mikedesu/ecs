@@ -1,3 +1,4 @@
+#include "bg_entity_type.h"
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "generator_component.h"
@@ -40,7 +41,9 @@ extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, enemy_type> enemy_types;
 extern unordered_map<entity_id, generator_component> generators;
 extern unordered_map<entity_id, sprite_component> sprites;
+extern unordered_map<entity_id, sprite_component> bg_sprites;
 extern unordered_map<entity_id, transform_component> transforms;
+extern unordered_map<entity_id, transform_component> bg_transforms;
 extern unordered_map<entity_id, bool> is_coin;
 extern unordered_map<entity_id, bool> is_rotating;
 extern unordered_map<entity_id, bool> is_knife;
@@ -57,6 +60,21 @@ extern void spawn_coin(int x, int y);
 extern void spawn_eyeball();
 extern void spawn_powerup();
 extern void spawn_bat();
+
+function<void(transform_pair)> handle_bg_transform =
+    [](const transform_pair t) {
+      entity_id id = t.first;
+      transform_component transform = t.second;
+      sprite_component sprite = bg_sprites[id];
+      transform.x += transform.vx;
+      transform.y += transform.vy;
+      sprite.dest.x = transform.x;
+      sprite.dest.y = transform.y;
+      sprite.dest.w = sprite.src.w * transform.scale;
+      sprite.dest.h = sprite.src.h * transform.scale;
+      bg_sprites[id] = sprite;
+      bg_transforms[id] = transform;
+    };
 
 function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   entity_id id = t.first;
@@ -168,6 +186,14 @@ function<void(sprite_pair)> update_animation = [](const sprite_pair p) {
   }
 };
 
+void update_bg_animations() {
+  for_each(bg_sprites.begin(), bg_sprites.end(), update_animation);
+}
+
+void update_bg_transform_components() {
+  for_each(bg_transforms.begin(), bg_transforms.end(), handle_bg_transform);
+}
+
 void update_generators() {
   for (auto kv : generators) {
     generator_component generator = kv.second;
@@ -267,6 +293,8 @@ void update_transform_components() {
 }
 
 void update() {
+  update_bg_transform_components();
+  update_bg_animations();
   update_transform_components();
   update_rotations();
   update_animations();

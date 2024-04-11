@@ -4,7 +4,8 @@ CC=clang++
 OBJ_FLAG=-c
 CFLAGS=-Wall -Wextra -Werror -Wpedantic -std=c++17
 
-OBJ_FILES=cleanup.o \
+OBJ_FILES=bg.o \
+					cleanup.o \
 					create.o \
 					fps.o \
 					handle_input.o \
@@ -24,6 +25,8 @@ $(BINARY): $(MAIN_FILE) $(OBJ_FILES)
 	$(CC) $^ $(CFLAGS) $(SDL_FLAGS) -lm -o $@
 
 # object files
+bg.o: bg.cpp
+	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 cleanup.o: cleanup.cpp
 	$(CC) $(CFLAGS) $(OBJ_FLAG) $^
 create.o: create.cpp

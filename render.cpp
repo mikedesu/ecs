@@ -13,7 +13,9 @@ using std::unordered_map;
 
 extern SDL_Renderer *renderer;
 extern unordered_map<entity_id, sprite_component> sprites;
+extern unordered_map<entity_id, sprite_component> bg_sprites;
 extern unordered_map<entity_id, transform_component> transforms;
+extern unordered_map<entity_id, transform_component> bg_transforms;
 extern unordered_map<entity_id, bool> is_flipped;
 extern SDL_Texture *debug_texture;
 extern SDL_Rect debug_texture_src;
@@ -42,12 +44,16 @@ void render_debug_panel() {
 }
 
 void render_sprites() { for_each(sprites.begin(), sprites.end(), draw_sprite); }
+void render_bg_sprites() {
+  for_each(bg_sprites.begin(), bg_sprites.end(), draw_sprite);
+}
 
 void render_frame() {
   // clear the target texture
   SDL_SetRenderTarget(renderer, target_texture);
   SDL_SetRenderDrawColor(renderer, 20, 20, 20, 255);
   SDL_RenderClear(renderer);
+  render_bg_sprites();
   render_sprites();
   //  reset the render target
   SDL_SetRenderTarget(renderer, NULL);

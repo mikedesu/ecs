@@ -179,6 +179,16 @@ void load_powerup_sheet_texture() {
   textures["powerup"] = t;
 }
 
+void load_moon_texture() {
+  string path = "img/moon-0a4x.png";
+  SDL_Texture *t = IMG_LoadTexture(renderer, path.c_str());
+  if (t == nullptr) {
+    cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
+                                         path);
+  }
+  textures["moon"] = t;
+}
+
 void load_textures() {
   load_skull_sheet_texture();
   load_eyeball_sheet_texture();
@@ -186,4 +196,5 @@ void load_textures() {
   load_coin_sheet_texture();
   load_powerup_sheet_texture();
   load_bat_sheet_texture();
+  load_moon_texture();
 }

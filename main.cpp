@@ -1,4 +1,5 @@
 #include "SDL_handler.h"
+#include "bg_entity_type.h"
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "generator_component.h"
@@ -89,8 +90,14 @@ vector<entity_id> entities_marked_for_deletion_tmp;
 unordered_map<int, bool> is_pressed;
 unordered_map<entity_id, powerup_type> powerup_types;
 unordered_map<entity_id, enemy_type> enemy_types;
+
 unordered_map<entity_id, sprite_component> sprites;
 unordered_map<entity_id, transform_component> transforms;
+
+unordered_map<entity_id, sprite_component> bg_sprites;
+unordered_map<entity_id, transform_component> bg_transforms;
+unordered_map<entity_id, bg_entity_type> bg_entity_types;
+
 unordered_map<entity_id, generator_component> generators;
 unordered_map<entity_id, bool> inputs;
 unordered_map<entity_id, bool> is_rotating;
@@ -114,6 +121,7 @@ uniform_real_distribution<double> texture_height_distribution;
 
 int init_target_texture();
 entity_id get_next_entity_id();
+void bg_init();
 void cleanup();
 void cleanup_entities_marked_for_deletion();
 void create_window();
@@ -143,6 +151,7 @@ int main() {
   init_debug_texture_rects();
   // get the width and height of the texture
   init_target_texture_rects();
+  bg_init();
   spawn_skull();
 
   // spawn_generator(ENEMY_TYPE_EYEBALL, true, 120);

@@ -153,6 +153,9 @@
     - [ ] health
     - [ ] time played
 - [ ] background textures
+    - [ ] one way to handle this might be to store them in a separate map and treat them separately from foreground entities
+        - [ ] we could paint everything to a separate background texture, then render the bg texture
+        - [ ] if we could find a way to organize things using surfaces, we could use blit, which is supposedly faster
     - [ ] moon
     - [ ] candles
     - [ ] lightning
@@ -160,8 +163,4 @@
     - [ ] gravestones
     - [ ] trees
     - [ ] parallax scrolling
-
-
-
-
 
