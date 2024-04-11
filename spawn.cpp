@@ -78,34 +78,21 @@ void spawn_coin(int x, int y) {
 
 void spawn_knife() {
   if (!knife_cooldown && num_knives) {
-    const int num_clips = 1;
     const int padding = 16;
-    bool is_animating = false;
-    entity_id id = get_next_entity_id();
-    sprite_component sprite = sprites[player_id];
-    double x = sprite.dest.x + sprite.dest.w + padding;
-    double y = sprite.dest.y + sprite.dest.h / 4.0;
-    double angle = 0.0;
-    double vx = current_knife_speed;
+    sprite_component player = sprites[player_id];
+    double x = !is_flipped[player_id] ? player.dest.x + player.dest.w + padding
+                                      : player.dest.x;
+    double y = player.dest.y + player.dest.h / 4.0;
+    entity_id id = spawn_entity("knife", false, 1, x, y);
+    double angle = is_flipped[player_id] ? 180.0 : 0.0;
+    double vx =
+        is_flipped[player_id] ? -current_knife_speed : current_knife_speed;
     double vy = 0;
-    if (is_flipped[player_id]) {
-      x = sprite.dest.x;
-      // x = sprite.dest.x - padding;
-      vx = -current_knife_speed;
-      angle = 180.0;
-    }
-    SDL_Texture *t = textures["knife"];
-    SDL_QueryTexture(t, NULL, NULL, &w, &h);
-    w = w / num_clips;
-    // knives may be scaled according to how many LARGNESS powerups we've
-    // collected
     int largeness = powerups_collected[POWERUP_TYPE_KNIFE_LARGENESS];
     double scale = 1.0 + (0.1 * largeness);
-    sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {0, 0, w, h}};
     transforms[id] = {x, y, vx, vy, angle, scale};
     is_knife[id] = true;
     is_rotating[id] = true;
-    entities.push_back(id);
     knife_cooldown = current_knife_cooldown;
     num_knives_fired++;
     num_knives--;
@@ -113,50 +100,34 @@ void spawn_knife() {
 }
 
 void spawn_eyeball() {
-  const int num_clips = 18;
-  bool is_animating = true;
-  string key = "eyeball";
-  SDL_Texture *t = textures[key];
-  SDL_QueryTexture(t, NULL, NULL, &w, &h);
-  w = w / num_clips;
-  entity_id id = get_next_entity_id();
-  int x = (target_texture_width - w);
-  int y = (rand() % (target_texture_height - h));
+  int x = target_texture_width - w;
+  int y = rand() % (target_texture_height - h);
+  entity_id id = spawn_entity("eyeball", true, 18, x, y);
   double vy = 0.0;
   double vx = eyeball_vx_distribution(rng_generator);
   double angle = 0.0;
   double scale = 1.0;
   double dx = x;
   double dy = y;
-  sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {x, y, w, h}};
   transforms[id] = {dx, dy, vx, vy, angle, scale};
   is_collidable[id] = true;
   is_enemy[id] = true;
-  entities.push_back(id);
 }
 
 void spawn_bat() {
-  const int num_clips = 2;
-  bool is_animating = true;
-  string key = "bat";
-  SDL_Texture *t = textures[key];
-  SDL_QueryTexture(t, NULL, NULL, &w, &h);
-  w = w / num_clips;
-  entity_id id = get_next_entity_id();
   int x = target_texture_width - w;
   int y = rand() % (target_texture_height - (h * 2));
+  entity_id id = spawn_entity("bat", true, 2, x, y);
   double vy = 0.0;
   double vx = eyeball_vx_distribution(rng_generator);
   double angle = 0.0;
   double scale = 1.0;
   double dx = x;
   double dy = y;
-  sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {x, y, w, h}};
   transforms[id] = {dx, dy, vx, vy, angle, scale};
   is_collidable[id] = true;
   is_enemy[id] = true;
   enemy_types[id] = ENEMY_TYPE_BAT;
-  entities.push_back(id);
 }
 
 void spawn_generator(enemy_type type, bool active, int cooldown) {
@@ -179,48 +150,26 @@ void spawn_generator(enemy_type type, bool active, int cooldown) {
 }
 
 void spawn_powerup() {
-  const int num_clips = 1;
-  bool is_animating = true;
-  string key = "powerup";
   powerup_type poweruptype = (powerup_type)(rand() % POWERUP_TYPE_COUNT);
-  SDL_Texture *t = nullptr; // textures["powerup"];
+  entity_id id = -1;
+  int x = target_texture_width - w;
+  int y = texture_height_distribution(rng_generator) - h;
   switch (poweruptype) {
   case POWERUP_TYPE_KNIFE_LARGENESS:
-    key = "powerup";
-    t = textures[key];
+    id = spawn_entity("powerup", false, 1, x, y);
     break;
   case POWERUP_TYPE_KNIFE_COOLDOWN:
-    key = "powerup";
-    t = textures[key];
+    id = spawn_entity("powerup", false, 1, x, y);
     break;
   case POWERUP_TYPE_KNIFE_QUANTITY:
-    key = "knife";
-    t = textures[key];
+    id = spawn_entity("knife", false, 1, x, y);
+    transforms[id].angle = 90.0;
     break;
   default:
-    key = "powerup";
-    t = textures[key];
     break;
   }
-  SDL_QueryTexture(t, NULL, NULL, &w, &h);
-  w = w / num_clips;
-  entity_id id = get_next_entity_id();
-  double vy = 0.0;
-  double vx = -1.0;
-  double angle = 0.0;
-  if (poweruptype == POWERUP_TYPE_KNIFE_QUANTITY) {
-    angle = 90.0;
-  }
-  double scale = 1.0;
-  double dx = target_texture_width - w;
-  double dy = texture_height_distribution(rng_generator) - h;
-  int x = (int)dx;
-  int y = (int)dy;
-  sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {x, y, w, h}};
-  transforms[id] = {dx, dy, vx, vy, angle, scale};
-  is_coin[id] = false;
+  transforms[id].vx = -1.0;
   is_powerup[id] = true;
   is_rotating[id] = true;
   powerup_types[id] = poweruptype;
-  entities.push_back(id);
 }

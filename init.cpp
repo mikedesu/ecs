@@ -53,6 +53,7 @@ void init_img() {
 }
 
 void init_rng() {
+  srand(time(nullptr));
   eyeball_vx_distribution = uniform_real_distribution<double>(-4.0, -2.0);
   coin_spawn_rate_distribution = uniform_real_distribution<double>(0.0, 100.0);
 
