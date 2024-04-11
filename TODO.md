@@ -143,20 +143,21 @@
 
 - [ ] powerup that decreases skull size
 - [ ] enemy bullets
+- [ ] enemy-grazing mechanic
 - [ ] bullet-grazing mechanic
 - [ ] different-colored power-up textures to distinguish them
     - [ ] some texture besides the 'scroll'
-- [ ] HUD
+- [ ] HUD / debug-panel
     - [ ] knife count
     - [ ] powerup count
     - [ ] score
     - [ ] health
-    - [ ] time played
-- [ ] background textures
-    - [ ] one way to handle this might be to store them in a separate map and treat them separately from foreground entities
-        - [ ] we could paint everything to a separate background texture, then render the bg texture
-        - [ ] if we could find a way to organize things using surfaces, we could use blit, which is supposedly faster
-    - [ ] moon
+    - [ ] time played this game
+    - [ ] enemies grazed
+    - [ ] bullets grazed
+- [x] background textures
+    - [x] one way to handle this might be to store them in a separate map and treat them separately from foreground entities
+    - [x] moon
     - [ ] candles
     - [ ] lightning
     - [ ] clouds
