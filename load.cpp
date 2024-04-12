@@ -32,7 +32,7 @@ extern int player_max_health;
 extern int player_money;
 extern int w, h;
 extern double zoom;
-extern string coin_sheet_filepath;
+extern string soulshard_sheet_filepath;
 extern char texture_text[1024];
 extern SDL_Texture *debug_texture;
 extern SDL_Surface *text_surface;
@@ -59,7 +59,7 @@ void load_debug_text() {
            "%d\nnum_knives :%d\nmax_num_knives: %d\nnum_knives_fired: "
            "%d\nknife_charge: %d\nnum_enemies_escaped: "
            "%d\nnum_enemies_killed: %ld\nplayer_health: "
-           "%d/%d\ncoins_collected: %d\n",
+           "%d/%d\nsoulshards_collected: %d\n",
            target_texture_width, target_texture_height, window_width,
            window_height, frame_count, entities.size(), fps(), zoom,
            num_collisions, knife_cooldown, current_knife_cooldown, num_knives,
@@ -121,8 +121,8 @@ void load_textures() {
   load_texture("eyeball", eyeballsheet_filepath);
   load_texture("knife", "img/knife4x.png");
 
-  load_texture("coin", "img/soulshard-white-sheet4x.png");
-  // load_texture_with_color_mod("coin", "img/soulshard-sheet4x.png");
+  load_texture("soulshard", "img/soulshard-white-sheet4x.png");
+  // load_texture_with_color_mod("soulshard", "img/soulshard-sheet4x.png");
 
   load_texture("powerup", "img/powerup-sheet4x.png");
   load_texture("bat", "img/bat-sheet4x.png");

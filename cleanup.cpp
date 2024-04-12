@@ -37,7 +37,7 @@ extern unordered_map<entity_id, bool> inputs;
 extern unordered_map<entity_id, bool> is_rotating;
 extern unordered_map<entity_id, bool> is_collidable;
 extern unordered_map<entity_id, bool> is_enemy;
-extern unordered_map<entity_id, bool> is_coin;
+extern unordered_map<entity_id, bool> is_soulshard;
 extern unordered_map<entity_id, bool> is_knife;
 extern unordered_map<entity_id, bool> is_flipped;
 extern unordered_map<entity_id, bool> is_generator;
@@ -59,7 +59,7 @@ function<void(pair<entity_id, bool>)> cleanup_entity_marked_for_deletion =
         is_collidable.erase(id);
         is_enemy.erase(id);
         is_knife.erase(id);
-        is_coin.erase(id);
+        is_soulshard.erase(id);
         entities.erase(remove(entities.begin(), entities.end(), id),
                        entities.end());
         entities_marked_for_deletion_tmp.push_back(id);
@@ -92,7 +92,7 @@ void cleanup() {
   is_marked_for_deletion.clear();
   is_generator.clear();
   is_flipped.clear();
-  is_coin.clear();
+  is_soulshard.clear();
   enemies_killed.clear();
   sprites.clear();
   transforms.clear();

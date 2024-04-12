@@ -38,7 +38,7 @@ extern unordered_map<entity_id, enemy_type> enemy_types;
 extern unordered_map<entity_id, sprite_component> sprites;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, generator_component> generators;
-extern unordered_map<entity_id, bool> is_coin;
+extern unordered_map<entity_id, bool> is_soulshard;
 extern unordered_map<entity_id, bool> is_flipped;
 extern unordered_map<entity_id, bool> is_knife;
 extern unordered_map<entity_id, bool> is_rotating;
@@ -72,9 +72,9 @@ void spawn_skull() {
   }
 }
 
-void spawn_coin(int x, int y) {
-  entity_id id = spawn_entity("coin", true, 8, x, y);
-  is_coin[id] = true;
+void spawn_soulshard(int x, int y) {
+  entity_id id = spawn_entity("soulshard", true, 8, x, y);
+  is_soulshard[id] = true;
   transforms[id].vx = -1.0;
 }
 

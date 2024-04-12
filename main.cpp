@@ -30,7 +30,7 @@ char texture_text[1024] = "a bunch of random text";
 int target_texture_width = 1600;
 int target_texture_height = 960;
 int debug_font_size = 16;
-int coin_spawn_rate = 25.0;
+int soulshard_spawn_rate = 25.0;
 
 bool quit = false;
 bool do_render_debug_panel = true;
@@ -67,7 +67,7 @@ int num_color_indices = 3;
 string skullsheet_filepath = "img/skull-sheet4x.png";
 // string skullsheet_filepath = "img/blackskull-sheet4x.png";
 string eyeballsheet_filepath = "img/eyeball-sheet4x.png";
-string coin_sheet_filepath = "img/coin-001-sheet4x.png";
+string soulshard_sheet_filepath = "img/soulshard-001-sheet4x.png";
 
 entity_id next_entity_id = 0;
 entity_id player_id = -1;
@@ -108,7 +108,7 @@ unordered_map<entity_id, bool> inputs;
 unordered_map<entity_id, bool> is_rotating;
 unordered_map<entity_id, bool> is_collidable;
 unordered_map<entity_id, bool> is_enemy;
-unordered_map<entity_id, bool> is_coin;
+unordered_map<entity_id, bool> is_soulshard;
 unordered_map<entity_id, bool> is_knife;
 unordered_map<entity_id, bool> is_powerup;
 unordered_map<entity_id, bool> is_flipped;
@@ -121,7 +121,7 @@ unordered_map<string, SDL_Texture *> textures;
 // random number generator
 default_random_engine rng_generator;
 uniform_real_distribution<double> eyeball_vx_distribution;
-uniform_real_distribution<double> coin_spawn_rate_distribution;
+uniform_real_distribution<double> soulshard_spawn_rate_distribution;
 uniform_real_distribution<double> texture_height_distribution;
 
 int init_target_texture();

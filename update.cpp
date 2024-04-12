@@ -32,13 +32,13 @@ extern int target_texture_width;
 extern int target_texture_height;
 extern int num_enemies_escaped;
 extern int window_width;
-extern int coin_spawn_rate;
+extern int soulshard_spawn_rate;
 extern entity_id player_id;
 extern int current_knife_cooldown;
 extern int knife_cooldown;
 extern int knife_charge;
 extern default_random_engine rng_generator;
-extern uniform_real_distribution<double> coin_spawn_rate_distribution;
+extern uniform_real_distribution<double> soulshard_spawn_rate_distribution;
 
 extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, enemy_type> enemy_types;
@@ -47,7 +47,7 @@ extern unordered_map<entity_id, sprite_component> sprites;
 extern unordered_map<entity_id, sprite_component> bg_sprites;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, transform_component> bg_transforms;
-extern unordered_map<entity_id, bool> is_coin;
+extern unordered_map<entity_id, bool> is_soulshard;
 extern unordered_map<entity_id, bool> is_rotating;
 extern unordered_map<entity_id, bool> is_knife;
 extern unordered_map<entity_id, bool> is_enemy;
@@ -60,7 +60,7 @@ extern vector<entity_id> entities;
 
 // extern void update_knife_collisions();
 // extern void update_skull_collisions();
-extern void spawn_coin(int x, int y);
+extern void spawn_soulshard(int x, int y);
 extern void spawn_eyeball();
 extern void spawn_powerup();
 extern void spawn_bat();
@@ -109,7 +109,7 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
     if (is_marked_for_deletion[id]) {
       num_enemies_escaped++;
     }
-  } else if (id != player_id && (is_knife[id] || is_coin[id])) {
+  } else if (id != player_id && (is_knife[id] || is_soulshard[id])) {
 
     bool is_marked = transform.x < -sprite.src.w || transform.x > window_width;
     is_marked_for_deletion[id] = is_marked;
@@ -153,9 +153,9 @@ function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
       is_marked_for_deletion[id] = true;
       num_collisions++;
       enemies_killed[ENEMY_TYPE_EYEBALL]++;
-      // double roll = coin_spawn_rate_distribution(rng_generator);
-      // if (roll < coin_spawn_rate) {
-      spawn_coin(enemy.dest.x, enemy.dest.y);
+      // double roll = soulshard_spawn_rate_distribution(rng_generator);
+      // if (roll < soulshard_spawn_rate) {
+      spawn_soulshard(enemy.dest.x, enemy.dest.y);
       //}
       // break;
       if (is_marked_for_deletion[id]) {
@@ -174,9 +174,9 @@ function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
 function<void(sprite_pair)> update_animation = [](const sprite_pair p) {
   entity_id id = p.first;
   sprite_component sprite = sprites[id];
-  if (sprite.is_animating && is_coin[id]) {
+  if (sprite.is_animating && is_soulshard[id]) {
     if (frame_count % 10 == 0) {
-      // mPrint("coin animation");
+      // mPrint("soulshard animation");
       sprite.current_clip = (sprite.current_clip + 1) % sprite.num_clips;
       sprite.src.x = sprite.current_clip * sprite.src.w;
       sprites[id] = sprite;
@@ -252,9 +252,9 @@ void update_skull_collisions() {
           knife_cooldown = 0;
         }
       }
-    } else if (is_coin[id]) {
-      sprite_component coin = sprites[id];
-      if (SDL_HasIntersection(&skull.dest, &coin.dest)) {
+    } else if (is_soulshard[id]) {
+      sprite_component soulshard = sprites[id];
+      if (SDL_HasIntersection(&skull.dest, &soulshard.dest)) {
         is_marked_for_deletion[id] = true;
         num_collisions++;
         player_money++;
@@ -267,15 +267,15 @@ void update_skull_collisions() {
       } else {
         int skull_cx = skull.dest.x / skull.dest.w;
         int skull_cy = skull.dest.y / skull.dest.h;
-        int coin_cx = coin.dest.x / coin.dest.w;
-        int coin_cy = coin.dest.y / coin.dest.h;
-        double dist = distance(skull_cx, skull_cy, coin_cx, coin_cy);
+        int soulshard_cx = soulshard.dest.x / soulshard.dest.w;
+        int soulshard_cy = soulshard.dest.y / soulshard.dest.h;
+        double dist = distance(skull_cx, skull_cy, soulshard_cx, soulshard_cy);
         const double threshold = 100.0;
         if (dist < threshold) {
           transform_component transform = transforms[id];
-          // magnetically move the coin towards the player
-          transform.vx = coin.dest.x < skull.dest.x ? 2 : -2;
-          transform.vy = coin.dest.y < skull.dest.y ? 2 : -2;
+          // magnetically move the soulshard towards the player
+          transform.vx = soulshard.dest.x < skull.dest.x ? 2 : -2;
+          transform.vy = soulshard.dest.y < skull.dest.y ? 2 : -2;
           transforms[id] = transform;
         }
       }

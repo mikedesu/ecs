@@ -41,7 +41,7 @@ extern unordered_map<entity_id, sprite_component> bg_sprites;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, transform_component> bg_transforms;
 extern unordered_map<entity_id, generator_component> generators;
-extern unordered_map<entity_id, bool> is_coin;
+extern unordered_map<entity_id, bool> is_soulshard;
 extern unordered_map<entity_id, bool> is_flipped;
 extern unordered_map<entity_id, bool> is_knife;
 extern unordered_map<entity_id, bool> is_rotating;
