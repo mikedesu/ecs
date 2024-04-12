@@ -294,8 +294,8 @@ void update_skull_collisions() {
         num_collisions++;
         if (type == POWERUP_TYPE_KNIFE_COOLDOWN) {
           current_knife_cooldown -= 5;
-          if (current_knife_cooldown < 5) {
-            current_knife_cooldown = 5;
+          if (current_knife_cooldown < 10) {
+            current_knife_cooldown = 10;
           }
         } else if (type == POWERUP_TYPE_KNIFE_QUANTITY) {
           num_knives++;
