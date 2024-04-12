@@ -152,10 +152,10 @@ function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
 
       num_collisions++;
       enemies_killed[ENEMY_TYPE_EYEBALL]++;
-      double roll = coin_spawn_rate_distribution(rng_generator);
-      if (roll < coin_spawn_rate) {
-        spawn_coin(enemy.dest.x, enemy.dest.y);
-      }
+      // double roll = coin_spawn_rate_distribution(rng_generator);
+      // if (roll < coin_spawn_rate) {
+      spawn_coin(enemy.dest.x, enemy.dest.y);
+      //}
       // break;
     }
 
