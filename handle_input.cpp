@@ -81,20 +81,6 @@ void handle_keydown() {
   case SDLK_f:
     toggle_fullscreen();
     break;
-  case SDLK_a:
-    // change the player's sprite texture to a hard-coded selection
-    color_index++;
-    if (color_index >= num_color_indices) {
-      color_index = 0;
-    }
-
-    if (color_index == 0)
-      sprites[player_id].texture = textures["skull-red"];
-    else if (color_index == 1)
-      sprites[player_id].texture = textures["skull-green"];
-    else if (color_index == 2)
-      sprites[player_id].texture = textures["skull-blue"];
-    break;
     // case SDLK_s:
     //   if (player_money > 0) {
     //     spawn_powerup();

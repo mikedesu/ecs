@@ -35,6 +35,7 @@ extern int window_width;
 extern int coin_spawn_rate;
 extern entity_id player_id;
 extern int current_knife_cooldown;
+extern int knife_cooldown;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> coin_spawn_rate_distribution;
 
@@ -220,7 +221,16 @@ void update_skull_collisions() {
     if (id == player_id) {
       continue;
     } else if (is_knife[id]) {
-      continue;
+      sprite_component knife = sprites[id];
+      if (SDL_HasIntersection(&skull.dest, &knife.dest)) {
+        is_marked_for_deletion[id] = true;
+        num_collisions++;
+        num_knives++;
+        if (num_knives > max_num_knives) {
+          num_knives = max_num_knives;
+          knife_cooldown = 0;
+        }
+      }
     } else if (is_coin[id]) {
       sprite_component coin = sprites[id];
       if (SDL_HasIntersection(&skull.dest, &coin.dest)) {
