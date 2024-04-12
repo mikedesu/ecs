@@ -92,7 +92,7 @@ void spawn_knife() {
     double scale = 1.0 + (0.1 * largeness);
     transforms[id] = {x, y, vx, vy, angle, scale};
     is_knife[id] = true;
-    is_rotating[id] = true;
+    // is_rotating[id] = true;
     knife_cooldown = current_knife_cooldown;
     num_knives_fired++;
     num_knives--;
