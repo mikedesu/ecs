@@ -85,7 +85,12 @@ void spawn_knife() {
     double x = !is_flipped[player_id] ? player.dest.x + player.dest.w + padding
                                       : player.dest.x;
     double y = player.dest.y + player.dest.h / 4.0;
-    entity_id id = spawn_entity("knife", false, 1, x, y);
+    string key = "knife";
+    if (knife_charge >= 2) {
+      key = "knife-blue";
+    }
+    entity_id id = spawn_entity(key, false, 1, x, y);
+    // entity_id id = spawn_entity("knife", false, 1, x, y);
     double angle = is_flipped[player_id] ? 180.0 : 0.0;
     double vx =
         is_flipped[player_id] ? -current_knife_speed : current_knife_speed;

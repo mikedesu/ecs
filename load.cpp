@@ -104,6 +104,18 @@ void load_texture(string key, string path) {
   textures[key] = t;
 }
 
+void load_texture_with_color_mod(string key, string path, Uint8 r, Uint8 g,
+                                 Uint8 b) {
+  SDL_Texture *t = IMG_LoadTexture(renderer, path.c_str());
+  if (t == nullptr) {
+    string msg =
+        "Failed to load texture image with key and path: " + key + "," + path;
+    cleanup_and_exit_with_failure_mprint(msg);
+  }
+  SDL_SetTextureColorMod(t, r, g, b);
+  textures[key] = t;
+}
+
 void load_textures() {
   load_texture("skull", skullsheet_filepath);
   load_texture("eyeball", eyeballsheet_filepath);
@@ -112,4 +124,6 @@ void load_textures() {
   load_texture("powerup", "img/powerup-sheet4x.png");
   load_texture("bat", "img/bat-sheet4x.png");
   load_texture("moon", "img/moon-0a4x.png");
+
+  load_texture_with_color_mod("knife-blue", "img/knife4x.png", 0, 0, 255);
 }
