@@ -2,7 +2,7 @@
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "generator_component.h"
-// #include "mPrint.h"
+#include "mPrint.h"
 #include "powerup_type.h"
 #include "rotation_pair.h"
 #include "sprite_component.h"
@@ -59,7 +59,7 @@ extern unordered_map<entity_id, double> rotation_speeds;
 extern vector<entity_id> entities;
 
 // extern void update_knife_collisions();
-extern void update_skull_collisions();
+// extern void update_skull_collisions();
 extern void spawn_coin(int x, int y);
 extern void spawn_eyeball();
 extern void spawn_powerup();
@@ -222,6 +222,19 @@ void update_generators() {
   }
 }
 
+// double fast_sqrt(double x) {
+//   double xhalf = 0.5f * x;
+//   int i = *(int *)&x;
+//   i = 0x5f3759df - (i >> 1);
+//   x = *(double *)&i;
+//   x = x * (1.5f - xhalf * x * x);
+//   return 1 / x;
+// }
+
+double distance(int x1, int y1, int x2, int y2) {
+  return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+}
+
 void update_skull_collisions() {
   sprite_component skull = sprites[player_id];
   for (auto id : entities) {
@@ -245,14 +258,26 @@ void update_skull_collisions() {
         is_marked_for_deletion[id] = true;
         num_collisions++;
         player_money++;
-
 #define POWERUP_COST 3
         if (player_money >= POWERUP_COST) {
           spawn_powerup();
           player_money -= POWERUP_COST;
         }
-
-        break;
+        // break;
+      } else {
+        int skull_cx = skull.dest.x / skull.dest.w;
+        int skull_cy = skull.dest.y / skull.dest.h;
+        int coin_cx = coin.dest.x / coin.dest.w;
+        int coin_cy = coin.dest.y / coin.dest.h;
+        double dist = distance(skull_cx, skull_cy, coin_cx, coin_cy);
+        const double threshold = 100.0;
+        if (dist < threshold) {
+          transform_component transform = transforms[id];
+          // magnetically move the coin towards the player
+          transform.vx = coin.dest.x < skull.dest.x ? 2 : -2;
+          transform.vy = coin.dest.y < skull.dest.y ? 2 : -2;
+          transforms[id] = transform;
+        }
       }
     } else if (is_enemy[id]) {
       sprite_component enemy = sprites[id];
@@ -260,7 +285,6 @@ void update_skull_collisions() {
         is_marked_for_deletion[id] = true;
         num_collisions++;
         player_health--;
-        break;
       }
     } else if (is_powerup[id]) {
       sprite_component powerup = sprites[id];
@@ -268,7 +292,6 @@ void update_skull_collisions() {
       if (SDL_HasIntersection(&skull.dest, &powerup.dest)) {
         is_marked_for_deletion[id] = true;
         num_collisions++;
-
         if (type == POWERUP_TYPE_KNIFE_COOLDOWN) {
           current_knife_cooldown -= 5;
           if (current_knife_cooldown < 5) {
@@ -281,11 +304,7 @@ void update_skull_collisions() {
             num_knives = max_num_knives;
           }
         }
-
         powerups_collected[type]++;
-
-        // player_health++;
-        break;
       }
     }
   }

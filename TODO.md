@@ -174,5 +174,7 @@
 - [ ] moon bg texture loop around
 - [ ] re-name coins to 'soulshards' in the code
 
+### 12:54 CDT
 
+- [ ] when you move close enough to a soulshard, it should magnetically attract to you
 
