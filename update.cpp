@@ -36,6 +36,7 @@ extern int coin_spawn_rate;
 extern entity_id player_id;
 extern int current_knife_cooldown;
 extern int knife_cooldown;
+extern int knife_charge;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> coin_spawn_rate_distribution;
 
@@ -54,6 +55,7 @@ extern unordered_map<entity_id, bool> is_powerup;
 extern unordered_map<entity_id, bool> is_marked_for_deletion;
 extern unordered_map<enemy_type, int> enemies_killed;
 extern unordered_map<powerup_type, int> powerups_collected;
+extern unordered_map<entity_id, double> rotation_speeds;
 extern vector<entity_id> entities;
 
 // extern void update_knife_collisions();
@@ -126,7 +128,7 @@ function<void(rotation_pair)> handle_rotation = [](const rotation_pair p) {
   if (is_rotating) {
     transform_component transform = transforms[id];
     if (is_knife[id]) {
-      transform.angle += 4.0;
+      transform.angle += rotation_speeds[id];
     } else {
       transform.angle += 1.0;
     }
@@ -226,6 +228,7 @@ void update_skull_collisions() {
         is_marked_for_deletion[id] = true;
         num_collisions++;
         num_knives++;
+        knife_charge++;
         if (num_knives > max_num_knives) {
           num_knives = max_num_knives;
           knife_cooldown = 0;

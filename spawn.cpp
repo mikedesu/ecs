@@ -24,6 +24,7 @@ extern int knife_cooldown;
 extern int current_knife_speed;
 extern int current_knife_cooldown;
 extern int num_knives;
+extern int knife_charge;
 extern int max_num_knives;
 extern int num_knives_fired;
 extern int target_texture_width;
@@ -46,6 +47,7 @@ extern unordered_map<entity_id, bool> is_enemy;
 extern unordered_map<entity_id, bool> is_powerup;
 extern unordered_map<entity_id, bool> is_generator;
 extern unordered_map<powerup_type, int> powerups_collected;
+extern unordered_map<entity_id, double> rotation_speeds;
 extern vector<entity_id> entities;
 
 extern entity_id get_next_entity_id();
@@ -92,10 +94,20 @@ void spawn_knife() {
     double scale = 1.0 + (0.1 * largeness);
     transforms[id] = {x, y, vx, vy, angle, scale};
     is_knife[id] = true;
-    // is_rotating[id] = true;
+    is_rotating[id] = knife_charge > 0;
+    if (knife_charge > 0) {
+      rotation_speeds[id] = 5.0 * knife_charge;
+    }
     knife_cooldown = current_knife_cooldown;
     num_knives_fired++;
     num_knives--;
+
+    if (knife_charge > 0) {
+      knife_charge--;
+      if (knife_charge < 0) {
+        knife_charge = 0;
+      }
+    }
   }
 }
 

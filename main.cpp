@@ -48,8 +48,11 @@ int h = 0;
 int frame_count = 0;
 int mWidth = -1;
 int mHeight = -1;
+
 int num_knives = 2;
 int max_num_knives = 2;
+int knife_charge = 2;
+
 int num_knives_fired = 0;
 int num_enemies_escaped = 0;
 int fullscreen_width = -1;
@@ -97,6 +100,8 @@ unordered_map<entity_id, transform_component> transforms;
 unordered_map<entity_id, sprite_component> bg_sprites;
 unordered_map<entity_id, transform_component> bg_transforms;
 unordered_map<entity_id, bg_entity_type> bg_entity_types;
+
+unordered_map<entity_id, double> rotation_speeds;
 
 unordered_map<entity_id, generator_component> generators;
 unordered_map<entity_id, bool> inputs;
