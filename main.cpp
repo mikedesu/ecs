@@ -24,7 +24,7 @@ double zoom = 1.0; // has to appear
 const int default_window_width = 1600;
 const int default_window_height = 960;
 const int default_knife_speed = 4;
-const int default_knife_cooldown = 60;
+const int default_knife_cooldown = 30;
 
 char texture_text[1024] = "a bunch of random text";
 int target_texture_width = 1600;

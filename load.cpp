@@ -120,7 +120,10 @@ void load_textures() {
   load_texture("skull", skullsheet_filepath);
   load_texture("eyeball", eyeballsheet_filepath);
   load_texture("knife", "img/knife4x.png");
-  load_texture("coin", coin_sheet_filepath);
+
+  load_texture("coin", "img/soulshard-white-sheet4x.png");
+  // load_texture_with_color_mod("coin", "img/soulshard-sheet4x.png");
+
   load_texture("powerup", "img/powerup-sheet4x.png");
   load_texture("bat", "img/bat-sheet4x.png");
   load_texture("moon", "img/moon-0a4x.png");

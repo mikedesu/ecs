@@ -73,7 +73,7 @@ void spawn_skull() {
 }
 
 void spawn_coin(int x, int y) {
-  entity_id id = spawn_entity("coin", true, 4, x, y);
+  entity_id id = spawn_entity("coin", true, 8, x, y);
   is_coin[id] = true;
   transforms[id].vx = -1.0;
 }

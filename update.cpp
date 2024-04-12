@@ -115,8 +115,10 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
     is_marked_for_deletion[id] = is_marked;
 
     if (is_knife[id] && is_marked) {
-      num_knives =
-          num_knives + 1 > max_num_knives ? max_num_knives : num_knives + 1;
+      num_knives++;
+      if (num_knives > max_num_knives) {
+        num_knives = max_num_knives;
+      }
     }
   }
   transforms[id] = transform;
@@ -149,7 +151,6 @@ function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
     if (SDL_HasIntersection(&knife.dest, &enemy.dest)) {
       is_marked_for_deletion[enemy_id] = true;
       is_marked_for_deletion[id] = true;
-
       num_collisions++;
       enemies_killed[ENEMY_TYPE_EYEBALL]++;
       // double roll = coin_spawn_rate_distribution(rng_generator);
@@ -157,11 +158,15 @@ function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
       spawn_coin(enemy.dest.x, enemy.dest.y);
       //}
       // break;
-    }
-
-    if (is_marked_for_deletion[id]) {
-      num_knives =
-          num_knives + 1 > max_num_knives ? max_num_knives : num_knives + 1;
+      if (is_marked_for_deletion[id]) {
+        num_knives++;
+        if (num_knives > max_num_knives) {
+          num_knives = max_num_knives;
+        }
+        // num_knives =
+        //     num_knives + 1 >= max_num_knives ? max_num_knives : num_knives +
+        //     1;
+      }
     }
   }
 };
