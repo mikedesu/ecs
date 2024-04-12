@@ -80,10 +80,13 @@ void spawn_coin(int x, int y) {
 
 void spawn_knife() {
   if (!knife_cooldown && num_knives) {
-    const int padding = 16;
+    const int padding = 4;
     sprite_component player = sprites[player_id];
+    SDL_Texture *t = textures["knife"];
+    SDL_QueryTexture(t, NULL, NULL, &w, &h);
+
     double x = !is_flipped[player_id] ? player.dest.x + player.dest.w + padding
-                                      : player.dest.x;
+                                      : player.dest.x - w - padding;
     double y = player.dest.y + player.dest.h / 4.0;
     string key = "knife";
     if (knife_charge >= 2) {
@@ -106,7 +109,6 @@ void spawn_knife() {
     knife_cooldown = current_knife_cooldown;
     num_knives_fired++;
     num_knives--;
-
     if (knife_charge > 0) {
       knife_charge--;
       if (knife_charge < 0) {

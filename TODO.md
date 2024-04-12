@@ -133,13 +133,13 @@
 - [ ] negative-powerup that increases enemy size
 - [ ] negative-powerup that increases enemy health
 
-## 15:35 CDT
+### 15:35 CDT
 
 - [x] knives should be able to collide with multiple enemies at the same time
     - [x] for each knife, check each other entity and mark all entities it collides with, as well as marking the knife itself
 
 
-## 16:06 CDT
+### 16:06 CDT
 
 - [ ] powerup that decreases skull size
 - [ ] enemy bullets
@@ -164,4 +164,15 @@
     - [ ] gravestones
     - [ ] trees
     - [ ] parallax scrolling
+
+## 12 April 2024
+
+### 00:53 CDT
+
+- [ ] bug involving firing knives to the left
+- [ ] tweak knife cooldown default and minimum values
+- [ ] moon bg texture loop around
+- [ ] re-name coins to 'soulshards' in the code
+
+
 
