@@ -258,7 +258,7 @@ void update_skull_collisions() {
         is_marked_for_deletion[id] = true;
         num_collisions++;
         player_money++;
-#define POWERUP_COST 3
+#define POWERUP_COST 5
         if (player_money >= POWERUP_COST) {
           spawn_powerup();
           player_money -= POWERUP_COST;
