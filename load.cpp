@@ -47,6 +47,7 @@ extern string eyeballsheet_filepath;
 
 extern double fps();
 extern size_t get_num_enemies_killed();
+extern void cleanup_and_exit_with_failure_mprint(string msg);
 
 void load_debug_text() {
   snprintf(texture_text, 1024,
@@ -92,109 +93,22 @@ void load_debug_text() {
   }
 }
 
-extern void cleanup_and_exit_with_failure_mprint(string msg);
-
-void load_coin_sheet_texture() {
-  SDL_Texture *t = IMG_LoadTexture(renderer, coin_sheet_filepath.c_str());
-  if (t == nullptr) {
-    cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
-                                         coin_sheet_filepath);
-  }
-  textures["coin"] = t;
-}
-
-void load_eyeball_sheet_texture() {
-  SDL_Texture *t = IMG_LoadTexture(renderer, eyeballsheet_filepath.c_str());
-  if (t == nullptr) {
-    cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
-                                         eyeballsheet_filepath);
-  }
-  textures["eyeball"] = t;
-}
-
-void load_bat_sheet_texture() {
-  string filepath = "img/bat-sheet4x.png";
-  SDL_Texture *t = IMG_LoadTexture(renderer, filepath.c_str());
-  if (t == nullptr) {
-    cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
-                                         filepath);
-  }
-  textures["bat"] = t;
-}
-
-void load_skull_sheet_texture() {
-
-  SDL_Surface *s = IMG_Load(skullsheet_filepath.c_str());
-  if (s == nullptr) {
-    cleanup_and_exit_with_failure_mprint("Failed to load image: " +
-                                         skullsheet_filepath);
-  }
-
-  SDL_Texture *t = SDL_CreateTextureFromSurface(renderer, s);
-  // SDL_Texture *t = IMG_LoadTexture(renderer, skullsheet_filepath.c_str());
-  if (t == nullptr) {
-    cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
-                                         skullsheet_filepath);
-  }
-
-  SDL_Texture *tmp_t[3] = {nullptr, nullptr, nullptr};
-  for (int i = 0; i < 3; i++) {
-    tmp_t[i] = SDL_CreateTextureFromSurface(renderer, s);
-    if (tmp_t[i] == nullptr) {
-      cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
-                                           skullsheet_filepath);
-    }
-  }
-
-  SDL_SetTextureColorMod(tmp_t[0], 255, 0, 0);
-  SDL_SetTextureColorMod(tmp_t[1], 0, 255, 0);
-  SDL_SetTextureColorMod(tmp_t[2], 0, 0, 255);
-
-  textures["skull"] = t;
-  textures["skull-red"] = tmp_t[0];
-  textures["skull-green"] = tmp_t[1];
-  textures["skull-blue"] = tmp_t[2];
-  SDL_FreeSurface(s);
-}
-
-void load_knife_sheet_texture() {
-  // string filepath = "img/knife4x.png";
-  string filepath = "img/knife-alt4x.png";
-  SDL_Texture *t = IMG_LoadTexture(renderer, filepath.c_str());
-  if (t == nullptr) {
-    cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
-                                         filepath);
-  }
-  // SDL_SetTextureColorMod(t, 255, 0, 0);
-  textures["knife"] = t;
-}
-
-void load_powerup_sheet_texture() {
-  string path = "img/powerup-sheet4x.png";
+void load_texture(string key, string path) {
   SDL_Texture *t = IMG_LoadTexture(renderer, path.c_str());
   if (t == nullptr) {
-    cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
-                                         path);
+    string msg =
+        "Failed to load texture image with key and path: " + key + "," + path;
+    cleanup_and_exit_with_failure_mprint(msg);
   }
-  textures["powerup"] = t;
-}
-
-void load_moon_texture() {
-  string path = "img/moon-0a4x.png";
-  SDL_Texture *t = IMG_LoadTexture(renderer, path.c_str());
-  if (t == nullptr) {
-    cleanup_and_exit_with_failure_mprint("Failed to load texture image: " +
-                                         path);
-  }
-  textures["moon"] = t;
+  textures[key] = t;
 }
 
 void load_textures() {
-  load_skull_sheet_texture();
-  load_eyeball_sheet_texture();
-  load_knife_sheet_texture();
-  load_coin_sheet_texture();
-  load_powerup_sheet_texture();
-  load_bat_sheet_texture();
-  load_moon_texture();
+  load_texture("skull", skullsheet_filepath);
+  load_texture("eyeball", eyeballsheet_filepath);
+  load_texture("knife", "img/knife4x.png");
+  load_texture("coin", coin_sheet_filepath);
+  load_texture("powerup", "img/powerup-sheet4x.png");
+  load_texture("bat", "img/bat-sheet4x.png");
+  load_texture("moon", "img/moon-0a4x.png");
 }
