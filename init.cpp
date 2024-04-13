@@ -26,6 +26,9 @@ extern SDL_Texture *target_texture;
 extern uniform_real_distribution<double> eyeball_vx_distribution;
 extern uniform_real_distribution<double> soulshard_spawn_rate_distribution;
 extern uniform_real_distribution<double> texture_height_distribution;
+extern uniform_real_distribution<double> blood_velocity_positive_distribution;
+extern uniform_real_distribution<double> blood_velocity_negative_distribution;
+extern uniform_real_distribution<double> blood_velocity_distribution;
 
 extern void cleanup_and_exit_with_failure_mprint(string message);
 
@@ -55,12 +58,21 @@ void init_img() {
 void init_rng() {
   srand(time(nullptr));
   eyeball_vx_distribution = uniform_real_distribution<double>(-4.0, -2.0);
-  soulshard_spawn_rate_distribution = uniform_real_distribution<double>(0.0, 100.0);
+  soulshard_spawn_rate_distribution =
+      uniform_real_distribution<double>(0.0, 100.0);
 
   if (target_texture_width > 0) {
     texture_height_distribution =
         uniform_real_distribution<double>(0.0, target_texture_height);
   }
+
+  blood_velocity_positive_distribution =
+      uniform_real_distribution<double>(1.0, 2.0);
+
+  blood_velocity_negative_distribution =
+      uniform_real_distribution<double>(-2.0, -1.0);
+
+  blood_velocity_distribution = uniform_real_distribution<double>(-2.0, 2.0);
 }
 
 int init_target_texture() {

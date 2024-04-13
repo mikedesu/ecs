@@ -122,6 +122,20 @@ void load_texture_with_color_mod(string key, string path, Uint8 r, Uint8 g,
   textures[key] = t;
 }
 
+void load_pixel(string key, Uint8 r, Uint8 g, Uint8 b, int w, int h) {
+  SDL_Texture *pixel = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888,
+                                         SDL_TEXTUREACCESS_TARGET, w, h);
+  if (pixel == nullptr) {
+    string msg = "Failed to create pixel texture with key: " + key;
+    cleanup_and_exit_with_failure_mprint(msg);
+  }
+  SDL_SetRenderTarget(renderer, pixel);
+  SDL_SetRenderDrawColor(renderer, r, g, b, 255);
+  SDL_RenderClear(renderer);
+  SDL_SetRenderTarget(renderer, nullptr);
+  textures[key] = pixel;
+}
+
 void load_textures() {
   load_texture("skull", skullsheet_filepath);
   load_texture("eyeball", eyeballsheet_filepath);
@@ -135,4 +149,6 @@ void load_textures() {
   load_texture("moon", "img/moon-0a4x.png");
 
   load_texture_with_color_mod("knife-blue", "img/knife4x.png", 0, 0, 255);
+
+  load_pixel("blood-pixel", 255, 0, 0, 4, 4);
 }

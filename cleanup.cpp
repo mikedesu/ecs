@@ -40,6 +40,7 @@ extern unordered_map<entity_id, bool> is_knife;
 extern unordered_map<entity_id, bool> is_flipped;
 extern unordered_map<entity_id, bool> is_generator;
 extern unordered_map<entity_id, bool> is_marked_for_deletion;
+extern unordered_map<entity_id, bool> is_blood_pixel;
 extern unordered_map<enemy_type, int> enemies_killed;
 extern unordered_map<int, bool> is_pressed;
 
@@ -58,6 +59,10 @@ function<void(pair<entity_id, bool>)> cleanup_entity_marked_for_deletion =
         is_enemy.erase(id);
         is_knife.erase(id);
         is_soulshard.erase(id);
+        is_flipped.erase(id);
+        is_generator.erase(id);
+        // is_marked_for_deletion.erase(id);
+        is_blood_pixel.erase(id);
         entities.erase(remove(entities.begin(), entities.end(), id),
                        entities.end());
         entities_marked_for_deletion_tmp.push_back(id);
@@ -96,6 +101,7 @@ void cleanup() {
   transforms.clear();
   generators.clear();
   inputs.clear();
+  is_blood_pixel.clear();
   // mPrint("cleaning up SDL");
   // mPrint("cleaning up SDL textures");
   cleanup_textures();

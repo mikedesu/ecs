@@ -88,20 +88,17 @@ SDL_Texture *debug_bg_texture = nullptr;
 
 vector<entity_id> entities;
 vector<entity_id> entities_marked_for_deletion_tmp;
+unordered_map<entity_id, bool> is_blood_pixel;
 
 unordered_map<int, bool> is_pressed;
 unordered_map<entity_id, powerup_type> powerup_types;
 unordered_map<entity_id, enemy_type> enemy_types;
-
 unordered_map<entity_id, sprite_component> sprites;
 unordered_map<entity_id, transform_component> transforms;
-
 unordered_map<entity_id, sprite_component> bg_sprites;
 unordered_map<entity_id, transform_component> bg_transforms;
 unordered_map<entity_id, bg_entity_type> bg_entity_types;
-
 unordered_map<entity_id, double> rotation_speeds;
-
 unordered_map<entity_id, generator_component> generators;
 unordered_map<entity_id, bool> inputs;
 unordered_map<entity_id, bool> is_rotating;
@@ -122,6 +119,9 @@ default_random_engine rng_generator;
 uniform_real_distribution<double> eyeball_vx_distribution;
 uniform_real_distribution<double> soulshard_spawn_rate_distribution;
 uniform_real_distribution<double> texture_height_distribution;
+uniform_real_distribution<double> blood_velocity_positive_distribution;
+uniform_real_distribution<double> blood_velocity_negative_distribution;
+uniform_real_distribution<double> blood_velocity_distribution;
 
 int init_target_texture();
 entity_id get_next_entity_id();
@@ -159,7 +159,7 @@ int main() {
   spawn_skull();
 
   // spawn_generator(ENEMY_TYPE_EYEBALL, true, 120);
-  spawn_generator(ENEMY_TYPE_BAT, true, 128);
+  spawn_generator(ENEMY_TYPE_BAT, true, 60);
 
   while (!quit) {
     handle_input();

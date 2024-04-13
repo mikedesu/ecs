@@ -61,6 +61,7 @@ extern void spawn_soulshard(int x, int y);
 extern void spawn_eyeball();
 extern void spawn_powerup();
 extern void spawn_bat();
+extern void spawn_blood_pixel(int x, int y);
 extern double distance(int x1, int y1, int x2, int y2);
 
 function<void(transform_pair)> handle_bg_transform =
@@ -115,6 +116,25 @@ function<void(const entity_id)> handle_knife_soulshard_transform =
       }
     };
 
+function<void(const entity_id)> handle_powerup_transform =
+    [](const entity_id id) {
+      is_marked_for_deletion[id] =
+          transforms[id].x < 2 * -sprites[id].src.w ||
+          transforms[id].x > window_width + 2 * sprites[id].src.w ||
+          transforms[id].y < 2 * -sprites[id].src.h ||
+          transforms[id].y > window_width + 2 * sprites[id].src.h;
+    };
+
+function<void(const entity_id)> handle_blood_pixel_transform =
+    [](const entity_id id) {
+      is_marked_for_deletion[id] =
+          transforms[id].x < 2 * -sprites[id].src.w ||
+          transforms[id].x > window_width + 2 * sprites[id].src.w ||
+          transforms[id].y < 2 * -sprites[id].src.h ||
+          transforms[id].y > window_width + 2 * sprites[id].src.h;
+    };
+
+extern unordered_map<entity_id, bool> is_blood_pixel;
 function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   entity_id id = t.first;
   transform_component transform = t.second;
@@ -132,6 +152,10 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
     handle_enemy_transform(id);
   } else if (id != player_id && (is_knife[id] || is_soulshard[id])) {
     handle_knife_soulshard_transform(id);
+  } else if (id != player_id && is_powerup[id]) {
+    handle_powerup_transform(id);
+  } else if (id != player_id && is_blood_pixel[id]) {
+    handle_blood_pixel_transform(id);
   }
 };
 
@@ -165,6 +189,12 @@ function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
       num_collisions++;
       enemies_killed[ENEMY_TYPE_EYEBALL]++;
       spawn_soulshard(enemy.dest.x, enemy.dest.y);
+
+      for (int i = 0; i < 10; i++) {
+        spawn_blood_pixel(enemy.dest.x + enemy.dest.w / 2,
+                          enemy.dest.y + enemy.dest.h / 2);
+      }
+
       if (is_marked_for_deletion[id]) {
         num_knives++;
         if (num_knives > max_num_knives) {

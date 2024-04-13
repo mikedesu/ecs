@@ -1,6 +1,7 @@
 #include "SDL_handler.h"
 #include "components.h"
 #include "entity_id.h"
+#include "mPrint.h"
 #include "powerup_type.h"
 #include <random>
 #include <string>
@@ -31,6 +32,11 @@ extern int player_money;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> eyeball_vx_distribution;
 extern uniform_real_distribution<double> texture_height_distribution;
+extern uniform_real_distribution<double> blood_velocity_positive_distribution;
+extern uniform_real_distribution<double> blood_velocity_negative_distribution;
+extern uniform_real_distribution<double> blood_velocity_distribution;
+
+extern unordered_map<entity_id, bool> is_blood_pixel;
 extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, enemy_type> enemy_types;
 extern unordered_map<entity_id, sprite_component> sprites;
@@ -193,4 +199,17 @@ void spawn_powerup() {
   is_powerup[id] = true;
   is_rotating[id] = true;
   powerup_types[id] = poweruptype;
+}
+
+void spawn_blood_pixel(int x, int y) {
+  // mPrint("spawn_blood_pixel");
+  entity_id id = spawn_entity("blood-pixel", false, 1, x, y);
+  transforms[id].vx = blood_velocity_negative_distribution(rng_generator);
+  transforms[id].vy = blood_velocity_distribution(rng_generator);
+  // transforms[id].vy = blood_ve
+  transforms[id].angle = 0.0;
+  transforms[id].scale = 1.0;
+  transforms[id].x = (double)x;
+  transforms[id].y = (double)y;
+  is_blood_pixel[id] = true;
 }
