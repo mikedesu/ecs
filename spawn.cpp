@@ -81,7 +81,7 @@ void spawn_soulshard(int x, int y) {
 void spawn_knife() {
   if (!knife_cooldown && num_knives) {
     const int padding_right = 4;
-    const int padding_left = 16;
+    const int padding_left = 20;
     sprite_component player = sprites[player_id];
     SDL_Texture *t = textures["knife"];
     SDL_QueryTexture(t, NULL, NULL, &w, &h);
@@ -172,6 +172,8 @@ void spawn_generator(enemy_type type, bool active, int cooldown) {
 
 void spawn_powerup() {
   powerup_type poweruptype = (powerup_type)(rand() % POWERUP_TYPE_COUNT);
+  SDL_Texture *t = textures["powerup"];
+  SDL_QueryTexture(t, NULL, NULL, &w, &h);
   entity_id id = -1;
   int x = target_texture_width - w;
   int y = texture_height_distribution(rng_generator) - h;

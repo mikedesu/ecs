@@ -80,48 +80,63 @@ function<void(transform_pair)> handle_bg_transform =
       bg_transforms[id] = transform;
     };
 
+// bounds checking, player cannot move beyond texture
+function<void(const entity_id, transform_component &)> handle_skull_transform =
+    [](const entity_id id, transform_component &transform) {
+      sprite_component sprite = sprites[id];
+      if (transform.x < 0) {
+        transform.x = 0;
+      } else if (transform.x > target_texture_width - sprite.dest.w) {
+        transform.x = target_texture_width - sprite.dest.w;
+      }
+      if (transform.y < 0) {
+        transform.y = 0;
+      } else if (transform.y > target_texture_height - sprite.dest.h) {
+        transform.y = target_texture_height - sprite.dest.h;
+      }
+    };
+
+function<void(const entity_id)> handle_enemy_transform =
+    [](const entity_id id) {
+      is_marked_for_deletion[id] = transforms[id].x < -sprites[id].src.w;
+      if (is_marked_for_deletion[id]) {
+        num_enemies_escaped++;
+      }
+    };
+
+function<void(const entity_id)> handle_knife_soulshard_transform =
+    [](const entity_id id) {
+      bool is_marked = transforms[id].x < 2 * -sprites[id].src.w ||
+                       transforms[id].x > window_width + 2 * sprites[id].src.w;
+      is_marked_for_deletion[id] = is_marked;
+      if (is_knife[id] && is_marked) {
+        num_knives++;
+        if (num_knives > max_num_knives) {
+          num_knives = max_num_knives;
+        }
+      }
+    };
+
 function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   entity_id id = t.first;
   transform_component transform = t.second;
-  sprite_component sprite = sprites[id];
   transform.x += transform.vx;
   transform.y += transform.vy;
   if (id == player_id) {
-    // bounds checking, player cannot move beyond texture
-    if (transform.x < 0) {
-      transform.x = 0;
-    } else if (transform.x > target_texture_width - sprite.dest.w) {
-      transform.x = target_texture_width - sprite.dest.w;
-    }
-    if (transform.y < 0) {
-      transform.y = 0;
-    } else if (transform.y > target_texture_height - sprite.dest.h) {
-      transform.y = target_texture_height - sprite.dest.h;
-    }
-  }
-  sprite.dest.x = transform.x;
-  sprite.dest.y = transform.y;
-  sprite.dest.w = sprite.src.w * transform.scale;
-  sprite.dest.h = sprite.src.h * transform.scale;
-  sprites[id] = sprite;
-  if (id != player_id && is_enemy[id]) {
-    is_marked_for_deletion[id] = transform.x < -sprite.src.w;
-    if (is_marked_for_deletion[id]) {
-      num_enemies_escaped++;
-    }
-  } else if (id != player_id && (is_knife[id] || is_soulshard[id])) {
-
-    bool is_marked = transform.x < -sprite.src.w || transform.x > window_width;
-    is_marked_for_deletion[id] = is_marked;
-
-    if (is_knife[id] && is_marked) {
-      num_knives++;
-      if (num_knives > max_num_knives) {
-        num_knives = max_num_knives;
-      }
-    }
+    handle_skull_transform(id, transform);
   }
   transforms[id] = transform;
+
+  sprites[id].dest.x = transform.x;
+  sprites[id].dest.y = transform.y;
+  sprites[id].dest.w = sprites[id].src.w * transform.scale;
+  sprites[id].dest.h = sprites[id].src.h * transform.scale;
+
+  if (id != player_id && is_enemy[id]) {
+    handle_enemy_transform(id);
+  } else if (id != player_id && (is_knife[id] || is_soulshard[id])) {
+    handle_knife_soulshard_transform(id);
+  }
 };
 
 function<void(rotation_pair)> handle_rotation = [](const rotation_pair p) {
@@ -265,19 +280,29 @@ void update_skull_collisions() {
         }
         // break;
       } else {
-        int skull_cx = skull.dest.x / skull.dest.w;
-        int skull_cy = skull.dest.y / skull.dest.h;
-        int soulshard_cx = soulshard.dest.x / soulshard.dest.w;
-        int soulshard_cy = soulshard.dest.y / soulshard.dest.h;
+        int skull_cx = (skull.dest.x + skull.dest.w / 2);
+        int skull_cy = (skull.dest.y + skull.dest.h / 2);
+        int soulshard_cx = (soulshard.dest.x + soulshard.dest.w / 2);
+        int soulshard_cy = (soulshard.dest.y + soulshard.dest.h / 2);
         double dist = distance(skull_cx, skull_cy, soulshard_cx, soulshard_cy);
-        const double threshold = 100.0;
+        const double threshold = 200.0;
+        transform_component transform = transforms[id];
         if (dist < threshold) {
-          transform_component transform = transforms[id];
           // magnetically move the soulshard towards the player
-          transform.vx = soulshard.dest.x < skull.dest.x ? 2 : -2;
-          transform.vy = soulshard.dest.y < skull.dest.y ? 2 : -2;
-          transforms[id] = transform;
+          // transform.vx = soulshard.dest.x < skull.dest.x   ? 2
+          //               : soulshard.dest.x > skull.dest.x ? -2
+          //                                                 : 0;
+          transform.vx = soulshard_cx < skull_cx - 4   ? 4
+                         : soulshard_cx > skull_cx + 4 ? -4
+                                                       : 0;
+          transform.vy = soulshard_cy < skull_cy - 4   ? 4
+                         : soulshard_cy > skull_cy + 4 ? -4
+                                                       : 0;
+        } else {
+          transform.vx = -1;
+          transform.vy = 0;
         }
+        transforms[id] = transform;
       }
     } else if (is_enemy[id]) {
       sprite_component enemy = sprites[id];

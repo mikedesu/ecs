@@ -176,5 +176,12 @@
 
 ### 12:54 CDT
 
-- [ ] when you move close enough to a soulshard, it should magnetically attract to you
+- [x] when you move close enough to a soulshard, it should magnetically attract to you
+
+### 17:18 CDT
+
+- [ ] enemy death animation
+- [ ] blood particle generator
+- [ ] fire particle generator
+
 

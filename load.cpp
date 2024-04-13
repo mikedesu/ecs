@@ -2,6 +2,7 @@
 // #include "enemy_type.h"
 #include "entity_id.h"
 #include "mPrint.h"
+#include "transform_component.h"
 #include <SDL2/SDL_render.h>
 #include <cstdio>
 #include <string>
@@ -45,7 +46,9 @@ extern int DEBUG_TEXT_WRAP_LEN;
 extern vector<entity_id> entities;
 extern unordered_map<string, SDL_Texture *> textures;
 extern string eyeballsheet_filepath;
+extern unordered_map<entity_id, transform_component> transforms;
 
+extern entity_id player_id;
 extern double fps();
 extern size_t get_num_enemies_killed();
 extern void cleanup_and_exit_with_failure_mprint(string msg);
@@ -59,13 +62,13 @@ void load_debug_text() {
            "%d\nnum_knives :%d\nmax_num_knives: %d\nnum_knives_fired: "
            "%d\nknife_charge: %d\nnum_enemies_escaped: "
            "%d\nnum_enemies_killed: %ld\nplayer_health: "
-           "%d/%d\nsoulshards_collected: %d\n",
+           "%d/%d\nsoulshards_collected: %d\nplayer position: %.02f,%.02f\n",
            target_texture_width, target_texture_height, window_width,
            window_height, frame_count, entities.size(), fps(), zoom,
            num_collisions, knife_cooldown, current_knife_cooldown, num_knives,
            max_num_knives, num_knives_fired, knife_charge, num_enemies_escaped,
            get_num_enemies_killed(), player_health, player_max_health,
-           player_money);
+           player_money, transforms[player_id].x, transforms[player_id].y);
   text_surface = TTF_RenderText_Blended_Wrapped(gFont, texture_text, textColor,
                                                 DEBUG_TEXT_WRAP_LEN);
   if (text_surface == nullptr) {
