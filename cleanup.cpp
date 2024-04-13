@@ -1,10 +1,8 @@
 #include "SDL_handler.h"
+#include "components.h"
 #include "enemy_type.h"
 #include "entity_id.h"
-#include "generator_component.h"
 #include "mPrint.h"
-#include "sprite_component.h"
-#include "transform_component.h"
 #include <algorithm>
 #include <functional>
 #include <string>

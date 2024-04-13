@@ -1,10 +1,8 @@
 
 #include "SDL_handler.h"
+#include "components.h"
 #include "entity_id.h"
-#include "generator_component.h"
 #include "powerup_type.h"
-#include "sprite_component.h"
-#include "transform_component.h"
 #include <random>
 #include <string>
 #include <unordered_map>

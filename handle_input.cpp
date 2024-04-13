@@ -1,7 +1,6 @@
 #include "SDL_handler.h"
+#include "components.h"
 #include "entity_id.h"
-#include "sprite_component.h"
-#include "transform_component.h"
 #include <string>
 #include <unordered_map>
 

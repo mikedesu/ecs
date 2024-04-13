@@ -1,8 +1,8 @@
 #include "SDL_handler.h"
 // #include "enemy_type.h"
+#include "components.h"
 #include "entity_id.h"
 #include "mPrint.h"
-#include "transform_component.h"
 #include <SDL2/SDL_render.h>
 #include <cstdio>
 #include <string>
@@ -30,7 +30,8 @@ extern int max_num_knives;
 extern int num_enemies_escaped;
 extern int player_health;
 extern int player_max_health;
-extern int player_money;
+extern int player_soulshards;
+extern int total_soulshards_collected;
 extern int w, h;
 extern double zoom;
 extern string soulshard_sheet_filepath;
@@ -62,13 +63,15 @@ void load_debug_text() {
            "%d\nnum_knives :%d\nmax_num_knives: %d\nnum_knives_fired: "
            "%d\nknife_charge: %d\nnum_enemies_escaped: "
            "%d\nnum_enemies_killed: %ld\nplayer_health: "
-           "%d/%d\nsoulshards_collected: %d\nplayer position: %.02f,%.02f\n",
+           "%d/%d\nsoulshards_collected: %d\ntotal_soulshards_collected: "
+           "%d\nplayer position: %.02f,%.02f\n",
            target_texture_width, target_texture_height, window_width,
            window_height, frame_count, entities.size(), fps(), zoom,
            num_collisions, knife_cooldown, current_knife_cooldown, num_knives,
            max_num_knives, num_knives_fired, knife_charge, num_enemies_escaped,
            get_num_enemies_killed(), player_health, player_max_health,
-           player_money, transforms[player_id].x, transforms[player_id].y);
+           player_soulshards, total_soulshards_collected,
+           transforms[player_id].x, transforms[player_id].y);
   text_surface = TTF_RenderText_Blended_Wrapped(gFont, texture_text, textColor,
                                                 DEBUG_TEXT_WRAP_LEN);
   if (text_surface == nullptr) {

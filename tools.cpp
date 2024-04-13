@@ -1,7 +1,7 @@
 #include "SDL_handler.h"
+#include "components.h"
 #include "enemy_type.h"
 #include "entity_id.h"
-#include "generator_component.h"
 #include <unordered_map>
 #include <vector>
 
@@ -23,6 +23,10 @@ extern unordered_map<entity_id, bool> is_generator;
 extern vector<entity_id> entities;
 
 entity_id get_next_entity_id() { return next_entity_id++; }
+
+double distance(int x1, int y1, int x2, int y2) {
+  return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+}
 
 size_t get_num_enemies_killed() {
   size_t total = 0;

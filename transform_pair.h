@@ -1,6 +1,6 @@
 #pragma once
 
-#include "transform_component.h"
+#include "components.h"
 #include <utility>
 
 using std::pair;

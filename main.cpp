@@ -1,11 +1,9 @@
 #include "SDL_handler.h"
 #include "bg_entity_type.h"
+#include "components.h"
 #include "enemy_type.h"
 #include "entity_id.h"
-#include "generator_component.h"
 #include "powerup_type.h"
-#include "sprite_component.h"
-#include "transform_component.h"
 #include <random>
 #include <string>
 #include <unordered_map>
@@ -59,7 +57,8 @@ int fullscreen_width = -1;
 int fullscreen_height = -1;
 int player_health = 3;
 int player_max_health = 3;
-int player_money = 0;
+int player_soulshards = 0;
+int total_soulshards_collected = 0;
 
 int color_index = 0;
 int num_color_indices = 3;

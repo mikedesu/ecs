@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sprite_component.h"
+#include "components.h"
 
 using std::pair;
 
