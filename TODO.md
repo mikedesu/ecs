@@ -148,10 +148,10 @@
 - [ ] different-colored power-up textures to distinguish them
     - [ ] some texture besides the 'scroll'
 - [ ] HUD / debug-panel
-    - [ ] knife count
+    - [x] knife count
     - [ ] powerup count
     - [ ] score
-    - [ ] health
+    - [x] health
     - [ ] time played this game
     - [ ] enemies grazed
     - [ ] bullets grazed
@@ -169,10 +169,10 @@
 
 ### 00:53 CDT
 
-- [ ] bug involving firing knives to the left
-- [ ] tweak knife cooldown default and minimum values
+- [x] bug involving firing knives to the left
+- [x] tweak knife cooldown default and minimum values
 - [ ] moon bg texture loop around
-- [ ] re-name coins to 'soulshards' in the code
+- [x] re-name coins to 'soulshards' in the code
 
 ### 12:54 CDT
 
@@ -184,4 +184,23 @@
 - [ ] blood particle generator
 - [ ] fire particle generator
 
+
+## 13 April 2024
+
+### 12:42 CDT
+
+- [ ] idea for blood splatter effect: use a transparent texture and randomly draw red pixels on it 
+    - [ ] pre-render several different textures and randomize them on enemy death
+    - [ ] fade them out over time then remove them from the scene
+- [ ] explosion animation
+- [ ] fire animation
+- [ ] move the magnetic-soulshard variables into main so that they can be tune-able over time
+    - [ ] magnet range
+    - [ ] magnet speed
+- [ ] gameover
+    - [ ] on player death, need to trigger some gameover event / state
+    - [ ] need to reset the game state
+        - [ ] will require a function
+        - [ ] a lot of the functionality needed to do this exists now, but we need to organize it into a single function
+        - [ ] this way, on either game load or gameover, we can start a new game
 
