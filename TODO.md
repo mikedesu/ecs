@@ -204,3 +204,12 @@
         - [ ] a lot of the functionality needed to do this exists now, but we need to organize it into a single function
         - [ ] this way, on either game load or gameover, we can start a new game
 
+### 23:08 CDT
+
+- [ ] fix the knife-throwing bug when the skull is facing left
+    - [ ] current implementation hard-codes smallest knife size
+        - [ ] when the knife-size scale increases, the resulting destination rects do 
+        - [ ] need to get the size of the scaled knife width in order to place it appropriately
+        - [ ] same with height, but the bug involves the width and x-position
+
+
