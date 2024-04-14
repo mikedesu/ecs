@@ -158,10 +158,12 @@ void load_textures() {
     cleanup_and_exit_with_failure_mprint(msg);
   }
 
-  char readBuffer[65536];
-  fread(readBuffer, 1, 65536, fp);
+  const size_t read_buffer_size = 65536;
+  char readBuffer[read_buffer_size];
+  fread(readBuffer, 1, read_buffer_size, fp);
   fclose(fp);
 
+  // suppress the deprecated warning
   Document d;
   d.Parse(readBuffer);
 
@@ -170,31 +172,20 @@ void load_textures() {
     cleanup_and_exit_with_failure_mprint(msg);
   }
 
-  // if (!d.IsObject()) {
-  //   string msg = "config/textures.json is not an object";
-  //   cleanup_and_exit_with_failure_mprint(msg);
-  // }
-
   if (d.IsArray()) {
-    string msg = "config/textures.json is an array";
-
-    // iterate the array
     for (auto &v : d.GetArray()) {
       if (!v.IsObject()) {
         string msg = "config/textures.json array element is not an object";
         cleanup_and_exit_with_failure_mprint(msg);
       }
-
       if (!v.HasMember("key") || !v["key"].IsString()) {
         string msg = "config/textures.json array element has no key";
         cleanup_and_exit_with_failure_mprint(msg);
       }
-
       if (!v.HasMember("path") || !v["path"].IsString()) {
         string msg = "config/textures.json array element has no path";
         cleanup_and_exit_with_failure_mprint(msg);
       }
-
       string key = v["key"].GetString();
       string path = v["path"].GetString();
       load_texture(key, path);
