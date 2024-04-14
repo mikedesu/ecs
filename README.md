@@ -2,6 +2,18 @@
 
 An entity-component-system (ECS) written in pure C++ and libsdl.
 
+## Requirements
+
+- libsdl2-dev
+- libsdl2-image-dev
+- libsdl2-ttf-dev
+- libsdl2-mixer-dev
+- cmake
+
+```
+sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev cmake
+```
+
 ## Building
 
 You'll currently need to add in your own graphics. This repository is meant more for the ECS than the game itself.
@@ -10,17 +22,10 @@ There are plans to also build various RPGs, as well as FPS engines, so one goal 
 This is still very early in the process, but if you want to build:
 
 ```
-make clean && make
+$ ./build.sh
 ```
 
-If you happen to have the graphics, you can run the game with: `./game`
-
-If you want to build with either `g++` or `clang++`, you can change the `CC` variable in the `Makefile`.
-
-```
-CC=g++
-CC=clang++
-```
+If you happen to have the graphics, you can run the game with: `build/game`
 
 ## Motivations
 
