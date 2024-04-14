@@ -1,3 +1,37 @@
-{
-  "test":"file/file.txt"
-}
+[
+  {
+    "type": "texture",
+    "key": "skull",
+    "path": "img/skull-sheet4x.png"
+  },
+  {
+    "type": "texture",
+    "key": "eyeball",
+    "path": "img/eyeball-sheet4x.png"
+  },
+  {
+    "type": "texture",
+    "key": "bat",
+    "path": "img/bat-sheet4x.png"
+  },
+  {
+    "type": "texture",
+    "key": "knife",
+    "path": "img/knife-alt4x.png"
+  },
+  {
+    "type": "texture",
+    "key": "moon",
+    "path": "img/moon-0a4x.png"
+  },
+  {
+    "type": "texture",
+    "key": "powerup",
+    "path": "img/powerup-sheet4x.png"
+  },
+  {
+    "type": "texture",
+    "key": "soulshard",
+    "path": "img/soulshard-white-sheet4x.png"
+  }
+]

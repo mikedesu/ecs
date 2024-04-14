@@ -5,7 +5,7 @@
 #include "mPrint.h"
 #include "rapidjson/document.h"
 #include "rapidjson/stringbuffer.h"
-#include "rapidjson/writer.h"
+// #include "rapidjson/writer.h"
 #include <SDL2/SDL_render.h>
 #include <cstdio>
 #include <string>
@@ -14,7 +14,7 @@
 
 using rapidjson::Document;
 using rapidjson::StringBuffer;
-using rapidjson::Writer;
+// using rapidjson::Writer;
 
 using std::snprintf;
 using std::string;
@@ -141,17 +141,15 @@ void load_pixel(string key, Uint8 r, Uint8 g, Uint8 b, int w, int h) {
 }
 
 void load_textures() {
-  load_texture("skull", "img/skull-sheet4x.png");
-  load_texture("eyeball", "img/eyeball-sheet4x.png");
-  load_texture("knife", "img/knife-alt4x.png");
-  load_texture("soulshard", "img/soulshard-white-sheet4x.png");
-  // load_texture_with_color_mod("soulshard", "img/soulshard-sheet4x.png");
-  load_texture("powerup", "img/powerup-sheet4x.png");
-  load_texture("bat", "img/bat-sheet4x.png");
-  load_texture("moon", "img/moon-0a4x.png");
-
+  // load_texture("skull", "img/skull-sheet4x.png");
+  // load_texture("eyeball", "img/eyeball-sheet4x.png");
+  // load_texture("knife", "img/knife-alt4x.png");
+  // load_texture("soulshard", "img/soulshard-white-sheet4x.png");
+  //// load_texture_with_color_mod("soulshard", "img/soulshard-sheet4x.png");
+  // load_texture("powerup", "img/powerup-sheet4x.png");
+  // load_texture("bat", "img/bat-sheet4x.png");
+  // load_texture("moon", "img/moon-0a4x.png");
   load_texture_with_color_mod("knife-blue", "img/knife-alt4x.png", 0, 0, 255);
-
   load_pixel("blood-pixel", 255, 0, 0, 4, 4);
 
   FILE *fp = fopen("config/textures.json", "r");
@@ -172,10 +170,36 @@ void load_textures() {
     cleanup_and_exit_with_failure_mprint(msg);
   }
 
-  if (!d.IsObject()) {
-    string msg = "config/textures.json is not an object";
-    cleanup_and_exit_with_failure_mprint(msg);
+  // if (!d.IsObject()) {
+  //   string msg = "config/textures.json is not an object";
+  //   cleanup_and_exit_with_failure_mprint(msg);
+  // }
+
+  if (d.IsArray()) {
+    string msg = "config/textures.json is an array";
+
+    // iterate the array
+    for (auto &v : d.GetArray()) {
+      if (!v.IsObject()) {
+        string msg = "config/textures.json array element is not an object";
+        cleanup_and_exit_with_failure_mprint(msg);
+      }
+
+      if (!v.HasMember("key") || !v["key"].IsString()) {
+        string msg = "config/textures.json array element has no key";
+        cleanup_and_exit_with_failure_mprint(msg);
+      }
+
+      if (!v.HasMember("path") || !v["path"].IsString()) {
+        string msg = "config/textures.json array element has no path";
+        cleanup_and_exit_with_failure_mprint(msg);
+      }
+
+      string key = v["key"].GetString();
+      string path = v["path"].GetString();
+      load_texture(key, path);
+    }
   }
 
-  cout << d["test"].GetString() << endl;
+  // cout << d["test"].GetString() << endl;
 }

@@ -9,3 +9,5 @@ build/*
 */*.o
 game
 */game
+.cache
+compile_commands.json
