@@ -13,6 +13,8 @@
 #include <unordered_map>
 #include <vector>
 
+#define POWERUP_COST 5
+
 using std::default_random_engine;
 using std::for_each;
 using std::function;
@@ -63,6 +65,86 @@ extern void spawn_powerup();
 extern void spawn_bat();
 extern void spawn_blood_pixel(int x, int y);
 extern double distance(int x1, int y1, int x2, int y2);
+
+function<void()> handle_update_skull_collision_knife = []() {
+  num_knives++;
+  knife_charge++;
+  if (num_knives > max_num_knives) {
+    num_knives = max_num_knives;
+    knife_cooldown = 0;
+  }
+};
+
+function<void()> handle_update_skull_collision_soulshard = []() {
+  player_soulshards++;
+  total_soulshards_collected++;
+  if (player_soulshards >= POWERUP_COST) {
+    spawn_powerup();
+    player_soulshards -= POWERUP_COST;
+  }
+};
+
+function<void(entity_id)> handle_soulshard_magneticism = [](entity_id id) {
+  sprite_component skull = sprites[player_id];
+  sprite_component other = sprites[id];
+  int cx = skull.dest.x + skull.dest.w / 2;
+  int cy = skull.dest.y + skull.dest.h / 2;
+  int cx1 = other.dest.x + other.dest.w / 2;
+  int cy1 = other.dest.y + other.dest.h / 2;
+  double dist = distance(cx, cy, cx1, cy1);
+  const double threshold = 200.0;
+  const int speed = 4;
+  if (dist < threshold) {
+    const int pad = 4;
+    // magnetically move the soulshard towards the player
+    transforms[id].vx = cx1 < cx - pad ? speed : cx1 > cx + pad ? -speed : 0;
+    transforms[id].vy = cy1 < cy - pad ? speed : cy1 > cy + pad ? -speed : 0;
+  } else {
+    transforms[id].vx = -1;
+    transforms[id].vy = 0;
+  }
+};
+
+function<void(entity_id)> handle_update_skull_collision_powerup =
+    [](entity_id id) {
+      powerup_type type = powerup_types[id];
+      if (type == POWERUP_TYPE_KNIFE_COOLDOWN) {
+        current_knife_cooldown -= 5;
+        if (current_knife_cooldown < 10) {
+          current_knife_cooldown = 10;
+        }
+      } else if (type == POWERUP_TYPE_KNIFE_QUANTITY) {
+        num_knives++;
+        max_num_knives++;
+        if (num_knives > max_num_knives) {
+          num_knives = max_num_knives;
+        }
+      }
+      powerups_collected[type]++;
+    };
+
+function<void(entity_id)> update_skull_collision = [](const entity_id id) {
+  if (id == player_id) {
+    return;
+  }
+  sprite_component skull = sprites[player_id];
+  sprite_component other = sprites[id];
+  if (SDL_HasIntersection(&skull.dest, &other.dest)) {
+    is_marked_for_deletion[id] = true;
+    num_collisions++;
+    if (is_knife[id]) {
+      handle_update_skull_collision_knife();
+    } else if (is_soulshard[id]) {
+      handle_update_skull_collision_soulshard();
+    } else if (is_enemy[id]) {
+      player_health--;
+    } else if (is_powerup[id]) {
+      handle_update_skull_collision_powerup(id);
+    }
+  } else if (is_soulshard[id]) {
+    handle_soulshard_magneticism(id);
+  }
+};
 
 function<void(transform_pair)> handle_bg_transform =
     [](const transform_pair t) {
@@ -255,86 +337,7 @@ void update_generators() {
 }
 
 void update_skull_collisions() {
-  sprite_component skull = sprites[player_id];
-  for (auto id : entities) {
-    if (id == player_id) {
-      continue;
-    } else if (is_knife[id]) {
-      sprite_component knife = sprites[id];
-      if (SDL_HasIntersection(&skull.dest, &knife.dest)) {
-        is_marked_for_deletion[id] = true;
-        num_collisions++;
-        num_knives++;
-        knife_charge++;
-        if (num_knives > max_num_knives) {
-          num_knives = max_num_knives;
-          knife_cooldown = 0;
-        }
-      }
-    } else if (is_soulshard[id]) {
-      sprite_component soulshard = sprites[id];
-      if (SDL_HasIntersection(&skull.dest, &soulshard.dest)) {
-        is_marked_for_deletion[id] = true;
-        num_collisions++;
-        player_soulshards++;
-        total_soulshards_collected++;
-#define POWERUP_COST 5
-        if (player_soulshards >= POWERUP_COST) {
-          spawn_powerup();
-          player_soulshards -= POWERUP_COST;
-        }
-      } else {
-        int skull_cx = (skull.dest.x + skull.dest.w / 2);
-        int skull_cy = (skull.dest.y + skull.dest.h / 2);
-        int soulshard_cx = (soulshard.dest.x + soulshard.dest.w / 2);
-        int soulshard_cy = (soulshard.dest.y + soulshard.dest.h / 2);
-        double dist = distance(skull_cx, skull_cy, soulshard_cx, soulshard_cy);
-        const double threshold = 100.0;
-        const int soulshard_magnet_speed = 4;
-        if (dist < threshold) {
-          // magnetically move the soulshard towards the player
-          transforms[id].vx =
-              soulshard_cx < skull_cx - 4   ? soulshard_magnet_speed
-              : soulshard_cx > skull_cx + 4 ? -soulshard_magnet_speed
-                                            : 0;
-          transforms[id].vy =
-              soulshard_cy < skull_cy - 4   ? soulshard_magnet_speed
-              : soulshard_cy > skull_cy + 4 ? -soulshard_magnet_speed
-                                            : 0;
-        } else {
-          transforms[id].vx = -1;
-          transforms[id].vy = 0;
-        }
-      }
-    } else if (is_enemy[id]) {
-      sprite_component enemy = sprites[id];
-      if (SDL_HasIntersection(&skull.dest, &enemy.dest)) {
-        is_marked_for_deletion[id] = true;
-        num_collisions++;
-        player_health--;
-      }
-    } else if (is_powerup[id]) {
-      sprite_component powerup = sprites[id];
-      powerup_type type = powerup_types[id];
-      if (SDL_HasIntersection(&skull.dest, &powerup.dest)) {
-        is_marked_for_deletion[id] = true;
-        num_collisions++;
-        if (type == POWERUP_TYPE_KNIFE_COOLDOWN) {
-          current_knife_cooldown -= 5;
-          if (current_knife_cooldown < 10) {
-            current_knife_cooldown = 10;
-          }
-        } else if (type == POWERUP_TYPE_KNIFE_QUANTITY) {
-          num_knives++;
-          max_num_knives++;
-          if (num_knives > max_num_knives) {
-            num_knives = max_num_knives;
-          }
-        }
-        powerups_collected[type]++;
-      }
-    }
-  }
+  for_each(entities.begin(), entities.end(), update_skull_collision);
 }
 
 void update_animations() {
