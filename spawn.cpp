@@ -200,15 +200,42 @@ void spawn_powerup() {
   powerup_types[id] = poweruptype;
 }
 
+void spawn_blood_pixels(int x, int y, int n) {
+  string key = "blood-pixel";
+  SDL_Texture *t = textures[key];
+  bool is_animating = false;
+  const int num_clips = 1;
+  double dx = x;
+  double dy = y;
+  sprite_component sprite = {is_animating, 0,           num_clips, t,
+                             {0, 0, 4, 4}, {x, y, 4, 4}};
+  for (int i = 0; i < n; i++) {
+    entity_id id = get_next_entity_id();
+    sprites[id] = sprite;
+    transforms[id] = {dx,
+                      dy,
+                      blood_velocity_negative_distribution(rng_generator),
+                      blood_velocity_distribution(rng_generator),
+                      0,
+                      1};
+    is_blood_pixel[id] = true;
+    entities.push_back(id);
+  }
+}
+
 void spawn_blood_pixel(int x, int y) {
-  // mPrint("spawn_blood_pixel");
-  entity_id id = spawn_entity("blood-pixel", false, 1, x, y);
-  transforms[id].vx = blood_velocity_negative_distribution(rng_generator);
-  transforms[id].vy = blood_velocity_distribution(rng_generator);
-  // transforms[id].vy = blood_ve
-  transforms[id].angle = 0.0;
-  transforms[id].scale = 1.0;
-  transforms[id].x = (double)x;
-  transforms[id].y = (double)y;
+  string key = "blood-pixel";
+  SDL_Texture *t = textures[key];
+  bool is_animating = false;
+  const int num_clips = 1;
+  entity_id id = get_next_entity_id();
+  sprites[id] = {is_animating, 0, num_clips, t, {0, 0, 4, 4}, {x, y, 4, 4}};
+  transforms[id] = {(double)x,
+                    (double)y,
+                    blood_velocity_negative_distribution(rng_generator),
+                    blood_velocity_distribution(rng_generator),
+                    0,
+                    1};
+  entities.push_back(id);
   is_blood_pixel[id] = true;
 }

@@ -67,6 +67,7 @@ extern void spawn_eyeball();
 extern void spawn_powerup();
 extern void spawn_bat();
 extern void spawn_blood_pixel(int x, int y);
+extern void spawn_blood_pixels(int x, int y, int n);
 extern double distance(int x1, int y1, int x2, int y2);
 
 function<void()> handle_update_skull_collision_knife = []() {
@@ -275,10 +276,10 @@ function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
       enemies_killed[ENEMY_TYPE_EYEBALL]++;
       spawn_soulshard(enemy.dest.x, enemy.dest.y);
 
-      for (int i = 0; i < 10; i++) {
-        spawn_blood_pixel(enemy.dest.x + enemy.dest.w / 2,
-                          enemy.dest.y + enemy.dest.h / 2);
-      }
+      const int num_pixels = 20;
+      const int x = enemy.dest.x + enemy.dest.w / 2;
+      const int y = enemy.dest.y + enemy.dest.h / 2;
+      spawn_blood_pixels(x, y, num_pixels);
 
       if (is_marked_for_deletion[id]) {
         num_knives++;

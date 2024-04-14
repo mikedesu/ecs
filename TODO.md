@@ -189,7 +189,7 @@
 
 ### 12:42 CDT
 
-- [ ] idea for blood splatter effect: use a transparent texture and randomly draw red pixels on it 
+- [x] idea for blood splatter effect: use a transparent texture and randomly draw red pixels on it 
     - [ ] pre-render several different textures and randomize them on enemy death
     - [ ] fade them out over time then remove them from the scene
 - [ ] explosion animation
@@ -206,10 +206,25 @@
 
 ### 23:08 CDT
 
-- [ ] fix the knife-throwing bug when the skull is facing left
-    - [ ] current implementation hard-codes smallest knife size
-        - [ ] when the knife-size scale increases, the resulting destination rects do 
-        - [ ] need to get the size of the scaled knife width in order to place it appropriately
-        - [ ] same with height, but the bug involves the width and x-position
+- [x] fix the knife-throwing bug when the skull is facing left
+    - [x] current implementation hard-codes smallest knife size
+        - [x] when the knife-size scale increases, the resulting destination rects do 
+        - [x] need to get the size of the scaled knife width in order to place it appropriately
+        - [x] same with height, but the bug involves the width and x-position
+
+### 23:52 CDT
+
+- [ ] bats currently 'pop' into existence due to the x,y position chosen
+    - [ ] this was initially to avoid them being removed from the scene early
+    - [ ] to fix this, extend the range for scene removal such that
+
+```
+removalboundary | spawnboundary | mainscreen | spawnboundary | removalboundary
+
+spawnboundary is from 0 to -sprite.width and screen.width to screen.width + sprite.width
+removalboundary is from -sprite.width to -2*sprite.width and screen.width + sprite.width to screen.width + 2*sprite.width
+```
+
+
 
 
