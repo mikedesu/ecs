@@ -139,7 +139,7 @@ void load_pixel(string key, Uint8 r, Uint8 g, Uint8 b, int w, int h) {
 void load_textures() {
   load_texture("skull", skullsheet_filepath);
   load_texture("eyeball", eyeballsheet_filepath);
-  load_texture("knife", "img/knife4x.png");
+  load_texture("knife", "img/knife-alt4x.png");
 
   load_texture("soulshard", "img/soulshard-white-sheet4x.png");
   // load_texture_with_color_mod("soulshard", "img/soulshard-sheet4x.png");
@@ -148,7 +148,7 @@ void load_textures() {
   load_texture("bat", "img/bat-sheet4x.png");
   load_texture("moon", "img/moon-0a4x.png");
 
-  load_texture_with_color_mod("knife-blue", "img/knife4x.png", 0, 0, 255);
+  load_texture_with_color_mod("knife-blue", "img/knife-alt4x.png", 0, 0, 255);
 
   load_pixel("blood-pixel", 255, 0, 0, 4, 4);
 }

@@ -84,28 +84,26 @@ void spawn_soulshard(int x, int y) {
 
 void spawn_knife() {
   if (!knife_cooldown && num_knives) {
-    const int padding_right = 4;
-    const int padding_left = 20;
+    int largeness = powerups_collected[POWERUP_TYPE_KNIFE_LARGENESS];
+    double scale = 1.0 + (0.1 * largeness);
     sprite_component player = sprites[player_id];
-    SDL_Texture *t = textures["knife"];
-    SDL_QueryTexture(t, NULL, NULL, &w, &h);
-
-    double x = !is_flipped[player_id]
-                   ? player.dest.x + player.dest.w + padding_right
-                   : player.dest.x - w - padding_left;
-    double y = player.dest.y + player.dest.h / 4.0;
+    const int padding_right = player.dest.w + 4;
     string key = "knife";
     if (knife_charge >= 2) {
       key = "knife-blue";
     }
+    SDL_Texture *t = textures[key];
+    SDL_QueryTexture(t, NULL, NULL, &w, &h);
+    int padding_left = w * scale;
+    bool flipped = is_flipped[player_id];
+    double x = player.dest.x;
+    x = !flipped ? x + padding_right : x - padding_left;
+    double y = player.dest.y + player.dest.h / 4.0;
     entity_id id = spawn_entity(key, false, 1, x, y);
     // entity_id id = spawn_entity("knife", false, 1, x, y);
-    double angle = is_flipped[player_id] ? 180.0 : 0.0;
-    double vx =
-        is_flipped[player_id] ? -current_knife_speed : current_knife_speed;
+    double angle = flipped ? 180.0 : 0.0;
+    double vx = flipped ? -current_knife_speed : current_knife_speed;
     double vy = 0;
-    int largeness = powerups_collected[POWERUP_TYPE_KNIFE_LARGENESS];
-    double scale = 1.0 + (0.1 * largeness);
     transforms[id] = {x, y, vx, vy, angle, scale};
     is_knife[id] = true;
     is_rotating[id] = knife_charge > 0;
