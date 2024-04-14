@@ -3,11 +3,18 @@
 #include "components.h"
 #include "entity_id.h"
 #include "mPrint.h"
+#include "rapidjson/document.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/writer.h"
 #include <SDL2/SDL_render.h>
 #include <cstdio>
 #include <string>
 #include <unordered_map>
 #include <vector>
+
+using rapidjson::Document;
+using rapidjson::StringBuffer;
+using rapidjson::Writer;
 
 using std::snprintf;
 using std::string;
@@ -146,4 +153,29 @@ void load_textures() {
   load_texture_with_color_mod("knife-blue", "img/knife-alt4x.png", 0, 0, 255);
 
   load_pixel("blood-pixel", 255, 0, 0, 4, 4);
+
+  FILE *fp = fopen("config/textures.json", "r");
+  if (fp == nullptr) {
+    string msg = "Failed to open config/textures.json";
+    cleanup_and_exit_with_failure_mprint(msg);
+  }
+
+  char readBuffer[65536];
+  fread(readBuffer, 1, 65536, fp);
+  fclose(fp);
+
+  Document d;
+  d.Parse(readBuffer);
+
+  if (d.HasParseError()) {
+    string msg = "Failed to parse config/textures.json";
+    cleanup_and_exit_with_failure_mprint(msg);
+  }
+
+  if (!d.IsObject()) {
+    string msg = "config/textures.json is not an object";
+    cleanup_and_exit_with_failure_mprint(msg);
+  }
+
+  cout << d["test"].GetString() << endl;
 }
