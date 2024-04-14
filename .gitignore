@@ -4,3 +4,8 @@ a.out
 *.o
 ttf
 *.asciinema
+build
+build/*
+*/*.o
+game
+*/game

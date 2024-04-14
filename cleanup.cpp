@@ -1,4 +1,5 @@
 #include "SDL_handler.h"
+
 #include "components.h"
 #include "enemy_type.h"
 #include "entity_id.h"

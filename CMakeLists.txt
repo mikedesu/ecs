@@ -1,0 +1,30 @@
+cmake_minimum_required(VERSION 3.10)
+project(game)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/sdl2)
+
+file(GLOB SOURCES "*.cpp")
+
+add_executable(game ${SOURCES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE $<$<C_COMPILER_ID:MSVC>:/W4 /WX>)
+target_compile_options(${PROJECT_NAME} PRIVATE $<$<NOT:$<C_COMPILER_ID:MSVC>>:-Wall -Wextra -pedantic -Werror>)
+
+
+# Link SDL libraries
+find_package(SDL2 REQUIRED)
+target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARY})
+
+find_package(SDL2_image REQUIRED)
+target_link_libraries(game SDL2::Image)
+
+find_package(SDL2_ttf REQUIRED)
+target_link_libraries(game SDL2::TTF)
+
+
+file(COPY img DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY ttf DESTINATION ${CMAKE_BINARY_DIR})

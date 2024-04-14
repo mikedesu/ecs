@@ -14,7 +14,6 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
-extern string skullsheet_filepath;
 extern int target_texture_width;
 extern int target_texture_height;
 extern int window_width;
@@ -34,7 +33,6 @@ extern int player_soulshards;
 extern int total_soulshards_collected;
 extern int w, h;
 extern double zoom;
-extern string soulshard_sheet_filepath;
 extern char texture_text[1024];
 extern SDL_Texture *debug_texture;
 extern SDL_Surface *text_surface;
@@ -46,7 +44,6 @@ extern int mHeight;
 extern int DEBUG_TEXT_WRAP_LEN;
 extern vector<entity_id> entities;
 extern unordered_map<string, SDL_Texture *> textures;
-extern string eyeballsheet_filepath;
 extern unordered_map<entity_id, transform_component> transforms;
 
 extern entity_id player_id;
@@ -137,13 +134,11 @@ void load_pixel(string key, Uint8 r, Uint8 g, Uint8 b, int w, int h) {
 }
 
 void load_textures() {
-  load_texture("skull", skullsheet_filepath);
-  load_texture("eyeball", eyeballsheet_filepath);
+  load_texture("skull", "img/skull-sheet4x.png");
+  load_texture("eyeball", "img/eyeball-sheet4x.png");
   load_texture("knife", "img/knife-alt4x.png");
-
   load_texture("soulshard", "img/soulshard-white-sheet4x.png");
   // load_texture_with_color_mod("soulshard", "img/soulshard-sheet4x.png");
-
   load_texture("powerup", "img/powerup-sheet4x.png");
   load_texture("bat", "img/bat-sheet4x.png");
   load_texture("moon", "img/moon-0a4x.png");

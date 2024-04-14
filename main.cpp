@@ -63,11 +63,6 @@ int total_soulshards_collected = 0;
 int color_index = 0;
 int num_color_indices = 3;
 
-string skullsheet_filepath = "img/skull-sheet4x.png";
-// string skullsheet_filepath = "img/blackskull-sheet4x.png";
-string eyeballsheet_filepath = "img/eyeball-sheet4x.png";
-string soulshard_sheet_filepath = "img/soulshard-001-sheet4x.png";
-
 entity_id next_entity_id = 0;
 entity_id player_id = -1;
 
