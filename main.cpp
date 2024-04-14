@@ -140,7 +140,8 @@ void load_debug_text();
 void load_textures();
 void render_frame();
 void spawn_skull();
-void spawn_generator(enemy_type type, bool active, int cooldown);
+void spawn_generator(enemy_type type, bool active, int cooldown,
+                     int cooldown_reduction);
 void update();
 
 int main() {
@@ -157,36 +158,14 @@ int main() {
   init_target_texture_rects();
   bg_init();
   spawn_skull();
-
   // spawn_generator(ENEMY_TYPE_EYEBALL, true, 120);
-  spawn_generator(ENEMY_TYPE_BAT, true, 60);
+  spawn_generator(ENEMY_TYPE_BAT, true, 60, 60 * 10);
 
   while (!quit) {
     handle_input();
     handle_input_component();
     update();
     render_frame();
-    // knife_cooldown = (knife_cooldown > 0) ? knife_cooldown - 1 : 0;
-    knife_cooldown--;
-    if (knife_cooldown <= 0) {
-      knife_cooldown = 0;
-    }
-
-    // playing around with speeding up eyeball generation on a timer
-    // every 30 seconds or 1800 frames, cut it in half
-    // prob need a realistic cap on this...
-    const int cooldown_min = 10;
-    if (frame_count > 0 && frame_count % 3600 == 0) {
-      for (auto id : entities) {
-        if (is_generator[id]) {
-          generators[id].cooldown = generators[id].cooldown / 2;
-          if (generators[id].cooldown < cooldown_min) {
-            generators[id].cooldown = cooldown_min;
-          }
-        }
-      }
-    }
-
     cleanup_entities_marked_for_deletion();
   }
   cleanup();

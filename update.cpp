@@ -22,6 +22,8 @@ using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
 
+const int cooldown_min = 10;
+
 extern int frame_count;
 extern int num_collisions;
 extern int num_knives;
@@ -52,6 +54,7 @@ extern unordered_map<entity_id, bool> is_soulshard;
 extern unordered_map<entity_id, bool> is_rotating;
 extern unordered_map<entity_id, bool> is_knife;
 extern unordered_map<entity_id, bool> is_enemy;
+extern unordered_map<entity_id, bool> is_generator;
 extern unordered_map<entity_id, bool> is_powerup;
 extern unordered_map<entity_id, bool> is_marked_for_deletion;
 extern unordered_map<enemy_type, int> enemies_killed;
@@ -319,10 +322,12 @@ void update_bg_transform_components() {
 }
 
 void update_generators() {
-  for (auto kv : generators) {
-    generator_component generator = kv.second;
-    if (generator.active && frame_count % generator.cooldown == 0) {
-      switch (generator.type) {
+  // for (auto kv : generators) {
+  for (auto kv : is_generator) {
+    entity_id id = kv.first;
+    // generator_component generator = kv.second;
+    if (generators[id].active && frame_count % generators[id].cooldown == 0) {
+      switch (generators[id].type) {
       case ENEMY_TYPE_EYEBALL:
         spawn_eyeball();
         break;
@@ -332,6 +337,14 @@ void update_generators() {
       default:
         break;
       }
+    }
+
+    // if the generator has a "cooldown reduction" set to non-zero,
+    // then every N frames, reduce the cooldown by half until we hit a minimum
+    if (generators[id].cooldown_reduction && frame_count > 0 &&
+        frame_count % generators[id].cooldown_reduction == 0 &&
+        generators[id].cooldown > cooldown_min) {
+      generators[id].cooldown = generators[id].cooldown / 2;
     }
   }
 }
@@ -361,6 +374,13 @@ void update_transform_components() {
   for_each(transforms.begin(), transforms.end(), handle_transform);
 }
 
+void update_knife_cooldown() {
+  knife_cooldown--;
+  if (knife_cooldown <= 0) {
+    knife_cooldown = 0;
+  }
+}
+
 void update() {
   update_bg_transform_components();
   update_bg_animations();
@@ -369,4 +389,5 @@ void update() {
   update_animations();
   update_collisions();
   update_generators();
+  update_knife_cooldown();
 }

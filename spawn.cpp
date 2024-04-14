@@ -155,7 +155,8 @@ void spawn_bat() {
   enemy_types[id] = ENEMY_TYPE_BAT;
 }
 
-void spawn_generator(enemy_type type, bool active, int cooldown) {
+void spawn_generator(enemy_type type, bool active, int cooldown,
+                     int cooldown_reduction) {
   if (type > ENEMY_TYPE_COUNT) {
     return;
   }
@@ -169,7 +170,7 @@ void spawn_generator(enemy_type type, bool active, int cooldown) {
     }
   }
   entity_id id = get_next_entity_id();
-  generators[id] = {type, active, cooldown};
+  generators[id] = {type, active, cooldown, cooldown_reduction};
   is_generator[id] = true;
   entities.push_back(id);
 }
