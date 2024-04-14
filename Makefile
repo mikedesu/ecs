@@ -2,7 +2,7 @@ all: game
 
 CC=clang++
 OBJ_FLAG=-c
-CFLAGS=-Wall -Wextra -Werror -Wpedantic -std=c++17
+CFLAGS=-Wall -Wextra -Werror -Wpedantic -std=c++20
 
 OBJ_FILES=bg.o \
 					cleanup.o \
