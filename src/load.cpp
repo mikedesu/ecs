@@ -1,27 +1,27 @@
 #include "SDL_handler.h"
-// #include "enemy_type.h"
 #include "components.h"
 #include "entity_id.h"
 #include "mPrint.h"
 #include "rapidjson/document.h"
 #include "rapidjson/stringbuffer.h"
-// #include "rapidjson/writer.h"
 #include <SDL2/SDL_render.h>
 #include <cstdio>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
+#define RAPIDJSON_NOMEMBERITERATORCLASS 1
+
 using rapidjson::Document;
 using rapidjson::StringBuffer;
 using rapidjson::Value;
-// using rapidjson::Writer;
 
 using std::snprintf;
 using std::string;
 using std::unordered_map;
 using std::vector;
 
+// external variables
 extern int target_texture_width;
 extern int target_texture_height;
 extern int window_width;
@@ -53,12 +53,29 @@ extern int DEBUG_TEXT_WRAP_LEN;
 extern vector<entity_id> entities;
 extern unordered_map<string, SDL_Texture *> textures;
 extern unordered_map<entity_id, transform_component> transforms;
-
 extern entity_id player_id;
+
+// external functions
 extern double fps();
 extern size_t get_num_enemies_killed();
 extern void cleanup_and_exit_with_failure();
 extern void cleanup_and_exit_with_failure_mprint(string msg);
+
+// declarations
+void load_debug_text();
+void load_texture(string key, string path);
+void load_texture_with_color_mod(string key, string path, Uint8 r, Uint8 g,
+                                 Uint8 b);
+void load_pixel(string key, Uint8 r, Uint8 g, Uint8 b, int w, int h);
+void handle_load_pixel(Value &v);
+bool json_value_has_member_is_string(Value &v, string member);
+void handle_load_texture_with_color_mod(Value &v);
+void handle_load_texture(Value &v);
+Document load_textures_document();
+void check_if_json_value_has_member_and_is_string(Value &v, string member);
+void handle_load_by_type(Value &v);
+void check_if_json_value_is_object(Value &v);
+void load_textures();
 
 void load_debug_text() {
   snprintf(texture_text, 1024,
@@ -181,6 +198,8 @@ bool json_value_has_member_is_string(Value &v, string member) {
 
 void handle_load_texture_with_color_mod(Value &v) {
   string keys[] = {"key", "path", "r", "g", "b"};
+  string integer_keys[] = {"r", "g", "b"};
+  string str_keys[] = {"key", "path"};
   for (string key : keys) {
     if (!v.HasMember(key.c_str())) {
       string msg = "config/textures.json array element has no " + key;
@@ -189,16 +208,20 @@ void handle_load_texture_with_color_mod(Value &v) {
     }
   }
 
-  if (!v["r"].IsInt() || !v["g"].IsInt() || !v["b"].IsInt()) {
-    string msg = "config/textures.json array element has invalid r, g, or b";
-    mPrint(msg);
-    cleanup_and_exit_with_failure();
+  for (string key : integer_keys) {
+    if (!v[key.c_str()].IsInt()) {
+      string msg = "config/textures.json array element has invalid " + key;
+      mPrint(msg);
+      cleanup_and_exit_with_failure();
+    }
   }
 
-  if (!v["key"].IsString() || !v["path"].IsString()) {
-    string msg = "config/textures.json array element has invalid key or path";
-    mPrint(msg);
-    cleanup_and_exit_with_failure();
+  for (string key : str_keys) {
+    if (!v[key.c_str()].IsString()) {
+      string msg = "config/textures.json array element has invalid " + key;
+      mPrint(msg);
+      cleanup_and_exit_with_failure();
+    }
   }
 
   string key = v["key"].GetString();
@@ -220,7 +243,7 @@ void handle_load_texture(Value &v) {
   load_texture(key, path);
 }
 
-void load_textures() {
+Document load_textures_document() {
   string config_file_path = "config/textures.json";
   const size_t read_buffer_size = 65536;
   char readBuffer[read_buffer_size];
@@ -232,44 +255,54 @@ void load_textures() {
   }
   fread(readBuffer, 1, read_buffer_size, fp);
   fclose(fp);
-
   d.Parse(readBuffer);
-
   if (d.HasParseError()) {
     string msg = "Failed to parse config/textures.json";
-    cleanup_and_exit_with_failure_mprint(msg);
+    mPrint(msg);
+    cleanup_and_exit_with_failure();
   }
+  return d;
+}
 
+void check_if_json_value_has_member_and_is_string(Value &v, string member) {
+  if (!v.HasMember(member.c_str()) || !v[member.c_str()].IsString()) {
+    string msg = "config/textures.json array element has no " + member;
+    mPrint(msg);
+    cleanup_and_exit_with_failure();
+  }
+}
+
+void check_if_json_value_is_object(Value &v) {
+  if (!v.IsObject()) {
+    string msg = "config/textures.json array element is not an object";
+    mPrint(msg);
+    cleanup_and_exit_with_failure();
+  }
+}
+
+void handle_load_by_type(Value &v) {
+  string type = v["type"].GetString();
+  if (type == "texture") {
+    handle_load_texture(v);
+  } else if (type == "texture_colormod") {
+    handle_load_texture_with_color_mod(v);
+  } else if (type == "pixel") {
+    handle_load_pixel(v);
+  } else {
+    string msg = "config/textures.json array element has unknown type: " + type;
+    mPrint(msg);
+    cleanup_and_exit_with_failure();
+  }
+}
+
+void load_textures() {
+  Document d = load_textures_document();
   if (d.IsArray()) {
     for (auto &v : d.GetArray()) {
-      if (!v.IsObject()) {
-        string msg = "config/textures.json array element is not an object";
-        cleanup_and_exit_with_failure_mprint(msg);
-      }
-      if (!json_value_has_member_is_string(v, "type")) {
-        string msg = "config/textures.json array element has no type";
-        mPrint(msg);
-        cleanup_and_exit_with_failure();
-      }
-      if (!json_value_has_member_is_string(v, "key")) {
-        string msg = "config/textures.json array element has no key";
-        mPrint(msg);
-        cleanup_and_exit_with_failure();
-      }
-      string type = v["type"].GetString();
-      // string key = v["key"].GetString();
-      if (type == "texture") {
-        handle_load_texture(v);
-      } else if (type == "texture_colormod") {
-        handle_load_texture_with_color_mod(v);
-      } else if (type == "pixel") {
-        handle_load_pixel(v);
-      } else {
-        string msg =
-            "config/textures.json array element has unknown type: " + type;
-        mPrint(msg);
-        cleanup_and_exit_with_failure();
-      }
+      check_if_json_value_is_object(v);
+      check_if_json_value_has_member_and_is_string(v, "type");
+      check_if_json_value_has_member_and_is_string(v, "key");
+      handle_load_by_type(v);
     }
   }
 }

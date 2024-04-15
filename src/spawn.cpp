@@ -182,10 +182,10 @@ void spawn_powerup() {
   int y = texture_height_distribution(rng_generator) - h;
   switch (poweruptype) {
   case POWERUP_TYPE_KNIFE_LARGENESS:
-    id = spawn_entity("powerup", false, 1, x, y);
+    id = spawn_entity("powerup-knife-largeness", false, 1, x, y);
     break;
   case POWERUP_TYPE_KNIFE_COOLDOWN:
-    id = spawn_entity("powerup", false, 1, x, y);
+    id = spawn_entity("powerup-knife-cooldown", false, 1, x, y);
     break;
   case POWERUP_TYPE_KNIFE_QUANTITY:
     id = spawn_entity("knife", false, 1, x, y);

@@ -154,7 +154,7 @@ int main() {
   bg_init();
   spawn_skull();
   // spawn_generator(ENEMY_TYPE_EYEBALL, true, 120);
-  spawn_generator(ENEMY_TYPE_BAT, true, 60, 60 * 10);
+  spawn_generator(ENEMY_TYPE_BAT, true, 120, 60 * 60);
 
   while (!quit) {
     handle_input();

@@ -237,4 +237,8 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
     - [x] fixed, am now passing in defined width and height on pixel load
         - [ ] probably need to create a global configuration object that can be tuned at runtime
 
+### 18:02 CDT
+
+- [ ] thinking of detaching the bottom of the skull mouth so that it is a separate sprite
+    - [ ] could lead to cool effects like long mouth opening for firing a laser or smth
 

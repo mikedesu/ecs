@@ -2,7 +2,7 @@
   {
     "type": "texture",
     "key": "skull",
-    "path": "img/skull-sheet4x.png"
+    "path": "img/skull-sheet-alt4x.png"
   },
   {
     "type": "texture",
@@ -33,6 +33,22 @@
     "path": "img/powerup-sheet4x.png",
     "r": 255,
     "g": 255,
+    "b": 255
+  },
+  {
+    "type": "texture_colormod",
+    "key": "powerup-knife-largeness",
+    "path": "img/powerup-sheet4x.png",
+    "r": 0,
+    "g": 255,
+    "b": 0
+  },
+  {
+    "type": "texture_colormod",
+    "key": "powerup-knife-cooldown",
+    "path": "img/powerup-sheet4x.png",
+    "r": 0,
+    "g": 0,
     "b": 255
   },
   {

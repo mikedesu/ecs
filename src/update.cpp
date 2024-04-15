@@ -134,17 +134,20 @@ function<void(entity_id)> update_skull_collision = [](const entity_id id) {
   sprite_component skull = sprites[player_id];
   sprite_component other = sprites[id];
   if (SDL_HasIntersection(&skull.dest, &other.dest)) {
-    is_marked_for_deletion[id] = true;
     num_collisions++;
     if (is_knife[id]) {
+      is_marked_for_deletion[id] = true;
       handle_update_skull_collision_knife();
     } else if (is_soulshard[id]) {
+      is_marked_for_deletion[id] = true;
       handle_update_skull_collision_soulshard();
     } else if (is_enemy[id]) {
+      is_marked_for_deletion[id] = true;
       player_health--;
     } else if (is_powerup[id]) {
+      is_marked_for_deletion[id] = true;
       handle_update_skull_collision_powerup(id);
-    }
+    } // else is blood pixel
   } else if (is_soulshard[id]) {
     handle_soulshard_magneticism(id);
   }
