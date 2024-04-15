@@ -14,6 +14,7 @@
 
 using rapidjson::Document;
 using rapidjson::StringBuffer;
+using rapidjson::Value;
 // using rapidjson::Writer;
 
 using std::snprintf;
@@ -56,6 +57,7 @@ extern unordered_map<entity_id, transform_component> transforms;
 extern entity_id player_id;
 extern double fps();
 extern size_t get_num_enemies_killed();
+extern void cleanup_and_exit_with_failure();
 extern void cleanup_and_exit_with_failure_mprint(string msg);
 
 void load_debug_text() {
@@ -140,34 +142,97 @@ void load_pixel(string key, Uint8 r, Uint8 g, Uint8 b, int w, int h) {
   textures[key] = pixel;
 }
 
-void load_textures() {
-  // load_texture("skull", "img/skull-sheet4x.png");
-  // load_texture("eyeball", "img/eyeball-sheet4x.png");
-  // load_texture("knife", "img/knife-alt4x.png");
-  // load_texture("soulshard", "img/soulshard-white-sheet4x.png");
-  //// load_texture_with_color_mod("soulshard", "img/soulshard-sheet4x.png");
-  // load_texture("powerup", "img/powerup-sheet4x.png");
-  // load_texture("bat", "img/bat-sheet4x.png");
-  // load_texture("moon", "img/moon-0a4x.png");
-  // load_texture_with_color_mod("knife-blue", "img/knife-alt4x.png", 0, 0,
-  // 255);
-  // load_pixel("blood-pixel", 255, 0, 0, 4, 4);
-
-  string config_file_path = "config/textures.json";
-
-  FILE *fp = fopen(config_file_path.c_str(), "r");
-  if (fp == nullptr) {
-    string msg = "Failed to open " + config_file_path;
-    cleanup_and_exit_with_failure_mprint(msg);
+void handle_load_pixel(Value &v) {
+  string keys[] = {"key", "r", "g", "b", "w", "h"};
+  for (string key : keys) {
+    if (!v.HasMember(key.c_str())) {
+      string msg = "config/textures.json array element has no " + key;
+      mPrint(msg);
+      cleanup_and_exit_with_failure();
+    }
   }
 
+  if (!v["r"].IsInt() || !v["g"].IsInt() || !v["b"].IsInt() ||
+      !v["w"].IsInt() || !v["h"].IsInt()) {
+    string msg = "config/textures.json array element has invalid r, g, b, w, "
+                 "or h";
+    mPrint(msg);
+    cleanup_and_exit_with_failure();
+  }
+
+  if (!v["key"].IsString()) {
+    string msg = "config/textures.json array element has invalid key";
+    mPrint(msg);
+    cleanup_and_exit_with_failure();
+  }
+
+  string key = v["key"].GetString();
+  int r = v["r"].GetInt();
+  int g = v["g"].GetInt();
+  int b = v["b"].GetInt();
+  int w = v["w"].GetInt();
+  int h = v["h"].GetInt();
+  load_pixel(key, r, g, b, w, h);
+}
+
+bool json_value_has_member_is_string(Value &v, string member) {
+  return v.HasMember(member.c_str()) && v[member.c_str()].IsString();
+}
+
+void handle_load_texture_with_color_mod(Value &v) {
+  string keys[] = {"key", "path", "r", "g", "b"};
+  for (string key : keys) {
+    if (!v.HasMember(key.c_str())) {
+      string msg = "config/textures.json array element has no " + key;
+      mPrint(msg);
+      cleanup_and_exit_with_failure();
+    }
+  }
+
+  if (!v["r"].IsInt() || !v["g"].IsInt() || !v["b"].IsInt()) {
+    string msg = "config/textures.json array element has invalid r, g, or b";
+    mPrint(msg);
+    cleanup_and_exit_with_failure();
+  }
+
+  if (!v["key"].IsString() || !v["path"].IsString()) {
+    string msg = "config/textures.json array element has invalid key or path";
+    mPrint(msg);
+    cleanup_and_exit_with_failure();
+  }
+
+  string key = v["key"].GetString();
+  string path = v["path"].GetString();
+  int r = v["r"].GetInt();
+  int g = v["g"].GetInt();
+  int b = v["b"].GetInt();
+  load_texture_with_color_mod(key, path, r, g, b);
+}
+
+void handle_load_texture(Value &v) {
+  if (!json_value_has_member_is_string(v, "path")) {
+    string msg = "config/textures.json array element has no path";
+    mPrint(msg);
+    cleanup_and_exit_with_failure();
+  }
+  string path = v["path"].GetString();
+  string key = v["key"].GetString();
+  load_texture(key, path);
+}
+
+void load_textures() {
+  string config_file_path = "config/textures.json";
   const size_t read_buffer_size = 65536;
   char readBuffer[read_buffer_size];
+  Document d;
+  FILE *fp = fopen(config_file_path.c_str(), "r");
+  if (fp == nullptr) {
+    mPrint("Failed to open " + config_file_path);
+    cleanup_and_exit_with_failure();
+  }
   fread(readBuffer, 1, read_buffer_size, fp);
   fclose(fp);
 
-  // suppress the deprecated warning
-  Document d;
   d.Parse(readBuffer);
 
   if (d.HasParseError()) {
@@ -181,85 +246,30 @@ void load_textures() {
         string msg = "config/textures.json array element is not an object";
         cleanup_and_exit_with_failure_mprint(msg);
       }
-      if (!v.HasMember("type") || !v["type"].IsString()) {
+      if (!json_value_has_member_is_string(v, "type")) {
         string msg = "config/textures.json array element has no type";
-        cleanup_and_exit_with_failure_mprint(msg);
+        mPrint(msg);
+        cleanup_and_exit_with_failure();
       }
-      if (!v.HasMember("key") || !v["key"].IsString()) {
+      if (!json_value_has_member_is_string(v, "key")) {
         string msg = "config/textures.json array element has no key";
-        cleanup_and_exit_with_failure_mprint(msg);
+        mPrint(msg);
+        cleanup_and_exit_with_failure();
       }
       string type = v["type"].GetString();
-      string key = v["key"].GetString();
-
+      // string key = v["key"].GetString();
       if (type == "texture") {
-
-        if (!v.HasMember("path") || !v["path"].IsString()) {
-          string msg = "config/textures.json array element has no path";
-          cleanup_and_exit_with_failure_mprint(msg);
-        }
-
-        string path = v["path"].GetString();
-
-        load_texture(key, path);
+        handle_load_texture(v);
       } else if (type == "texture_colormod") {
-        if (!v.HasMember("path") || !v["path"].IsString()) {
-          string msg = "config/textures.json array element has no path";
-          cleanup_and_exit_with_failure_mprint(msg);
-        }
-
-        if (!v.HasMember("r") || !v["r"].IsInt()) {
-          string msg = "config/textures.json array element has no r";
-          cleanup_and_exit_with_failure_mprint(msg);
-        }
-        if (!v.HasMember("g") || !v["g"].IsInt()) {
-          string msg = "config/textures.json array element has no g";
-          cleanup_and_exit_with_failure_mprint(msg);
-        }
-        if (!v.HasMember("b") || !v["b"].IsInt()) {
-          string msg = "config/textures.json array element has no b";
-          cleanup_and_exit_with_failure_mprint(msg);
-        }
-
-        string path = v["path"].GetString();
-        int r = v["r"].GetInt();
-        int g = v["g"].GetInt();
-        int b = v["b"].GetInt();
-        load_texture_with_color_mod(key, path, r, g, b);
+        handle_load_texture_with_color_mod(v);
       } else if (type == "pixel") {
-        if (!v.HasMember("r") || !v["r"].IsInt()) {
-          string msg = "config/textures.json array element has no r";
-          cleanup_and_exit_with_failure_mprint(msg);
-        }
-        if (!v.HasMember("g") || !v["g"].IsInt()) {
-          string msg = "config/textures.json array element has no g";
-          cleanup_and_exit_with_failure_mprint(msg);
-        }
-        if (!v.HasMember("b") || !v["b"].IsInt()) {
-          string msg = "config/textures.json array element has no b";
-          cleanup_and_exit_with_failure_mprint(msg);
-        }
-        if (!v.HasMember("w") || !v["w"].IsInt()) {
-          string msg = "config/textures.json array element has no w";
-          cleanup_and_exit_with_failure_mprint(msg);
-        }
-        if (!v.HasMember("h") || !v["h"].IsInt()) {
-          string msg = "config/textures.json array element has no h";
-          cleanup_and_exit_with_failure_mprint(msg);
-        }
-
-        int r = v["r"].GetInt();
-        int g = v["g"].GetInt();
-        int b = v["b"].GetInt();
-        int w = v["w"].GetInt();
-        int h = v["h"].GetInt();
-        load_pixel(key, r, g, b, w, h);
+        handle_load_pixel(v);
       } else {
-        string msg = "config/textures.json array element has unknown type";
-        cleanup_and_exit_with_failure_mprint(msg);
+        string msg =
+            "config/textures.json array element has unknown type: " + type;
+        mPrint(msg);
+        cleanup_and_exit_with_failure();
       }
     }
   }
-
-  // cout << d["test"].GetString() << endl;
 }

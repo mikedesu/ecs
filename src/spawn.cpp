@@ -203,12 +203,14 @@ void spawn_powerup() {
 void spawn_blood_pixels(int x, int y, int n) {
   string key = "blood-pixel";
   SDL_Texture *t = textures[key];
+  // custom width/height defined in config/textures.json
+  SDL_QueryTexture(t, NULL, NULL, &w, &h);
   bool is_animating = false;
   const int num_clips = 1;
   double dx = x;
   double dy = y;
   sprite_component sprite = {is_animating, 0,           num_clips, t,
-                             {0, 0, 4, 4}, {x, y, 4, 4}};
+                             {0, 0, w, h}, {x, y, w, h}};
   for (int i = 0; i < n; i++) {
     entity_id id = get_next_entity_id();
     sprites[id] = sprite;
@@ -226,10 +228,11 @@ void spawn_blood_pixels(int x, int y, int n) {
 void spawn_blood_pixel(int x, int y) {
   string key = "blood-pixel";
   SDL_Texture *t = textures[key];
+  SDL_QueryTexture(t, NULL, NULL, &w, &h);
   bool is_animating = false;
   const int num_clips = 1;
   entity_id id = get_next_entity_id();
-  sprites[id] = {is_animating, 0, num_clips, t, {0, 0, 4, 4}, {x, y, 4, 4}};
+  sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {x, y, w, h}};
   transforms[id] = {(double)x,
                     (double)y,
                     blood_velocity_negative_distribution(rng_generator),

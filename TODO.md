@@ -225,6 +225,16 @@ spawnboundary is from 0 to -sprite.width and screen.width to screen.width + spri
 removalboundary is from -sprite.width to -2*sprite.width and screen.width + sprite.width to screen.width + 2*sprite.width
 ```
 
+## 15 April 2024
 
+### 13:02 CDT
+
+- [ ] we could spawn bats in groups of N
+- [ ] preparing for powerup texture color mods via JSON config file
+- [x] loading textures from config/textures.json
+    - [x] RapidJSON parsing
+- [x] blood pixels defined in the texture.json file are not displaying at their configured width and height
+    - [x] fixed, am now passing in defined width and height on pixel load
+        - [ ] probably need to create a global configuration object that can be tuned at runtime
 
 
