@@ -149,12 +149,15 @@ void load_textures() {
   // load_texture("powerup", "img/powerup-sheet4x.png");
   // load_texture("bat", "img/bat-sheet4x.png");
   // load_texture("moon", "img/moon-0a4x.png");
-  load_texture_with_color_mod("knife-blue", "img/knife-alt4x.png", 0, 0, 255);
-  load_pixel("blood-pixel", 255, 0, 0, 4, 4);
+  // load_texture_with_color_mod("knife-blue", "img/knife-alt4x.png", 0, 0,
+  // 255);
+  // load_pixel("blood-pixel", 255, 0, 0, 4, 4);
 
-  FILE *fp = fopen("config/textures.json", "r");
+  string config_file_path = "config/textures.json";
+
+  FILE *fp = fopen(config_file_path.c_str(), "r");
   if (fp == nullptr) {
-    string msg = "Failed to open config/textures.json";
+    string msg = "Failed to open " + config_file_path;
     cleanup_and_exit_with_failure_mprint(msg);
   }
 
@@ -178,17 +181,83 @@ void load_textures() {
         string msg = "config/textures.json array element is not an object";
         cleanup_and_exit_with_failure_mprint(msg);
       }
+      if (!v.HasMember("type") || !v["type"].IsString()) {
+        string msg = "config/textures.json array element has no type";
+        cleanup_and_exit_with_failure_mprint(msg);
+      }
       if (!v.HasMember("key") || !v["key"].IsString()) {
         string msg = "config/textures.json array element has no key";
         cleanup_and_exit_with_failure_mprint(msg);
       }
-      if (!v.HasMember("path") || !v["path"].IsString()) {
-        string msg = "config/textures.json array element has no path";
+      string type = v["type"].GetString();
+      string key = v["key"].GetString();
+
+      if (type == "texture") {
+
+        if (!v.HasMember("path") || !v["path"].IsString()) {
+          string msg = "config/textures.json array element has no path";
+          cleanup_and_exit_with_failure_mprint(msg);
+        }
+
+        string path = v["path"].GetString();
+
+        load_texture(key, path);
+      } else if (type == "texture_colormod") {
+        if (!v.HasMember("path") || !v["path"].IsString()) {
+          string msg = "config/textures.json array element has no path";
+          cleanup_and_exit_with_failure_mprint(msg);
+        }
+
+        if (!v.HasMember("r") || !v["r"].IsInt()) {
+          string msg = "config/textures.json array element has no r";
+          cleanup_and_exit_with_failure_mprint(msg);
+        }
+        if (!v.HasMember("g") || !v["g"].IsInt()) {
+          string msg = "config/textures.json array element has no g";
+          cleanup_and_exit_with_failure_mprint(msg);
+        }
+        if (!v.HasMember("b") || !v["b"].IsInt()) {
+          string msg = "config/textures.json array element has no b";
+          cleanup_and_exit_with_failure_mprint(msg);
+        }
+
+        string path = v["path"].GetString();
+        int r = v["r"].GetInt();
+        int g = v["g"].GetInt();
+        int b = v["b"].GetInt();
+        load_texture_with_color_mod(key, path, r, g, b);
+      } else if (type == "pixel") {
+        if (!v.HasMember("r") || !v["r"].IsInt()) {
+          string msg = "config/textures.json array element has no r";
+          cleanup_and_exit_with_failure_mprint(msg);
+        }
+        if (!v.HasMember("g") || !v["g"].IsInt()) {
+          string msg = "config/textures.json array element has no g";
+          cleanup_and_exit_with_failure_mprint(msg);
+        }
+        if (!v.HasMember("b") || !v["b"].IsInt()) {
+          string msg = "config/textures.json array element has no b";
+          cleanup_and_exit_with_failure_mprint(msg);
+        }
+        if (!v.HasMember("w") || !v["w"].IsInt()) {
+          string msg = "config/textures.json array element has no w";
+          cleanup_and_exit_with_failure_mprint(msg);
+        }
+        if (!v.HasMember("h") || !v["h"].IsInt()) {
+          string msg = "config/textures.json array element has no h";
+          cleanup_and_exit_with_failure_mprint(msg);
+        }
+
+        int r = v["r"].GetInt();
+        int g = v["g"].GetInt();
+        int b = v["b"].GetInt();
+        int w = v["w"].GetInt();
+        int h = v["h"].GetInt();
+        load_pixel(key, r, g, b, w, h);
+      } else {
+        string msg = "config/textures.json array element has unknown type";
         cleanup_and_exit_with_failure_mprint(msg);
       }
-      string key = v["key"].GetString();
-      string path = v["path"].GetString();
-      load_texture(key, path);
     }
   }
 
