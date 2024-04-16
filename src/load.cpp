@@ -24,12 +24,6 @@ using std::vector;
 
 // external variables
 extern gameconfig config;
-// extern int default_window_width;
-// extern int default_window_height;
-extern int target_texture_width;
-extern int target_texture_height;
-// extern int window_width;
-// extern int window_height;
 extern int frame_count;
 extern int num_collisions;
 extern int knife_cooldown;
@@ -84,7 +78,7 @@ void load_textures();
 
 void load_debug_text() {
   snprintf(texture_text, 1024,
-           "target texture: %dx%d\nwindow size: %ldx%ld\nframe_count: "
+           "target texture: %ldx%ld\nwindow size: %ldx%ld\nframe_count: "
            "%06d\nnum_entities: %ld\n"
            "fps: %.02f\nzoom: %.02f\nnum_collisions: "
            "%d\nknife_cooldown: %d\ncurrent_knife_cooldown: "
@@ -93,20 +87,20 @@ void load_debug_text() {
            "%d\nnum_enemies_killed: %ld\nplayer_health: "
            "%d/%d\nsoulshards_collected: %d\ntotal_soulshards_collected: "
            "%d\nplayer position: %.02f,%.02f\n",
-           target_texture_width, target_texture_height, config.window_width,
-           config.window_height, frame_count, entities.size(), fps(), zoom,
-           num_collisions, knife_cooldown, current_knife_cooldown, num_knives,
-           max_num_knives, num_knives_fired, knife_charge, num_enemies_escaped,
-           get_num_enemies_killed(), player_health, player_max_health,
-           player_soulshards, total_soulshards_collected,
-           transforms[player_id].x, transforms[player_id].y);
+           config.target_texture_width, config.target_texture_height,
+           config.window_width, config.window_height, frame_count,
+           entities.size(), fps(), zoom, num_collisions, knife_cooldown,
+           current_knife_cooldown, num_knives, max_num_knives, num_knives_fired,
+           knife_charge, num_enemies_escaped, get_num_enemies_killed(),
+           player_health, player_max_health, player_soulshards,
+           total_soulshards_collected, transforms[player_id].x,
+           transforms[player_id].y);
   text_surface = TTF_RenderText_Blended_Wrapped(gFont, texture_text, textColor,
                                                 DEBUG_TEXT_WRAP_LEN);
   if (text_surface == nullptr) {
     mPrint("text_surface == nullptr");
-    // printf("textureText = %s\n", textureText);
-    printf("Unable to render text_surface! SDL_ttf Error: %s\n",
-           TTF_GetError());
+    mPrint("Unable to render text_surface! SDL_ttf Error: " +
+           string(TTF_GetError()));
   } else {
     // Create texture from surface pixels
     if (debug_texture != nullptr) {
@@ -116,8 +110,8 @@ void load_debug_text() {
     debug_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
     if (debug_texture == nullptr) {
       mPrint("mTexture == NULL");
-      printf("Unable to create texture from rendered text! SDL Error: %s\n",
-             SDL_GetError());
+      mPrint("Unable to create texture from rendered text! SDL Error: " +
+             string(SDL_GetError()));
     }
     // Get image dimensions
     mWidth = text_surface->w;
@@ -131,9 +125,9 @@ void load_debug_text() {
 void load_texture(string key, string path) {
   SDL_Texture *t = IMG_LoadTexture(renderer, path.c_str());
   if (t == nullptr) {
-    string msg =
-        "Failed to load texture image with key and path: " + key + "," + path;
-    cleanup_and_exit_with_failure_mprint(msg);
+    mPrint("Failed to load texture image with key and path: " + key + "," +
+           path);
+    cleanup_and_exit_with_failure();
   }
   textures[key] = t;
 }
@@ -142,9 +136,9 @@ void load_texture_with_color_mod(string key, string path, Uint8 r, Uint8 g,
                                  Uint8 b) {
   SDL_Texture *t = IMG_LoadTexture(renderer, path.c_str());
   if (t == nullptr) {
-    string msg =
-        "Failed to load texture image with key and path: " + key + "," + path;
-    cleanup_and_exit_with_failure_mprint(msg);
+    mPrint("Failed to load texture image with key and path: " + key + "," +
+           path);
+    cleanup_and_exit_with_failure();
   }
   SDL_SetTextureColorMod(t, r, g, b);
   textures[key] = t;
@@ -154,8 +148,8 @@ void load_pixel(string key, Uint8 r, Uint8 g, Uint8 b, int w, int h) {
   SDL_Texture *pixel = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888,
                                          SDL_TEXTUREACCESS_TARGET, w, h);
   if (pixel == nullptr) {
-    string msg = "Failed to create pixel texture with key: " + key;
-    cleanup_and_exit_with_failure_mprint(msg);
+    mPrint("Failed to create pixel texture with key: " + key);
+    cleanup_and_exit_with_failure();
   }
   SDL_SetRenderTarget(renderer, pixel);
   SDL_SetRenderDrawColor(renderer, r, g, b, 255);
@@ -364,6 +358,6 @@ void load_main_config() {
   config.window_width = config.default_window_width;
   config.window_height = config.default_window_height;
 
-  target_texture_width = config.default_window_width;
-  target_texture_height = config.default_window_height;
+  config.target_texture_width = config.default_window_width;
+  config.target_texture_height = config.default_window_height;
 }

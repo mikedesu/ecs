@@ -12,10 +12,6 @@ using std::vector;
 extern gameconfig config;
 extern entity_id next_entity_id;
 extern bool is_fullscreen;
-extern int fullscreen_width;
-extern int fullscreen_height;
-extern int window_width;
-extern int window_height;
 extern int frame_count;
 extern SDL_Rect target_texture_dest;
 extern SDL_Window *window;
@@ -43,9 +39,12 @@ void toggle_fullscreen() {
   SDL_SetWindowFullscreen(window,
                           is_fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
   if (is_fullscreen) {
+    int fullscreen_width, fullscreen_height;
     SDL_GetWindowSize(window, &fullscreen_width, &fullscreen_height);
-    target_texture_dest.w = fullscreen_width;
-    target_texture_dest.h = fullscreen_height;
+    config.fullscreen_width = fullscreen_width;
+    config.fullscreen_height = fullscreen_height;
+    target_texture_dest.w = config.fullscreen_width;
+    target_texture_dest.h = config.fullscreen_height;
   } else {
     target_texture_dest.w = config.window_width;
     target_texture_dest.h = config.window_height;
@@ -61,7 +60,6 @@ void generator_set_active(entity_id id, bool active) {
 }
 
 void generator_set_active_flip(entity_id id) {
-  // mPrint("generator_set_active_flip");
   if (is_generator[id]) {
     generator_component generator = generators[id];
     generator.active = !generator.active;

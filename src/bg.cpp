@@ -2,6 +2,7 @@
 #include "SDL_handler.h"
 #include "components.h"
 #include "entity_id.h"
+#include "gameconfig.h"
 #include "powerup_type.h"
 #include <random>
 #include <string>
@@ -14,8 +15,8 @@ using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
 
+extern gameconfig config;
 extern entity_id player_id;
-
 extern unordered_map<entity_id, bool> inputs;
 extern unordered_map<string, SDL_Texture *> textures;
 extern int w;
@@ -26,8 +27,6 @@ extern int current_knife_cooldown;
 extern int num_knives;
 extern int max_num_knives;
 extern int num_knives_fired;
-extern int target_texture_width;
-extern int target_texture_height;
 extern int player_money;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> eyeball_vx_distribution;
@@ -63,7 +62,7 @@ void bg_spawn_moon() {
   double scale = 1.0;
   SDL_Texture *t = textures["moon"];
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
-  int x = target_texture_width;
+  int x = config.target_texture_width;
   int y = 0;
   double dest_x = x;
   double dest_y = y;
@@ -72,8 +71,6 @@ void bg_spawn_moon() {
   bg_sprites[id] = {is_animating,         0,           num_clips, t,
                     {src_x, src_y, w, h}, {x, y, w, h}};
   bg_transforms[id] = {dest_x, dest_y, vx, vy, angle, scale};
-  // inputs[id] = true;
-  // player_id = id;
   entities.push_back(id);
 }
 

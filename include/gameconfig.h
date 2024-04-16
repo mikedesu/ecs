@@ -8,4 +8,8 @@ typedef struct {
   size_t default_window_height;
   size_t window_width;
   size_t window_height;
+  size_t target_texture_width;
+  size_t target_texture_height;
+  size_t fullscreen_width;
+  size_t fullscreen_height;
 } gameconfig;

@@ -21,22 +21,24 @@ gameconfig config;
 
 int DEBUG_TEXT_WRAP_LEN = 2048;
 
+// moving into gameconfig soon
 double zoom = 1.0; // has to appear
 
+// moving into gameconfig soon
 const int default_knife_speed = 4;
+int current_knife_speed = default_knife_speed;
+
+// moving into gameconfig soon
 const int default_knife_cooldown = 30;
+int knife_cooldown = 0;
+int current_knife_cooldown = default_knife_cooldown;
 
 char texture_text[1024] = "a bunch of random text";
-int target_texture_width;
-int target_texture_height;
 
 bool quit = false;
 bool do_render_debug_panel = true;
 bool is_fullscreen = false;
-int knife_cooldown = 0;
-int current_knife_cooldown = default_knife_cooldown;
 int num_collisions = 0;
-int current_knife_speed = default_knife_speed;
 int img_flags = IMG_INIT_PNG;
 int result = -1;
 int w = 0;
@@ -78,8 +80,6 @@ SDL_Texture *debug_bg_texture = nullptr;
 
 vector<entity_id> entities;
 vector<entity_id> entities_marked_for_deletion_tmp;
-unordered_map<entity_id, bool> is_blood_pixel;
-
 unordered_map<int, bool> is_pressed;
 unordered_map<entity_id, powerup_type> powerup_types;
 unordered_map<entity_id, enemy_type> enemy_types;
@@ -93,6 +93,7 @@ unordered_map<entity_id, generator_component> generators;
 unordered_map<entity_id, bool> inputs;
 unordered_map<entity_id, bool> is_rotating;
 unordered_map<entity_id, bool> is_collidable;
+unordered_map<entity_id, bool> is_blood_pixel;
 unordered_map<entity_id, bool> is_enemy;
 unordered_map<entity_id, bool> is_soulshard;
 unordered_map<entity_id, bool> is_knife;

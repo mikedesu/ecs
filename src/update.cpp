@@ -35,15 +35,12 @@ extern int player_soulshards;
 extern int total_soulshards_collected;
 extern int player_health;
 extern int player_max_health;
-extern int target_texture_width;
-extern int target_texture_height;
 extern int num_enemies_escaped;
-// extern int window_width;
 extern int soulshard_spawn_rate;
-extern entity_id player_id;
 extern int current_knife_cooldown;
 extern int knife_cooldown;
 extern int knife_charge;
+extern entity_id player_id;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> soulshard_spawn_rate_distribution;
 
@@ -70,7 +67,6 @@ extern void spawn_soulshard(int x, int y);
 extern void spawn_eyeball();
 extern void spawn_powerup();
 extern void spawn_bat();
-// extern void spawn_blood_pixel(int x, int y);
 extern void spawn_blood_pixels(int x, int y, int n);
 extern double distance(int x1, int y1, int x2, int y2);
 
@@ -187,13 +183,13 @@ function<void(const entity_id, transform_component &)> handle_skull_transform =
       sprite_component sprite = sprites[id];
       if (transform.x < 0) {
         transform.x = 0;
-      } else if (transform.x > target_texture_width - sprite.dest.w) {
-        transform.x = target_texture_width - sprite.dest.w;
+      } else if (transform.x > config.target_texture_width - sprite.dest.w) {
+        transform.x = config.target_texture_width - sprite.dest.w;
       }
       if (transform.y < 0) {
         transform.y = 0;
-      } else if (transform.y > target_texture_height - sprite.dest.h) {
-        transform.y = target_texture_height - sprite.dest.h;
+      } else if (transform.y > config.target_texture_height - sprite.dest.h) {
+        transform.y = config.target_texture_height - sprite.dest.h;
       }
     };
 

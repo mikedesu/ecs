@@ -1,4 +1,3 @@
-
 #include "SDL_handler.h"
 #include "gameconfig.h"
 #include "mPrint.h"
@@ -13,18 +12,12 @@ extern SDL_Rect debug_texture_src;
 extern SDL_Rect debug_texture_dest;
 extern SDL_Rect target_texture_src;
 extern SDL_Rect target_texture_dest;
-extern int default_window_width;
-extern int default_window_height;
 extern int mWidth;
 extern int mHeight;
 extern int soulshard_spawn_rate;
 extern int debug_font_size;
 extern int img_flags;
 extern int result;
-extern int target_texture_width;
-extern int target_texture_height;
-extern int window_width;
-extern int window_height;
 extern TTF_Font *gFont;
 extern SDL_Renderer *renderer;
 extern SDL_Texture *target_texture;
@@ -46,7 +39,6 @@ void init_debug_texture_rects() {
 }
 
 void init_gfont() {
-  // gFont = TTF_OpenFont("ttf/hack.ttf", debug_font_size);
   string path = "ttf/hack.ttf";
   gFont = TTF_OpenFont(path.c_str(), config.debug_font_size);
   if (gFont == nullptr) {
@@ -70,9 +62,10 @@ void init_rng() {
   soulshard_spawn_rate_distribution =
       uniform_real_distribution<double>(0.0, 100.0);
 
-  if (target_texture_width > 0) {
+  // if (config.target_texture_width > 0) {
+  if (config.target_texture_height > 0) {
     texture_height_distribution =
-        uniform_real_distribution<double>(0.0, target_texture_height);
+        uniform_real_distribution<double>(0.0, config.target_texture_height);
   }
 
   blood_velocity_positive_distribution =
@@ -85,9 +78,15 @@ void init_rng() {
 }
 
 int init_target_texture() {
+
+  if (config.target_texture_width == 0 || config.target_texture_height == 0) {
+    mPrint("Target texture width or height is 0!");
+    return 0;
+  }
+
   target_texture = SDL_CreateTexture(
       renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
-      target_texture_width, target_texture_height);
+      config.target_texture_width, config.target_texture_height);
   if (target_texture == nullptr) {
     mPrint("Failed to create target texture!");
     return 0;
@@ -98,7 +97,8 @@ int init_target_texture() {
 void handle_init_target_texture() {
   result = init_target_texture();
   if (!result) {
-    cleanup_and_exit_with_failure_mprint("Failed to init target texture");
+    mPrint("Failed to init target texture");
+    cleanup_and_exit_with_failure();
   }
 }
 
@@ -107,19 +107,17 @@ void init_target_texture_rects() {
   target_texture_src.y = 0;
   target_texture_dest.x = 0;
   target_texture_dest.y = 0;
-  target_texture_src.w = target_texture_width;
-  target_texture_src.h = target_texture_height;
-  // target_texture_dest.w = window_width;
+  target_texture_src.w = config.target_texture_width;
+  target_texture_src.h = config.target_texture_height;
   target_texture_dest.w = config.window_width;
-  // target_texture_dest.h = window_height;
   target_texture_dest.h = config.window_height;
 }
 
 void init_ttf() {
   result = TTF_Init();
   if (result == -1) {
-    cleanup_and_exit_with_failure_mprint("Failed to init TTF" +
-                                         string(TTF_GetError()));
+    mPrint("Failed to init TTF" + string(TTF_GetError()));
+    cleanup_and_exit_with_failure();
   }
 }
 
