@@ -345,29 +345,23 @@ void load_main_config() {
 
   if (d.HasMember("default_window_width") &&
       d["default_window_width"].IsInt()) {
-    // default_window_width = d["default_window_width"].GetInt();
     config.default_window_width = d["default_window_width"].GetInt();
   } else {
     mPrint("config/game.json has no default_window_width");
     mPrint("setting to a default");
-    // default_window_width = 640;
     config.default_window_width = 640;
   }
   //
   if (d.HasMember("default_window_height") &&
       d["default_window_height"].IsInt()) {
-    // default_window_height = d["default_window_height"].GetInt();
     config.default_window_height = d["default_window_height"].GetInt();
   } else {
     mPrint("config/game.json has no default_window_height");
     mPrint("setting to a default");
-    // default_window_height = 480;
     config.default_window_height = 480;
   }
 
-  // window_width = default_window_width;
   config.window_width = config.default_window_width;
-  // window_height = default_window_height;
   config.window_height = config.default_window_height;
 
   target_texture_width = config.default_window_width;
