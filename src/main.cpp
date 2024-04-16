@@ -164,6 +164,7 @@ int main() {
   // spawn_generator(ENEMY_TYPE_EYEBALL, true, 120);
   spawn_generator(ENEMY_TYPE_BAT, true, 120, 60 * 60);
   mPrint("main loop...");
+  mPrint("player_id: " + to_string(player_id));
   while (!quit) {
     handle_input();
     handle_input_component();

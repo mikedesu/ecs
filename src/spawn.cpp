@@ -214,6 +214,8 @@ void spawn_powerup() {
 }
 
 void spawn_blood_pixels(int x, int y, int n) {
+  mPrint("spawn_blood_pixels: " + to_string(x) + ", " + to_string(y) + ", " +
+         to_string(n));
   string key = "blood-pixel";
   SDL_Texture *t = textures[key];
   // custom width/height defined in config/textures.json

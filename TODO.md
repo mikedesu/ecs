@@ -260,5 +260,7 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 
 - [x] configurable number of blood particles per kill set in game.json
     - [ ] probably shouldn't allow this number to be set too high :X 
-        - [ ] observable slowdowns when set to 1000 and getting 5000+ entities on screen at once
+    - [x] fixed - re-wrote the knife-collision code to do explicit checks to make sure we aren't colliding with a blood pixel or other non-enemy
+
+
 

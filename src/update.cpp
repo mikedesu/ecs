@@ -281,23 +281,26 @@ function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
     return;
   }
   sprite_component knife = sprites[id];
-  for (auto enemy_id : entities) {
-    if (id == enemy_id || !is_enemy[enemy_id]) {
+  for (auto p : is_enemy) {
+    entity_id enemy_id = p.first;
+    if (id == enemy_id || is_blood_pixel[enemy_id] || is_soulshard[enemy_id] ||
+        is_powerup[enemy_id]) {
       continue;
     }
+    enemy_type type = enemy_types[enemy_id];
     sprite_component enemy = sprites[enemy_id];
     if (SDL_HasIntersection(&knife.dest, &enemy.dest)) {
+      mPrint("knife collision with entity id " + to_string(enemy_id) +
+             " of type " + to_string(type));
       is_marked_for_deletion[enemy_id] = true;
       is_marked_for_deletion[id] = true;
       num_collisions++;
-      enemies_killed[ENEMY_TYPE_EYEBALL]++;
+      enemies_killed[type]++;
       spawn_soulshard(enemy.dest.x, enemy.dest.y);
-
       int num_pixels = config["blood_pixel_count"];
       const int x = enemy.dest.x + enemy.dest.w / 2;
       const int y = enemy.dest.y + enemy.dest.h / 2;
       spawn_blood_pixels(x, y, num_pixels);
-
       if (is_marked_for_deletion[id]) {
         num_knives++;
         if (num_knives > max_num_knives) {
