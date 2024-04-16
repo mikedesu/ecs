@@ -1,11 +1,14 @@
 
 #include "SDL_handler.h"
+#include "gameconfig.h"
 #include "mPrint.h"
 #include <random>
 #include <string>
+
 using std::string;
 using std::uniform_real_distribution;
 
+extern gameconfig config;
 extern SDL_Rect debug_texture_src;
 extern SDL_Rect debug_texture_dest;
 extern SDL_Rect target_texture_src;
@@ -30,6 +33,7 @@ extern uniform_real_distribution<double> blood_velocity_positive_distribution;
 extern uniform_real_distribution<double> blood_velocity_negative_distribution;
 extern uniform_real_distribution<double> blood_velocity_distribution;
 
+extern void cleanup_and_exit_with_failure();
 extern void cleanup_and_exit_with_failure_mprint(string message);
 
 void init_debug_texture_rects() {
@@ -40,9 +44,12 @@ void init_debug_texture_rects() {
 }
 
 void init_gfont() {
-  gFont = TTF_OpenFont("ttf/hack.ttf", debug_font_size);
+  // gFont = TTF_OpenFont("ttf/hack.ttf", debug_font_size);
+  string path = "ttf/hack.ttf";
+  gFont = TTF_OpenFont(path.c_str(), config.debug_font_size);
   if (gFont == nullptr) {
-    cleanup_and_exit_with_failure_mprint("Failed to load font");
+    mPrint("Failed to load font: " + path);
+    cleanup_and_exit_with_failure();
   }
 }
 

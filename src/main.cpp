@@ -3,6 +3,7 @@
 #include "components.h"
 #include "enemy_type.h"
 #include "entity_id.h"
+#include "gameconfig.h"
 #include "powerup_type.h"
 #include <random>
 #include <string>
@@ -14,6 +15,8 @@ using std::string;
 using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
+
+gameconfig config;
 
 int DEBUG_TEXT_WRAP_LEN = 2048;
 
@@ -28,7 +31,7 @@ char texture_text[1024] = "a bunch of random text";
 int target_texture_width = 1600;
 int target_texture_height = 960;
 int debug_font_size = 16;
-int soulshard_spawn_rate = 25.0;
+// int soulshard_spawn_rate = 25.0;
 
 bool quit = false;
 bool do_render_debug_panel = true;
@@ -133,6 +136,7 @@ void init_target_texture_rects();
 void init();
 void load_debug_text();
 void load_textures();
+void load_main_config();
 void render_frame();
 void spawn_skull();
 void spawn_generator(enemy_type type, bool active, int cooldown,
@@ -144,6 +148,7 @@ int main() {
   create_window();
   create_renderer();
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+  load_main_config();
   init();
   handle_init_target_texture();
   load_textures();

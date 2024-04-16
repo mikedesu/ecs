@@ -1,6 +1,7 @@
 #include "SDL_handler.h"
 #include "components.h"
 #include "entity_id.h"
+#include "gameconfig.h"
 #include "mPrint.h"
 #include "rapidjson/document.h"
 #include "rapidjson/stringbuffer.h"
@@ -22,6 +23,7 @@ using std::unordered_map;
 using std::vector;
 
 // external variables
+extern gameconfig config;
 extern int target_texture_width;
 extern int target_texture_height;
 extern int window_width;
@@ -72,6 +74,7 @@ bool json_value_has_member_is_string(Value &v, string member);
 void handle_load_texture_with_color_mod(Value &v);
 void handle_load_texture(Value &v);
 Document load_textures_document();
+Document load_main_config_document();
 void check_if_json_value_has_member_and_is_string(Value &v, string member);
 void handle_load_by_type(Value &v);
 void check_if_json_value_is_object(Value &v);
@@ -304,5 +307,37 @@ void load_textures() {
       check_if_json_value_has_member_and_is_string(v, "key");
       handle_load_by_type(v);
     }
+  }
+}
+
+Document load_main_config_document() {
+  string config_file_path = "config/game.json";
+  const size_t read_buffer_size = 65536;
+  char readBuffer[read_buffer_size];
+  Document d;
+  FILE *fp = fopen(config_file_path.c_str(), "r");
+  if (fp == nullptr) {
+    mPrint("Failed to open " + config_file_path);
+    cleanup_and_exit_with_failure();
+  }
+  fread(readBuffer, 1, read_buffer_size, fp);
+  fclose(fp);
+  d.Parse(readBuffer);
+  if (d.HasParseError()) {
+    string msg = "Failed to parse " + config_file_path;
+    mPrint(msg);
+    cleanup_and_exit_with_failure();
+  }
+  return d;
+}
+
+void load_main_config() {
+  Document d = load_main_config_document();
+  if (d.HasMember("debug_font_size") && d["debug_font_size"].IsInt()) {
+    config.debug_font_size = d["debug_font_size"].GetInt();
+  } else {
+    mPrint("config/game.json has no debug_font_size");
+    mPrint("setting to a default");
+    config.debug_font_size = 16;
   }
 }
