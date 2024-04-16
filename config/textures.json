@@ -78,7 +78,15 @@
     "r": 255,
     "g": 0,
     "b": 0,
-    "w": 32,
-    "h": 32
+    "w": 4,
+    "h": 4
+  },
+  {
+    "type": "texture_colormod",
+    "key": "powerup-heart",
+    "path": "img/heart-sheet4x.png",
+    "r": 255,
+    "g": 255,
+    "b": 255
   }
 ]

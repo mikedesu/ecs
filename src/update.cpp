@@ -32,6 +32,7 @@ extern int max_num_knives;
 extern int player_soulshards;
 extern int total_soulshards_collected;
 extern int player_health;
+extern int player_max_health;
 extern int target_texture_width;
 extern int target_texture_height;
 extern int num_enemies_escaped;
@@ -67,7 +68,7 @@ extern void spawn_soulshard(int x, int y);
 extern void spawn_eyeball();
 extern void spawn_powerup();
 extern void spawn_bat();
-extern void spawn_blood_pixel(int x, int y);
+// extern void spawn_blood_pixel(int x, int y);
 extern void spawn_blood_pixels(int x, int y, int n);
 extern double distance(int x1, int y1, int x2, int y2);
 
@@ -127,6 +128,12 @@ function<void(entity_id)> handle_update_skull_collision_powerup =
         }
       } else if (type == POWERUP_TYPE_KNIFE_SPEED) {
         current_knife_speed += 1;
+      } else if (type == POWERUP_TYPE_HEART) {
+        player_health++;
+        if (player_health > player_max_health) {
+          player_health = player_max_health;
+        }
+        // player_max_health++;
       }
       powerups_collected[type]++;
     };
@@ -283,7 +290,7 @@ function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
       enemies_killed[ENEMY_TYPE_EYEBALL]++;
       spawn_soulshard(enemy.dest.x, enemy.dest.y);
 
-      const int num_pixels = 20;
+      int num_pixels = rand() % 20 + 10;
       const int x = enemy.dest.x + enemy.dest.w / 2;
       const int y = enemy.dest.y + enemy.dest.h / 2;
       spawn_blood_pixels(x, y, num_pixels);
@@ -300,24 +307,10 @@ function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
 
 function<void(sprite_pair)> update_animation = [](const sprite_pair p) {
   entity_id id = p.first;
-  sprite_component sprite = sprites[id];
-  if (sprite.is_animating && is_soulshard[id]) {
-    if (frame_count % 10 == 0) {
-      // mPrint("soulshard animation");
-      sprite.current_clip = (sprite.current_clip + 1) % sprite.num_clips;
-      sprite.src.x = sprite.current_clip * sprite.src.w;
-      sprites[id] = sprite;
-    }
-  } else if (sprite.is_animating && enemy_types[id] == ENEMY_TYPE_BAT) {
-    if (frame_count % 10 == 0) {
-      sprite.current_clip = (sprite.current_clip + 1) % sprite.num_clips;
-      sprite.src.x = sprite.current_clip * sprite.src.w;
-      sprites[id] = sprite;
-    }
-  } else if (sprite.is_animating) {
-    sprite.current_clip = (sprite.current_clip + 1) % sprite.num_clips;
-    sprite.src.x = sprite.current_clip * sprite.src.w;
-    sprites[id] = sprite;
+  if (sprites[id].is_animating && frame_count % 10 == 0) {
+    sprites[id].current_clip =
+        (sprites[id].current_clip + 1) % sprites[id].num_clips;
+    sprites[id].src.x = sprites[id].current_clip * sprites[id].src.w;
   }
 };
 
@@ -330,10 +323,8 @@ void update_bg_transform_components() {
 }
 
 void update_generators() {
-  // for (auto kv : generators) {
   for (auto kv : is_generator) {
     entity_id id = kv.first;
-    // generator_component generator = kv.second;
     if (generators[id].active && frame_count % generators[id].cooldown == 0) {
       switch (generators[id].type) {
       case ENEMY_TYPE_EYEBALL:
@@ -346,7 +337,6 @@ void update_generators() {
         break;
       }
     }
-
     // if the generator has a "cooldown reduction" set to non-zero,
     // then every N frames, reduce the cooldown by half until we hit a minimum
     if (generators[id].cooldown_reduction && frame_count > 0 &&

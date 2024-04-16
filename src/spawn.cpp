@@ -183,15 +183,22 @@ void spawn_powerup() {
   switch (poweruptype) {
   case POWERUP_TYPE_KNIFE_LARGENESS:
     id = spawn_entity("powerup-knife-largeness", false, 1, x, y);
+    is_rotating[id] = true;
     break;
   case POWERUP_TYPE_KNIFE_COOLDOWN:
     id = spawn_entity("powerup-knife-cooldown", false, 1, x, y);
+    is_rotating[id] = true;
     break;
   case POWERUP_TYPE_KNIFE_SPEED:
     id = spawn_entity("powerup-knife-speed", false, 1, x, y);
+    is_rotating[id] = true;
+    break;
+  case POWERUP_TYPE_HEART:
+    id = spawn_entity("powerup-heart", true, 6, x, y);
     break;
   case POWERUP_TYPE_KNIFE_QUANTITY:
     id = spawn_entity("knife", false, 1, x, y);
+    is_rotating[id] = true;
     transforms[id].angle = 90.0;
     break;
   default:
@@ -199,7 +206,7 @@ void spawn_powerup() {
   }
   transforms[id].vx = -1.0;
   is_powerup[id] = true;
-  is_rotating[id] = true;
+  // is_rotating[id] = true;
   powerup_types[id] = poweruptype;
 }
 
@@ -217,12 +224,10 @@ void spawn_blood_pixels(int x, int y, int n) {
   for (int i = 0; i < n; i++) {
     entity_id id = get_next_entity_id();
     sprites[id] = sprite;
-    transforms[id] = {dx,
-                      dy,
-                      blood_velocity_negative_distribution(rng_generator),
+    transforms[id] = {dx, dy,
+                      // blood_velocity_negative_distribution(rng_generator),
                       blood_velocity_distribution(rng_generator),
-                      0,
-                      1};
+                      blood_velocity_distribution(rng_generator), 0, 1};
     is_blood_pixel[id] = true;
     entities.push_back(id);
   }
