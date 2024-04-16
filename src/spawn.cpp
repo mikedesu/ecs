@@ -187,6 +187,9 @@ void spawn_powerup() {
   case POWERUP_TYPE_KNIFE_COOLDOWN:
     id = spawn_entity("powerup-knife-cooldown", false, 1, x, y);
     break;
+  case POWERUP_TYPE_KNIFE_SPEED:
+    id = spawn_entity("powerup-knife-speed", false, 1, x, y);
+    break;
   case POWERUP_TYPE_KNIFE_QUANTITY:
     id = spawn_entity("knife", false, 1, x, y);
     transforms[id].angle = 90.0;

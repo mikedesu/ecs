@@ -24,6 +24,7 @@ using std::vector;
 
 const int cooldown_min = 10;
 
+extern int current_knife_speed;
 extern int frame_count;
 extern int num_collisions;
 extern int num_knives;
@@ -118,11 +119,14 @@ function<void(entity_id)> handle_update_skull_collision_powerup =
           current_knife_cooldown = 10;
         }
       } else if (type == POWERUP_TYPE_KNIFE_QUANTITY) {
+        // this is worth examining
         num_knives++;
         max_num_knives++;
         if (num_knives > max_num_knives) {
           num_knives = max_num_knives;
         }
+      } else if (type == POWERUP_TYPE_KNIFE_SPEED) {
+        current_knife_speed += 1;
       }
       powerups_collected[type]++;
     };

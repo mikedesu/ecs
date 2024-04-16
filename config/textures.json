@@ -52,6 +52,14 @@
     "b": 255
   },
   {
+    "type": "texture_colormod",
+    "key": "powerup-knife-speed",
+    "path": "img/powerup-sheet4x.png",
+    "r": 255,
+    "g": 0,
+    "b": 0
+  },
+  {
     "type": "texture",
     "key": "soulshard",
     "path": "img/soulshard-white-sheet4x.png"
@@ -70,7 +78,7 @@
     "r": 255,
     "g": 0,
     "b": 0,
-    "w": 2,
-    "h": 2
+    "w": 32,
+    "h": 32
   }
 ]
