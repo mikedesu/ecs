@@ -24,6 +24,8 @@ using std::vector;
 
 // external variables
 extern gameconfig config;
+extern int default_window_width;
+extern int default_window_height;
 extern int target_texture_width;
 extern int target_texture_height;
 extern int window_width;
@@ -340,4 +342,28 @@ void load_main_config() {
     mPrint("setting to a default");
     config.debug_font_size = 16;
   }
+
+  if (d.HasMember("default_window_width") &&
+      d["default_window_width"].IsInt()) {
+    default_window_width = d["default_window_width"].GetInt();
+  } else {
+    mPrint("config/game.json has no default_window_width");
+    mPrint("setting to a default");
+    default_window_width = 640;
+  }
+  //
+  if (d.HasMember("default_window_height") &&
+      d["default_window_height"].IsInt()) {
+    default_window_height = d["default_window_height"].GetInt();
+  } else {
+    mPrint("config/game.json has no default_window_height");
+    mPrint("setting to a default");
+    default_window_height = 480;
+  }
+
+  window_width = default_window_width;
+  window_height = default_window_height;
+
+  target_texture_width = default_window_width;
+  target_texture_height = default_window_height;
 }

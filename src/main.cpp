@@ -4,6 +4,7 @@
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "gameconfig.h"
+#include "mPrint.h"
 #include "powerup_type.h"
 #include <random>
 #include <string>
@@ -22,22 +23,28 @@ int DEBUG_TEXT_WRAP_LEN = 2048;
 
 double zoom = 1.0; // has to appear
 
-const int default_window_width = 1600;
-const int default_window_height = 960;
+int default_window_width;
+int default_window_height;
+// int default_window_width = 1600;
+// int default_window_height = 960;
+int window_width;
+int window_height;
+// int window_width = default_window_width;
+// int window_height = default_window_height;
 const int default_knife_speed = 4;
 const int default_knife_cooldown = 30;
 
 char texture_text[1024] = "a bunch of random text";
-int target_texture_width = 1600;
-int target_texture_height = 960;
-int debug_font_size = 16;
-// int soulshard_spawn_rate = 25.0;
+int target_texture_width;
+int target_texture_height;
+// int target_texture_width = 1600;
+// int target_texture_height = 960;
+//   int debug_font_size = 16;
+//    int soulshard_spawn_rate = 25.0;
 
 bool quit = false;
 bool do_render_debug_panel = true;
 bool is_fullscreen = false;
-int window_width = default_window_width;
-int window_height = default_window_height;
 int knife_cooldown = 0;
 int current_knife_cooldown = default_knife_cooldown;
 int num_collisions = 0;
@@ -145,21 +152,32 @@ void update();
 
 int main() {
   SDL_Init(SDL_INIT_VIDEO);
+  load_main_config();
   create_window();
   create_renderer();
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-  load_main_config();
+
+  mPrint("init...");
   init();
+  mPrint("handle init...");
   handle_init_target_texture();
+  mPrint("load textures...");
   load_textures();
+  mPrint("load debug text...");
   load_debug_text();
+  mPrint("init debug texture rects...");
   init_debug_texture_rects();
   // get the width and height of the texture
+  mPrint("init target texture rects...");
   init_target_texture_rects();
+  mPrint("bg init...");
   bg_init();
+  mPrint("spawn skull...");
   spawn_skull();
+  mPrint("spawn generator...");
   // spawn_generator(ENEMY_TYPE_EYEBALL, true, 120);
   spawn_generator(ENEMY_TYPE_BAT, true, 120, 60 * 60);
+  mPrint("main loop...");
 
   while (!quit) {
     handle_input();

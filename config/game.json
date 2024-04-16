@@ -1,3 +1,5 @@
 {
-  "debug_font_size": 32
+  "debug_font_size": 32,
+  "default_window_width": 1600,
+  "default_window_height": 960
 }

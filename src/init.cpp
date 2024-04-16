@@ -13,6 +13,8 @@ extern SDL_Rect debug_texture_src;
 extern SDL_Rect debug_texture_dest;
 extern SDL_Rect target_texture_src;
 extern SDL_Rect target_texture_dest;
+extern int default_window_width;
+extern int default_window_height;
 extern int mWidth;
 extern int mHeight;
 extern int soulshard_spawn_rate;
