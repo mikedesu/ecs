@@ -3,7 +3,7 @@
 #include "components.h"
 #include "enemy_type.h"
 #include "entity_id.h"
-#include "gameconfig.h"
+// #include "gameconfig.h"
 #include "mPrint.h"
 #include "powerup_type.h"
 #include <random>
@@ -17,7 +17,8 @@ using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
 
-gameconfig config;
+// gameconfig config;
+unordered_map<string, size_t> config;
 
 int DEBUG_TEXT_WRAP_LEN = 2048;
 

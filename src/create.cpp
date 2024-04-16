@@ -1,29 +1,43 @@
 #include "SDL_handler.h"
-#include "gameconfig.h"
+// #include "gameconfig.h"
 #include "mPrint.h"
 #include <string>
-extern gameconfig config;
-extern int window_width;
-extern int window_height;
-extern SDL_Window *window;
-extern SDL_Renderer *renderer;
+#include <unordered_map>
 
 using std::string;
+using std::unordered_map;
+
+// extern gameconfig config;
+extern unordered_map<string, size_t> config;
+// extern int window_width;
+// extern int window_height;
+extern SDL_Window *window;
+extern SDL_Renderer *renderer;
 
 extern void cleanup_and_exit_with_failure_mprint(string msg);
 extern void cleanup_and_exit_with_failure();
 
 void create_window() {
-
-  if (config.window_width == 0 || config.window_height == 0) {
-    mPrint("Window width and height must be set");
+  string window_title = "game";
+  string keys[] = {"window_width", "window_height"};
+  for (string k : keys) {
+    if (config.find(k) == config.end()) {
+      mPrint("Key not present in unordered_map config: " + k);
+      cleanup_and_exit_with_failure();
+    }
+  }
+  size_t window_width = config[keys[0]];
+  size_t window_height = config[keys[1]];
+  if (window_width == 0) {
+    mPrint("Window width cannot be 0");
+    cleanup_and_exit_with_failure();
+  } else if (window_height == 0) {
+    mPrint("Window height cannot be 0");
     cleanup_and_exit_with_failure();
   }
-
-  window = SDL_CreateWindow(
-      "SDL2 Displaying Image", SDL_WINDOWPOS_UNDEFINED,
-      // SDL_WINDOWPOS_UNDEFINED, window_width, window_height, 0);
-      SDL_WINDOWPOS_UNDEFINED, config.window_width, config.window_height, 0);
+  window =
+      SDL_CreateWindow(window_title.c_str(), SDL_WINDOWPOS_UNDEFINED,
+                       SDL_WINDOWPOS_UNDEFINED, window_width, window_height, 0);
   if (window == nullptr) {
     mPrint("Failed to create window: " + string(SDL_GetError()));
     cleanup_and_exit_with_failure();

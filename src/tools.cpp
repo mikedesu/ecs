@@ -2,18 +2,21 @@
 #include "components.h"
 #include "enemy_type.h"
 #include "entity_id.h"
-#include "gameconfig.h"
+// #include "gameconfig.h"
+#include <string>
 #include <unordered_map>
 #include <vector>
 
+using std::string;
 using std::unordered_map;
 using std::vector;
 
-extern gameconfig config;
+// extern gameconfig config;
 extern entity_id next_entity_id;
 extern bool is_fullscreen;
 extern int frame_count;
 extern SDL_Rect target_texture_dest;
+extern unordered_map<string, size_t> config;
 extern SDL_Window *window;
 extern unordered_map<enemy_type, int> enemies_killed;
 extern unordered_map<entity_id, generator_component> generators;
@@ -41,13 +44,13 @@ void toggle_fullscreen() {
   if (is_fullscreen) {
     int fullscreen_width, fullscreen_height;
     SDL_GetWindowSize(window, &fullscreen_width, &fullscreen_height);
-    config.fullscreen_width = fullscreen_width;
-    config.fullscreen_height = fullscreen_height;
-    target_texture_dest.w = config.fullscreen_width;
-    target_texture_dest.h = config.fullscreen_height;
+    config["fullscreen_width"] = fullscreen_width;
+    config["fullscreen_height"] = fullscreen_height;
+    target_texture_dest.w = config["fullscreen_width"];
+    target_texture_dest.h = config["fullscreen_height"];
   } else {
-    target_texture_dest.w = config.window_width;
-    target_texture_dest.h = config.window_height;
+    target_texture_dest.w = config["window_width"];
+    target_texture_dest.h = config["window_height"];
   }
 }
 

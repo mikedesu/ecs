@@ -242,3 +242,23 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 - [ ] thinking of detaching the bottom of the skull mouth so that it is a separate sprite
     - [ ] could lead to cool effects like long mouth opening for firing a laser or smth
 
+## 16 April 2024
+
+### 00:36 CDT
+
+- [x] starting to do config via json files
+    - [x] textures
+    - [x] game config
+        - [x] default window width and height
+        - [x] debug panel font size
+    - [x] config is now an unordered_map of string key and size_t value
+- [ ] magnetic pick-up of ALL items, not just soulshards
+- [ ] magnetic pick-up as a global variable that can be tuned with powerups
+- [ ] a powerup for magnetic pick-up range extension
+
+### 11:10 CDT
+
+- [x] configurable number of blood particles per kill set in game.json
+    - [ ] probably shouldn't allow this number to be set too high :X 
+        - [ ] observable slowdowns when set to 1000 and getting 5000+ entities on screen at once
+

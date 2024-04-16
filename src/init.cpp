@@ -1,13 +1,16 @@
 #include "SDL_handler.h"
-#include "gameconfig.h"
+// #include "gameconfig.h"
 #include "mPrint.h"
 #include <random>
 #include <string>
+#include <unordered_map>
 
 using std::string;
 using std::uniform_real_distribution;
+using std::unordered_map;
 
-extern gameconfig config;
+// extern gameconfig config;
+extern unordered_map<string, size_t> config;
 extern SDL_Rect debug_texture_src;
 extern SDL_Rect debug_texture_dest;
 extern SDL_Rect target_texture_src;
@@ -40,7 +43,7 @@ void init_debug_texture_rects() {
 
 void init_gfont() {
   string path = "ttf/hack.ttf";
-  gFont = TTF_OpenFont(path.c_str(), config.debug_font_size);
+  gFont = TTF_OpenFont(path.c_str(), config["debug_font_size"]);
   if (gFont == nullptr) {
     mPrint("Failed to load font: " + path);
     cleanup_and_exit_with_failure();
@@ -63,9 +66,9 @@ void init_rng() {
       uniform_real_distribution<double>(0.0, 100.0);
 
   // if (config.target_texture_width > 0) {
-  if (config.target_texture_height > 0) {
+  if (config["target_texture_height"] > 0) {
     texture_height_distribution =
-        uniform_real_distribution<double>(0.0, config.target_texture_height);
+        uniform_real_distribution<double>(0.0, config["target_texture_height"]);
   }
 
   blood_velocity_positive_distribution =
@@ -78,15 +81,21 @@ void init_rng() {
 }
 
 int init_target_texture() {
+  if (config.find("target_texture_width") == config.end() ||
+      config.find("target_texture_height") == config.end()) {
+    mPrint("Target texture width or height not found in config!");
+    return 0;
+  }
 
-  if (config.target_texture_width == 0 || config.target_texture_height == 0) {
+  if (config["target_texture_width"] == 0 ||
+      config["target_texture_height"] == 0) {
     mPrint("Target texture width or height is 0!");
     return 0;
   }
 
   target_texture = SDL_CreateTexture(
       renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
-      config.target_texture_width, config.target_texture_height);
+      config["target_texture_width"], config["target_texture_height"]);
   if (target_texture == nullptr) {
     mPrint("Failed to create target texture!");
     return 0;
@@ -107,10 +116,10 @@ void init_target_texture_rects() {
   target_texture_src.y = 0;
   target_texture_dest.x = 0;
   target_texture_dest.y = 0;
-  target_texture_src.w = config.target_texture_width;
-  target_texture_src.h = config.target_texture_height;
-  target_texture_dest.w = config.window_width;
-  target_texture_dest.h = config.window_height;
+  target_texture_src.w = config["target_texture_width"];
+  target_texture_src.h = config["target_texture_height"];
+  target_texture_dest.w = config["window_width"];
+  target_texture_dest.h = config["window_height"];
 }
 
 void init_ttf() {

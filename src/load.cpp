@@ -1,7 +1,7 @@
 #include "SDL_handler.h"
 #include "components.h"
 #include "entity_id.h"
-#include "gameconfig.h"
+// #include "gameconfig.h"
 #include "mPrint.h"
 #include "rapidjson/document.h"
 #include "rapidjson/stringbuffer.h"
@@ -23,7 +23,8 @@ using std::unordered_map;
 using std::vector;
 
 // external variables
-extern gameconfig config;
+// extern gameconfig config;
+extern unordered_map<string, size_t> config;
 extern int frame_count;
 extern int num_collisions;
 extern int knife_cooldown;
@@ -87,8 +88,8 @@ void load_debug_text() {
            "%d\nnum_enemies_killed: %ld\nplayer_health: "
            "%d/%d\nsoulshards_collected: %d\ntotal_soulshards_collected: "
            "%d\nplayer position: %.02f,%.02f\n",
-           config.target_texture_width, config.target_texture_height,
-           config.window_width, config.window_height, frame_count,
+           config["target_texture_width"], config["target_texture_height"],
+           config["window_width"], config["window_height"], frame_count,
            entities.size(), fps(), zoom, num_collisions, knife_cooldown,
            current_knife_cooldown, num_knives, max_num_knives, num_knives_fired,
            knife_charge, num_enemies_escaped, get_num_enemies_killed(),
@@ -330,34 +331,41 @@ Document load_main_config_document() {
 void load_main_config() {
   Document d = load_main_config_document();
   if (d.HasMember("debug_font_size") && d["debug_font_size"].IsInt()) {
-    config.debug_font_size = d["debug_font_size"].GetInt();
+    config["debug_font_size"] = d["debug_font_size"].GetInt();
   } else {
     mPrint("config/game.json has no debug_font_size");
     mPrint("setting to a default");
-    config.debug_font_size = 16;
+    config["debug_font_size"] = 16;
   }
 
   if (d.HasMember("default_window_width") &&
       d["default_window_width"].IsInt()) {
-    config.default_window_width = d["default_window_width"].GetInt();
+    config["default_window_width"] = d["default_window_width"].GetInt();
   } else {
     mPrint("config/game.json has no default_window_width");
     mPrint("setting to a default");
-    config.default_window_width = 640;
+    config["default_window_width"] = 640;
   }
-  //
+
   if (d.HasMember("default_window_height") &&
       d["default_window_height"].IsInt()) {
-    config.default_window_height = d["default_window_height"].GetInt();
+    config["default_window_height"] = d["default_window_height"].GetInt();
   } else {
     mPrint("config/game.json has no default_window_height");
     mPrint("setting to a default");
-    config.default_window_height = 480;
+    config["default_window_height"] = 480;
   }
 
-  config.window_width = config.default_window_width;
-  config.window_height = config.default_window_height;
+  if (d.HasMember("blood_pixel_count") && d["blood_pixel_count"].IsInt()) {
+    config["blood_pixel_count"] = d["blood_pixel_count"].GetInt();
+  } else {
+    mPrint("config/game.json has no blood_pixel_count");
+    mPrint("setting to a default");
+    config["blood_pixel_count"] = 10;
+  }
 
-  config.target_texture_width = config.default_window_width;
-  config.target_texture_height = config.default_window_height;
+  config["window_width"] = config["default_window_width"];
+  config["window_height"] = config["default_window_height"];
+  config["target_texture_width"] = config["default_window_width"];
+  config["target_texture_height"] = config["default_window_height"];
 }

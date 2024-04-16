@@ -2,7 +2,7 @@
 #include "components.h"
 #include "enemy_type.h"
 #include "entity_id.h"
-#include "gameconfig.h"
+// #include "gameconfig.h"
 #include "mPrint.h"
 #include "powerup_type.h"
 #include "rotation_pair.h"
@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <functional>
 #include <random>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
@@ -19,13 +20,15 @@
 using std::default_random_engine;
 using std::for_each;
 using std::function;
+using std::string;
 using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
 
 const int cooldown_min = 10;
 
-extern gameconfig config;
+// extern gameconfig config;
+extern unordered_map<string, size_t> config;
 extern int current_knife_speed;
 extern int frame_count;
 extern int num_collisions;
@@ -183,13 +186,14 @@ function<void(const entity_id, transform_component &)> handle_skull_transform =
       sprite_component sprite = sprites[id];
       if (transform.x < 0) {
         transform.x = 0;
-      } else if (transform.x > config.target_texture_width - sprite.dest.w) {
-        transform.x = config.target_texture_width - sprite.dest.w;
+      } else if (transform.x > config["target_texture_width"] - sprite.dest.w) {
+        transform.x = config["target_texture_width"] - sprite.dest.w;
       }
       if (transform.y < 0) {
         transform.y = 0;
-      } else if (transform.y > config.target_texture_height - sprite.dest.h) {
-        transform.y = config.target_texture_height - sprite.dest.h;
+      } else if (transform.y >
+                 config["target_texture_height"] - sprite.dest.h) {
+        transform.y = config["target_texture_height"] - sprite.dest.h;
       }
     };
 
@@ -205,7 +209,7 @@ function<void(const entity_id)> handle_knife_soulshard_transform =
     [](const entity_id id) {
       bool is_marked =
           transforms[id].x < 2 * -sprites[id].src.w ||
-          transforms[id].x > config.window_width + 2 * sprites[id].src.w;
+          transforms[id].x > config["window_width"] + 2 * sprites[id].src.w;
       is_marked_for_deletion[id] = is_marked;
       if (is_knife[id] && is_marked) {
         num_knives++;
@@ -219,18 +223,18 @@ function<void(const entity_id)> handle_powerup_transform =
     [](const entity_id id) {
       is_marked_for_deletion[id] =
           transforms[id].x < 2 * -sprites[id].src.w ||
-          transforms[id].x > config.window_width + 2 * sprites[id].src.w ||
+          transforms[id].x > config["window_width"] + 2 * sprites[id].src.w ||
           transforms[id].y < 2 * -sprites[id].src.h ||
-          transforms[id].y > config.window_width + 2 * sprites[id].src.h;
+          transforms[id].y > config["window_width"] + 2 * sprites[id].src.h;
     };
 
 function<void(const entity_id)> handle_blood_pixel_transform =
     [](const entity_id id) {
       is_marked_for_deletion[id] =
           transforms[id].x < 2 * -sprites[id].src.w ||
-          transforms[id].x > config.window_width + 2 * sprites[id].src.w ||
+          transforms[id].x > config["window_width"] + 2 * sprites[id].src.w ||
           transforms[id].y < 2 * -sprites[id].src.h ||
-          transforms[id].y > config.window_width + 2 * sprites[id].src.h;
+          transforms[id].y > config["window_width"] + 2 * sprites[id].src.h;
     };
 
 extern unordered_map<entity_id, bool> is_blood_pixel;
@@ -289,7 +293,7 @@ function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
       enemies_killed[ENEMY_TYPE_EYEBALL]++;
       spawn_soulshard(enemy.dest.x, enemy.dest.y);
 
-      int num_pixels = rand() % 20 + 10;
+      int num_pixels = config["blood_pixel_count"];
       const int x = enemy.dest.x + enemy.dest.w / 2;
       const int y = enemy.dest.y + enemy.dest.h / 2;
       spawn_blood_pixels(x, y, num_pixels);

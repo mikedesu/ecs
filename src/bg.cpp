@@ -2,7 +2,7 @@
 #include "SDL_handler.h"
 #include "components.h"
 #include "entity_id.h"
-#include "gameconfig.h"
+// #include "gameconfig.h"
 #include "powerup_type.h"
 #include <random>
 #include <string>
@@ -15,7 +15,8 @@ using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
 
-extern gameconfig config;
+// extern gameconfig config;
+extern unordered_map<string, size_t> config;
 extern entity_id player_id;
 extern unordered_map<entity_id, bool> inputs;
 extern unordered_map<string, SDL_Texture *> textures;
@@ -52,6 +53,9 @@ extern vector<entity_id> entities;
 extern entity_id get_next_entity_id();
 
 void bg_spawn_moon() {
+  string moon_texture_key = "moon";
+  string target_texture_width_config_key = "target_texture_width";
+
   const int num_clips = 1;
   bool is_animating = false;
   int src_x = 0;
@@ -60,9 +64,9 @@ void bg_spawn_moon() {
   double vy = 0;
   double angle = 0.0;
   double scale = 1.0;
-  SDL_Texture *t = textures["moon"];
+  SDL_Texture *t = textures[moon_texture_key];
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
-  int x = config.target_texture_width;
+  int x = config[target_texture_width_config_key];
   int y = 0;
   double dest_x = x;
   double dest_y = y;

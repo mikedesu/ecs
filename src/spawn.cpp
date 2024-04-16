@@ -1,7 +1,7 @@
 #include "SDL_handler.h"
 #include "components.h"
 #include "entity_id.h"
-#include "gameconfig.h"
+// #include "gameconfig.h"
 #include "mPrint.h"
 #include "powerup_type.h"
 #include <random>
@@ -15,7 +15,8 @@ using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
 
-extern gameconfig config;
+// extern gameconfig config;
+extern unordered_map<string, size_t> config;
 extern entity_id player_id;
 extern unordered_map<entity_id, bool> inputs;
 extern unordered_map<string, SDL_Texture *> textures;
@@ -125,8 +126,8 @@ void spawn_knife() {
 }
 
 void spawn_eyeball() {
-  int x = config.target_texture_width - w;
-  int y = rand() % (config.target_texture_height - h);
+  int x = config["target_texture_width"] - w;
+  int y = rand() % (config["target_texture_height"] - h);
   entity_id id = spawn_entity("eyeball", true, 18, x, y);
   double vy = 0.0;
   double vx = eyeball_vx_distribution(rng_generator);
@@ -140,8 +141,8 @@ void spawn_eyeball() {
 }
 
 void spawn_bat() {
-  int x = config.target_texture_width - w;
-  int y = rand() % (config.target_texture_height - (h * 2));
+  int x = config["target_texture_width"] - w;
+  int y = rand() % (config["target_texture_height"] - (h * 2));
   entity_id id = spawn_entity("bat", true, 2, x, y);
   double vy = 0.0;
   double vx = eyeball_vx_distribution(rng_generator);
@@ -180,7 +181,7 @@ void spawn_powerup() {
   SDL_Texture *t = textures["powerup"];
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
   entity_id id = -1;
-  int x = config.target_texture_width - w;
+  int x = config["target_texture_width"] - w;
   int y = texture_height_distribution(rng_generator) - h;
   switch (poweruptype) {
   case POWERUP_TYPE_KNIFE_LARGENESS:
