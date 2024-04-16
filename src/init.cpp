@@ -109,8 +109,10 @@ void init_target_texture_rects() {
   target_texture_dest.y = 0;
   target_texture_src.w = target_texture_width;
   target_texture_src.h = target_texture_height;
-  target_texture_dest.w = window_width;
-  target_texture_dest.h = window_height;
+  // target_texture_dest.w = window_width;
+  target_texture_dest.w = config.window_width;
+  // target_texture_dest.h = window_height;
+  target_texture_dest.h = config.window_height;
 }
 
 void init_ttf() {

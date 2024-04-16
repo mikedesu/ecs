@@ -2,6 +2,7 @@
 #include "components.h"
 #include "enemy_type.h"
 #include "entity_id.h"
+#include "gameconfig.h"
 #include "mPrint.h"
 #include "powerup_type.h"
 #include "rotation_pair.h"
@@ -24,6 +25,7 @@ using std::vector;
 
 const int cooldown_min = 10;
 
+extern gameconfig config;
 extern int current_knife_speed;
 extern int frame_count;
 extern int num_collisions;
@@ -36,7 +38,7 @@ extern int player_max_health;
 extern int target_texture_width;
 extern int target_texture_height;
 extern int num_enemies_escaped;
-extern int window_width;
+// extern int window_width;
 extern int soulshard_spawn_rate;
 extern entity_id player_id;
 extern int current_knife_cooldown;
@@ -205,8 +207,9 @@ function<void(const entity_id)> handle_enemy_transform =
 
 function<void(const entity_id)> handle_knife_soulshard_transform =
     [](const entity_id id) {
-      bool is_marked = transforms[id].x < 2 * -sprites[id].src.w ||
-                       transforms[id].x > window_width + 2 * sprites[id].src.w;
+      bool is_marked =
+          transforms[id].x < 2 * -sprites[id].src.w ||
+          transforms[id].x > config.window_width + 2 * sprites[id].src.w;
       is_marked_for_deletion[id] = is_marked;
       if (is_knife[id] && is_marked) {
         num_knives++;
@@ -220,18 +223,18 @@ function<void(const entity_id)> handle_powerup_transform =
     [](const entity_id id) {
       is_marked_for_deletion[id] =
           transforms[id].x < 2 * -sprites[id].src.w ||
-          transforms[id].x > window_width + 2 * sprites[id].src.w ||
+          transforms[id].x > config.window_width + 2 * sprites[id].src.w ||
           transforms[id].y < 2 * -sprites[id].src.h ||
-          transforms[id].y > window_width + 2 * sprites[id].src.h;
+          transforms[id].y > config.window_width + 2 * sprites[id].src.h;
     };
 
 function<void(const entity_id)> handle_blood_pixel_transform =
     [](const entity_id id) {
       is_marked_for_deletion[id] =
           transforms[id].x < 2 * -sprites[id].src.w ||
-          transforms[id].x > window_width + 2 * sprites[id].src.w ||
+          transforms[id].x > config.window_width + 2 * sprites[id].src.w ||
           transforms[id].y < 2 * -sprites[id].src.h ||
-          transforms[id].y > window_width + 2 * sprites[id].src.h;
+          transforms[id].y > config.window_width + 2 * sprites[id].src.h;
     };
 
 extern unordered_map<entity_id, bool> is_blood_pixel;

@@ -2,12 +2,14 @@
 #include "components.h"
 #include "enemy_type.h"
 #include "entity_id.h"
+#include "gameconfig.h"
 #include <unordered_map>
 #include <vector>
 
 using std::unordered_map;
 using std::vector;
 
+extern gameconfig config;
 extern entity_id next_entity_id;
 extern bool is_fullscreen;
 extern int fullscreen_width;
@@ -45,8 +47,8 @@ void toggle_fullscreen() {
     target_texture_dest.w = fullscreen_width;
     target_texture_dest.h = fullscreen_height;
   } else {
-    target_texture_dest.w = window_width;
-    target_texture_dest.h = window_height;
+    target_texture_dest.w = config.window_width;
+    target_texture_dest.h = config.window_height;
   }
 }
 

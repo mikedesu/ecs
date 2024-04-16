@@ -24,12 +24,12 @@ using std::vector;
 
 // external variables
 extern gameconfig config;
-extern int default_window_width;
-extern int default_window_height;
+// extern int default_window_width;
+// extern int default_window_height;
 extern int target_texture_width;
 extern int target_texture_height;
-extern int window_width;
-extern int window_height;
+// extern int window_width;
+// extern int window_height;
 extern int frame_count;
 extern int num_collisions;
 extern int knife_cooldown;
@@ -84,7 +84,7 @@ void load_textures();
 
 void load_debug_text() {
   snprintf(texture_text, 1024,
-           "target texture: %dx%d\nwindow size: %dx%d\nframe_count: "
+           "target texture: %dx%d\nwindow size: %ldx%ld\nframe_count: "
            "%06d\nnum_entities: %ld\n"
            "fps: %.02f\nzoom: %.02f\nnum_collisions: "
            "%d\nknife_cooldown: %d\ncurrent_knife_cooldown: "
@@ -93,8 +93,8 @@ void load_debug_text() {
            "%d\nnum_enemies_killed: %ld\nplayer_health: "
            "%d/%d\nsoulshards_collected: %d\ntotal_soulshards_collected: "
            "%d\nplayer position: %.02f,%.02f\n",
-           target_texture_width, target_texture_height, window_width,
-           window_height, frame_count, entities.size(), fps(), zoom,
+           target_texture_width, target_texture_height, config.window_width,
+           config.window_height, frame_count, entities.size(), fps(), zoom,
            num_collisions, knife_cooldown, current_knife_cooldown, num_knives,
            max_num_knives, num_knives_fired, knife_charge, num_enemies_escaped,
            get_num_enemies_killed(), player_health, player_max_health,
@@ -345,25 +345,31 @@ void load_main_config() {
 
   if (d.HasMember("default_window_width") &&
       d["default_window_width"].IsInt()) {
-    default_window_width = d["default_window_width"].GetInt();
+    // default_window_width = d["default_window_width"].GetInt();
+    config.default_window_width = d["default_window_width"].GetInt();
   } else {
     mPrint("config/game.json has no default_window_width");
     mPrint("setting to a default");
-    default_window_width = 640;
+    // default_window_width = 640;
+    config.default_window_width = 640;
   }
   //
   if (d.HasMember("default_window_height") &&
       d["default_window_height"].IsInt()) {
-    default_window_height = d["default_window_height"].GetInt();
+    // default_window_height = d["default_window_height"].GetInt();
+    config.default_window_height = d["default_window_height"].GetInt();
   } else {
     mPrint("config/game.json has no default_window_height");
     mPrint("setting to a default");
-    default_window_height = 480;
+    // default_window_height = 480;
+    config.default_window_height = 480;
   }
 
-  window_width = default_window_width;
-  window_height = default_window_height;
+  // window_width = default_window_width;
+  config.window_width = config.default_window_width;
+  // window_height = default_window_height;
+  config.window_height = config.default_window_height;
 
-  target_texture_width = default_window_width;
-  target_texture_height = default_window_height;
+  target_texture_width = config.default_window_width;
+  target_texture_height = config.default_window_height;
 }

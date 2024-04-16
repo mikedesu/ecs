@@ -23,24 +23,12 @@ int DEBUG_TEXT_WRAP_LEN = 2048;
 
 double zoom = 1.0; // has to appear
 
-int default_window_width;
-int default_window_height;
-// int default_window_width = 1600;
-// int default_window_height = 960;
-int window_width;
-int window_height;
-// int window_width = default_window_width;
-// int window_height = default_window_height;
 const int default_knife_speed = 4;
 const int default_knife_cooldown = 30;
 
 char texture_text[1024] = "a bunch of random text";
 int target_texture_width;
 int target_texture_height;
-// int target_texture_width = 1600;
-// int target_texture_height = 960;
-//   int debug_font_size = 16;
-//    int soulshard_spawn_rate = 25.0;
 
 bool quit = false;
 bool do_render_debug_panel = true;
@@ -56,11 +44,9 @@ int h = 0;
 int frame_count = 0;
 int mWidth = -1;
 int mHeight = -1;
-
 int num_knives = 2;
 int max_num_knives = 2;
 int knife_charge = 2;
-
 int num_knives_fired = 0;
 int num_enemies_escaped = 0;
 int fullscreen_width = -1;
@@ -69,7 +55,6 @@ int player_health = 3;
 int player_max_health = 3;
 int player_soulshards = 0;
 int total_soulshards_collected = 0;
-
 int color_index = 0;
 int num_color_indices = 3;
 
@@ -156,7 +141,6 @@ int main() {
   create_window();
   create_renderer();
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-
   mPrint("init...");
   init();
   mPrint("handle init...");
@@ -178,7 +162,6 @@ int main() {
   // spawn_generator(ENEMY_TYPE_EYEBALL, true, 120);
   spawn_generator(ENEMY_TYPE_BAT, true, 120, 60 * 60);
   mPrint("main loop...");
-
   while (!quit) {
     handle_input();
     handle_input_component();
