@@ -328,42 +328,24 @@ Document load_main_config_document() {
   return d;
 }
 
+void json_value_has_member_is_int_set_config(Document &d, string member) {
+  if (!d.HasMember(member.c_str()) || !d[member.c_str()].IsInt()) {
+    string msg = "config/game.json has no " + member;
+    mPrint(msg);
+    cleanup_and_exit_with_failure();
+  }
+  config[member] = d[member.c_str()].GetInt();
+}
+
 void load_main_config() {
   Document d = load_main_config_document();
-  if (d.HasMember("debug_font_size") && d["debug_font_size"].IsInt()) {
-    config["debug_font_size"] = d["debug_font_size"].GetInt();
-  } else {
-    mPrint("config/game.json has no debug_font_size");
-    mPrint("setting to a default");
-    config["debug_font_size"] = 16;
-  }
 
-  if (d.HasMember("default_window_width") &&
-      d["default_window_width"].IsInt()) {
-    config["default_window_width"] = d["default_window_width"].GetInt();
-  } else {
-    mPrint("config/game.json has no default_window_width");
-    mPrint("setting to a default");
-    config["default_window_width"] = 640;
-  }
+  json_value_has_member_is_int_set_config(d, "debug_font_size");
+  json_value_has_member_is_int_set_config(d, "default_window_width");
+  json_value_has_member_is_int_set_config(d, "default_window_height");
+  json_value_has_member_is_int_set_config(d, "blood_pixel_count");
 
-  if (d.HasMember("default_window_height") &&
-      d["default_window_height"].IsInt()) {
-    config["default_window_height"] = d["default_window_height"].GetInt();
-  } else {
-    mPrint("config/game.json has no default_window_height");
-    mPrint("setting to a default");
-    config["default_window_height"] = 480;
-  }
-
-  if (d.HasMember("blood_pixel_count") && d["blood_pixel_count"].IsInt()) {
-    config["blood_pixel_count"] = d["blood_pixel_count"].GetInt();
-  } else {
-    mPrint("config/game.json has no blood_pixel_count");
-    mPrint("setting to a default");
-    config["blood_pixel_count"] = 10;
-  }
-
+  // copy over default window width and height as default window width values
   config["window_width"] = config["default_window_width"];
   config["window_height"] = config["default_window_height"];
   config["target_texture_width"] = config["default_window_width"];
