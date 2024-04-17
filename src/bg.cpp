@@ -53,25 +53,24 @@ extern vector<entity_id> entities;
 extern entity_id get_next_entity_id();
 
 void bg_spawn_moon() {
-  string moon_texture_key = "moon";
-  string target_texture_width_config_key = "target_texture_width";
-
+  const string moon_texture_key = "moon";
+  const string target_texture_width_config_key = "target_texture_width";
   const int num_clips = 1;
-  bool is_animating = false;
-  int src_x = 0;
-  int src_y = 0;
-  double vx = -0.2;
-  double vy = 0;
-  double angle = 0.0;
-  double scale = 1.0;
+  const bool is_animating = false;
+  const int src_x = 0;
+  const int src_y = 0;
+  const double vx = -0.2;
+  const double vy = 0;
+  const double angle = 0.0;
+  const double scale = 1.0;
   SDL_Texture *t = textures[moon_texture_key];
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
-  int x = config[target_texture_width_config_key];
-  int y = 0;
-  double dest_x = x;
-  double dest_y = y;
+  const int x = config[target_texture_width_config_key];
+  const int y = 0;
+  const double dest_x = x;
+  const double dest_y = y;
   w = w / num_clips;
-  entity_id id = get_next_entity_id();
+  const entity_id id = get_next_entity_id();
   bg_sprites[id] = {is_animating,         0,           num_clips, t,
                     {src_x, src_y, w, h}, {x, y, w, h}};
   bg_transforms[id] = {dest_x, dest_y, vx, vy, angle, scale};

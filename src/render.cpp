@@ -28,14 +28,14 @@ extern SDL_Texture *target_texture;
 extern void load_debug_text();
 
 function<void(sprite_pair)> draw_sprite = [](const sprite_pair p) {
-  entity_id id = p.first;
+  const entity_id id = p.first;
   SDL_RenderCopyEx(renderer, p.second.texture, &p.second.src, &p.second.dest,
                    transforms[id].angle, NULL,
                    is_flipped[id] ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
 };
 
 void render_debug_panel() {
-  SDL_Color color = {0, 0, 0, 128};
+  const SDL_Color color = {0, 0, 0, 128};
   SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
   SDL_RenderFillRect(renderer, &debug_texture_dest);
   SDL_RenderCopy(renderer, debug_texture, &debug_texture_src,

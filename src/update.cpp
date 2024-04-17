@@ -71,7 +71,7 @@ extern void spawn_eyeball();
 extern void spawn_powerup();
 extern void spawn_bat();
 extern void spawn_blood_pixels(const int x, const int y, const int n);
-extern double distance(int x1, int y1, int x2, int y2);
+extern double distance(const int x1, const int y1, const int x2, const int y2);
 
 function<void()> handle_update_skull_collision_knife = []() {
   num_knives++;
@@ -92,20 +92,36 @@ function<void()> handle_update_skull_collision_soulshard = []() {
 };
 
 function<void(entity_id)> handle_soulshard_magneticism = [](entity_id id) {
-  sprite_component skull = sprites[player_id];
-  sprite_component other = sprites[id];
-  int cx = skull.dest.x + skull.dest.w / 2;
-  int cy = skull.dest.y + skull.dest.h / 2;
-  int cx1 = other.dest.x + other.dest.w / 2;
-  int cy1 = other.dest.y + other.dest.h / 2;
-  double dist = distance(cx, cy, cx1, cy1);
+  sprite_component s = sprites[player_id];
+  sprite_component o = sprites[id];
+  int x = s.dest.x + s.dest.w / 2;
+  int y = s.dest.y + s.dest.h / 2;
+  int x1 = o.dest.x + o.dest.w / 2;
+  int y1 = o.dest.y + o.dest.h / 2;
+  double dist = distance(x, y, x1, y1);
   const double threshold = 200.0;
-  const int speed = 4;
+  const int v = 4;
   if (dist < threshold) {
     const int pad = 4;
     // magnetically move the soulshard towards the player
-    transforms[id].vx = cx1 < cx - pad ? speed : cx1 > cx + pad ? -speed : 0;
-    transforms[id].vy = cy1 < cy - pad ? speed : cy1 > cy + pad ? -speed : 0;
+    if (x1 < x - pad) {
+      transforms[id].vx = v;
+    } else if (x1 > x + pad) {
+      transforms[id].vx = -v;
+    } else {
+      transforms[id].vx = 0;
+    }
+
+    if (y1 < y - pad) {
+      transforms[id].vy = v;
+    } else if (y1 > y + pad) {
+      transforms[id].vy = -v;
+    } else {
+      transforms[id].vy = 0;
+    }
+
+    // transforms[id].vx = x1 < x - pad ? v : x1 > x + pad ? -v : 0;
+    // transforms[id].vy = y1 < y - pad ? v : y1 > y + pad ? -v : 0;
   } else {
     transforms[id].vx = -1;
     transforms[id].vy = 0;

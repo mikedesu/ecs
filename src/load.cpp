@@ -70,8 +70,8 @@ void handle_load_pixel(Value &v);
 bool json_value_has_member_is_string(Value &v, string member);
 void handle_load_texture_with_color_mod(Value &v);
 void handle_load_texture(Value &v);
-Document load_textures_document();
-Document load_main_config_document();
+const Document load_textures_document();
+const Document load_main_config_document();
 void check_if_json_value_has_member_and_is_string(Value &v, string member);
 void handle_load_by_type(Value &v);
 void check_if_json_value_is_object(Value &v);
@@ -243,7 +243,7 @@ void handle_load_texture(Value &v) {
   load_texture(key, path);
 }
 
-Document load_textures_document() {
+const Document load_textures_document() {
   string config_file_path = "config/textures.json";
   const size_t read_buffer_size = 65536;
   char readBuffer[read_buffer_size];
@@ -307,7 +307,7 @@ void load_textures() {
   }
 }
 
-Document load_main_config_document() {
+const Document load_main_config_document() {
   string config_file_path = "config/game.json";
   const size_t read_buffer_size = 65536;
   char readBuffer[read_buffer_size];

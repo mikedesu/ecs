@@ -25,7 +25,7 @@ extern vector<entity_id> entities;
 
 entity_id get_next_entity_id() { return next_entity_id++; }
 
-double distance(int x1, int y1, int x2, int y2) {
+double distance(const int x1, const int y1, const int x2, const int y2) {
   return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
 
