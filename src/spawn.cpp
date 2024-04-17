@@ -71,16 +71,39 @@ entity_id spawn_entity(const string key, const bool is_animating,
 
 void spawn_skull() {
   if (player_id == -1) {
-    const entity_id id = spawn_entity("skull", false, 2, 0, 0);
+    const string key = "skull";
+    const bool is_anim = false;
+    const int num_frames = 2;
+    const int x = 0;
+    const int y = 0;
+    const entity_id id = spawn_entity(key, is_anim, num_frames, x, y);
     inputs[id] = true;
     player_id = id;
   }
 }
 
 void spawn_soulshard(const int x, const int y) {
-  const entity_id id = spawn_entity("soulshard", true, 8, x, y);
+  const string key = "soulshard";
+  const bool is_anim = true;
+  const int num_frames = 8;
+  const entity_id id = spawn_entity("soulshard", is_anim, num_frames, x, y);
+  const double vx = -1.0;
+  transforms[id].vx = vx;
   is_soulshard[id] = true;
-  transforms[id].vx = -1.0;
+}
+
+void handle_knife_charge_decrement() {
+  knife_charge--;
+  if (knife_charge < 0) {
+    knife_charge = 0;
+  }
+}
+
+void handle_knife_charge_rotation(const entity_id id) {
+  if (knife_charge > 0) {
+    is_rotating[id] = true;
+    rotation_speeds[id] = 5.0 * knife_charge;
+  }
 }
 
 void spawn_knife() {
@@ -103,19 +126,11 @@ void spawn_knife() {
     const double vy = 0;
     transforms[id] = {x, y, vx, vy, angle, scale};
     is_knife[id] = true;
-    is_rotating[id] = knife_charge > 0;
-    if (knife_charge > 0) {
-      rotation_speeds[id] = 5.0 * knife_charge;
-    }
+    handle_knife_charge_rotation(id);
     knife_cooldown = current_knife_cooldown;
     num_knives_fired++;
     num_knives--;
-    if (knife_charge > 0) {
-      knife_charge--;
-      if (knife_charge < 0) {
-        knife_charge = 0;
-      }
-    }
+    handle_knife_charge_decrement();
   }
 }
 
@@ -203,7 +218,6 @@ void spawn_powerup() {
   }
   transforms[id].vx = -1.0;
   is_powerup[id] = true;
-  // is_rotating[id] = true;
   powerup_types[id] = poweruptype;
 }
 
