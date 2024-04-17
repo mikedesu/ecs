@@ -1,7 +1,6 @@
 #include "SDL_handler.h"
 #include "components.h"
 #include "entity_id.h"
-// #include "gameconfig.h"
 #include "mPrint.h"
 #include "powerup_type.h"
 #include <random>
@@ -15,7 +14,6 @@ using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
 
-// extern gameconfig config;
 extern unordered_map<string, size_t> config;
 extern entity_id player_id;
 extern unordered_map<entity_id, bool> inputs;
@@ -29,8 +27,6 @@ extern int num_knives;
 extern int knife_charge;
 extern int max_num_knives;
 extern int num_knives_fired;
-// extern int target_texture_width;
-// extern int target_texture_height;
 extern int player_money;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> eyeball_vx_distribution;
@@ -59,54 +55,52 @@ extern vector<entity_id> entities;
 
 extern entity_id get_next_entity_id();
 
-entity_id spawn_entity(string key, bool is_animating, int num_clips, int x,
-                       int y) {
+entity_id spawn_entity(const string key, const bool is_animating,
+                       const int num_clips, const int x, const int y) {
   SDL_Texture *t = textures[key];
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
   w = w / num_clips;
-  entity_id id = get_next_entity_id();
+  const entity_id id = get_next_entity_id();
+  const double dx = x;
+  const double dy = y;
   sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {x, y, w, h}};
-  transforms[id] = {(double)x, (double)y, 0, 0, 0, 1};
+  transforms[id] = {dx, dy, 0, 0, 0, 1};
   entities.push_back(id);
   return id;
 }
 
 void spawn_skull() {
   if (player_id == -1) {
-    entity_id id = spawn_entity("skull", false, 2, 0, 0);
+    const entity_id id = spawn_entity("skull", false, 2, 0, 0);
     inputs[id] = true;
     player_id = id;
   }
 }
 
-void spawn_soulshard(int x, int y) {
-  entity_id id = spawn_entity("soulshard", true, 8, x, y);
+void spawn_soulshard(const int x, const int y) {
+  const entity_id id = spawn_entity("soulshard", true, 8, x, y);
   is_soulshard[id] = true;
   transforms[id].vx = -1.0;
 }
 
 void spawn_knife() {
   if (!knife_cooldown && num_knives) {
-    int largeness = powerups_collected[POWERUP_TYPE_KNIFE_LARGENESS];
-    double scale = 1.0 + (0.1 * largeness);
-    sprite_component player = sprites[player_id];
+    string key = knife_charge >= 2 ? "knife-blue" : "knife";
+    const int largeness = powerups_collected[POWERUP_TYPE_KNIFE_LARGENESS];
+    const double scale = 1.0 + (0.1 * largeness);
+    const sprite_component player = sprites[player_id];
     const int padding_right = player.dest.w + 4;
-    string key = "knife";
-    if (knife_charge >= 2) {
-      key = "knife-blue";
-    }
     SDL_Texture *t = textures[key];
     SDL_QueryTexture(t, NULL, NULL, &w, &h);
-    int padding_left = w * scale;
-    bool flipped = is_flipped[player_id];
-    double x = player.dest.x;
-    x = !flipped ? x + padding_right : x - padding_left;
-    double y = player.dest.y + player.dest.h / 4.0;
-    entity_id id = spawn_entity(key, false, 1, x, y);
-    // entity_id id = spawn_entity("knife", false, 1, x, y);
-    double angle = flipped ? 180.0 : 0.0;
-    double vx = flipped ? -current_knife_speed : current_knife_speed;
-    double vy = 0;
+    const int padding_left = w * scale;
+    const bool flipped = is_flipped[player_id];
+    const double x =
+        !flipped ? player.dest.x + padding_right : player.dest.x - padding_left;
+    const double y = player.dest.y + player.dest.h / 4.0;
+    const entity_id id = spawn_entity(key, false, 1, x, y);
+    const double angle = flipped ? 180.0 : 0.0;
+    const double vx = flipped ? -current_knife_speed : current_knife_speed;
+    const double vy = 0;
     transforms[id] = {x, y, vx, vy, angle, scale};
     is_knife[id] = true;
     is_rotating[id] = knife_charge > 0;
@@ -126,30 +120,30 @@ void spawn_knife() {
 }
 
 void spawn_eyeball() {
-  int x = config["target_texture_width"] - w;
-  int y = rand() % (config["target_texture_height"] - h);
-  entity_id id = spawn_entity("eyeball", true, 18, x, y);
-  double vy = 0.0;
-  double vx = eyeball_vx_distribution(rng_generator);
-  double angle = 0.0;
-  double scale = 1.0;
-  double dx = x;
-  double dy = y;
+  const int x = config["target_texture_width"] - w;
+  const int y = rand() % (config["target_texture_height"] - h);
+  const entity_id id = spawn_entity("eyeball", true, 18, x, y);
+  const double vy = 0.0;
+  const double vx = eyeball_vx_distribution(rng_generator);
+  const double angle = 0.0;
+  const double scale = 1.0;
+  const double dx = x;
+  const double dy = y;
   transforms[id] = {dx, dy, vx, vy, angle, scale};
   is_collidable[id] = true;
   is_enemy[id] = true;
 }
 
 void spawn_bat() {
-  int x = config["target_texture_width"] - w;
-  int y = rand() % (config["target_texture_height"] - (h * 2));
-  entity_id id = spawn_entity("bat", true, 2, x, y);
-  double vy = 0.0;
-  double vx = eyeball_vx_distribution(rng_generator);
-  double angle = 0.0;
-  double scale = 1.0;
-  double dx = x;
-  double dy = y;
+  const int x = config["target_texture_width"] - w;
+  const int y = rand() % (config["target_texture_height"] - (h * 2));
+  const entity_id id = spawn_entity("bat", true, 2, x, y);
+  const double vy = 0.0;
+  const double vx = eyeball_vx_distribution(rng_generator);
+  const double angle = 0.0;
+  const double scale = 1.0;
+  const double dx = x;
+  const double dy = y;
   transforms[id] = {dx, dy, vx, vy, angle, scale};
   is_collidable[id] = true;
   is_enemy[id] = true;
@@ -165,24 +159,24 @@ void spawn_generator(enemy_type type, bool active, int cooldown,
     return;
   }
   for (auto kv : generators) {
-    generator_component generator = kv.second;
+    const generator_component generator = kv.second;
     if (generator.type == type) {
       return;
     }
   }
-  entity_id id = get_next_entity_id();
+  const entity_id id = get_next_entity_id();
   generators[id] = {type, active, cooldown, cooldown_reduction};
   is_generator[id] = true;
   entities.push_back(id);
 }
 
 void spawn_powerup() {
-  powerup_type poweruptype = (powerup_type)(rand() % POWERUP_TYPE_COUNT);
+  const powerup_type poweruptype = (powerup_type)(rand() % POWERUP_TYPE_COUNT);
   SDL_Texture *t = textures["powerup"];
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
   entity_id id = -1;
-  int x = config["target_texture_width"] - w;
-  int y = texture_height_distribution(rng_generator) - h;
+  const int x = config["target_texture_width"] - w;
+  const int y = texture_height_distribution(rng_generator) - h;
   switch (poweruptype) {
   case POWERUP_TYPE_KNIFE_LARGENESS:
     id = spawn_entity("powerup-knife-largeness", false, 1, x, y);
@@ -213,22 +207,20 @@ void spawn_powerup() {
   powerup_types[id] = poweruptype;
 }
 
-void spawn_blood_pixels(int x, int y, int n) {
-  mPrint("spawn_blood_pixels: " + to_string(x) + ", " + to_string(y) + ", " +
-         to_string(n));
-  string key = "blood-pixel";
+void spawn_blood_pixels(const int x, const int y, const int n) {
+  // mPrint("spawn_blood_pixels: " + to_string(x) + ", " + to_string(y) + ", " +
+  //        to_string(n));
+  const string key = "blood-pixel";
   SDL_Texture *t = textures[key];
   // custom width/height defined in config/textures.json
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
-  bool is_animating = false;
+  const bool is_animating = false;
   const int num_clips = 1;
-  double dx = x;
-  double dy = y;
-  sprite_component sprite = {is_animating, 0,           num_clips, t,
-                             {0, 0, w, h}, {x, y, w, h}};
+  const double dx = x;
+  const double dy = y;
   for (int i = 0; i < n; i++) {
     entity_id id = get_next_entity_id();
-    sprites[id] = sprite;
+    sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {x, y, w, h}};
     transforms[id] = {dx, dy,
                       // blood_velocity_negative_distribution(rng_generator),
                       blood_velocity_distribution(rng_generator),
@@ -239,12 +231,12 @@ void spawn_blood_pixels(int x, int y, int n) {
 }
 
 void spawn_blood_pixel(int x, int y) {
-  string key = "blood-pixel";
+  const string key = "blood-pixel";
   SDL_Texture *t = textures[key];
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
-  bool is_animating = false;
+  const bool is_animating = false;
   const int num_clips = 1;
-  entity_id id = get_next_entity_id();
+  const entity_id id = get_next_entity_id();
   sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {x, y, w, h}};
   transforms[id] = {(double)x,
                     (double)y,

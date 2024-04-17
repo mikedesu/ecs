@@ -66,11 +66,11 @@ extern unordered_map<powerup_type, int> powerups_collected;
 extern unordered_map<entity_id, double> rotation_speeds;
 extern vector<entity_id> entities;
 
-extern void spawn_soulshard(int x, int y);
+extern void spawn_soulshard(const int x, const int y);
 extern void spawn_eyeball();
 extern void spawn_powerup();
 extern void spawn_bat();
-extern void spawn_blood_pixels(int x, int y, int n);
+extern void spawn_blood_pixels(const int x, const int y, const int n);
 extern double distance(int x1, int y1, int x2, int y2);
 
 function<void()> handle_update_skull_collision_knife = []() {
