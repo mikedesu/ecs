@@ -6,19 +6,20 @@
 
 - [ ] Find a way to make the debug_texture into an entity 
     - [ ] May not be necessary?
-- [ ] Find a way to bundle the textures and the rects into an unordered_map for easy management
+- [x] Find a way to bundle the textures and the rects into an unordered_map for easy management
     - [x] Textures done
-    - [ ] Rects may not be necessary?
+    - [x] Rects may not be necessary?
+        - [x] this is handled via transform
 
 ## 04 April 2024
 
 ### 13:56 CDT
 
-- [ ] knives
+- [x] knives
     - [x] spawning
     - [x] movement
     - [x] removal when off-screen
-    - [ ] collision with player
+    - [x] collision with player
     - [x] collision with enemies
 - [ ] distinguishing entity types
     - [ ] player
@@ -28,7 +29,8 @@
     - [x] power-ups
 - [x] scaling up graphics to make 4x the new 'default' 1x
 - [x] faster movement using the SHIFT key
-- [ ] knife "catching" mechanic
+- [x] knife "catching" mechanic
+    - [ ] needs tuning, basically "uncatchable" after so-many speedups/sizeups
 - [x] generic enemy generator
     - [x] eyeball generator
 - [x] count number of knives fired
@@ -43,10 +45,10 @@
         - [ ] verify the file locations exist on disk
         - [ ] be generic enough to handle key-value name-filepath pairs
             - [ ] ex: "texture-dir", "img"
-            - [ ] ex: "skull-texture", "skull-sheet.png"
+            - [x] ex: "skull-texture", "skull-sheet.png"
             - [ ] ex: "font-dir", "fonts"
             - [ ] ex: "gfont", "hack.ttf"
-            - [ ] ex: "eyeball-texture", "eyeball-sheet.png"
+            - [x] ex: "eyeball-texture", "eyeball-sheet.png"
 
 ### 19:28 CDT
 
@@ -63,7 +65,7 @@
     - [x] increasing the generator rate
         - [ ] increasing the eyeball generation rate every N kills
         - [ ] increasing the eyeball generation rate every powerup activation
-        - [ ] increasing the eyeball generation rate every N frames
+        - [x] increasing the eyeball generation rate every N frames
     - [ ] spawning from both sides of the screen
         - [ ] do we need another generator data field?
 - [ ] eyeball up/down bounce
@@ -91,27 +93,28 @@
 
 ### 18:21 CDT
 
-- [ ] the game crashed several 10k+ frames in
-    - [ ] spawn rate may have been too high
-    - [ ] need to build some debug logging infrastructure for when this happens 
-        - [ ] need to write out stats to a file
+- [x] the game crashed several 10k+ frames in
+    - [-] spawn rate may have been too high
+    - [-] need to build some debug logging infrastructure for when this happens 
+        - [-] need to write out stats to a file
     - [x] appears to not be crashing, survived 100k frame renders
-- [ ] we can do cool things with colors such as
-    - [ ] load the skull texture once, then color it differently and save as a separate texture
-        - [ ] this would allow us to hot-swap sprite textures on-the-fly
+- [x] we can do cool things with colors such as
+    - [x] load the skull texture once, then color it differently and save as a separate texture
+        - [x] this would allow us to hot-swap sprite textures on-the-fly
 
 ### 22:02 CDT
 
 - [ ] popup texts for various messages
 - [ ] handle getting hit by an enemy
-    - [ ] colliding with enemy
+    - [x] colliding with enemy
         - [x] one-damage 
         - [ ] lose all powerups
 - [ ] enemy death animation texture
     - [ ] eyeball
     - [ ] bat
+        - [x] blood-pixel spawning
 - [ ] cap on size multiplier for knives
-- [ ] powerup that increases the knife velocity
+- [x] powerup that increases the knife velocity
 - [ ] game over screen
 
 ## 10 April 2024
@@ -119,7 +122,7 @@
 ### 11:24 CDT
 
 - [x] knife-limit mechanic
-- [ ] knife-catching mechanic
+- [x] knife-catching mechanic
 - [ ] game-over screen with debug stats
     - [ ] enemies killed
     - [ ] enemies escaped
@@ -145,7 +148,7 @@
 - [ ] enemy bullets
 - [ ] enemy-grazing mechanic
 - [ ] bullet-grazing mechanic
-- [ ] different-colored power-up textures to distinguish them
+- [x] different-colored power-up textures to distinguish them
     - [ ] some texture besides the 'scroll'
 - [ ] HUD / debug-panel
     - [x] knife count
@@ -181,7 +184,7 @@
 ### 17:18 CDT
 
 - [ ] enemy death animation
-- [ ] blood particle generator
+- [x] blood particle generator
 - [ ] fire particle generator
 
 
@@ -214,9 +217,9 @@
 
 ### 23:52 CDT
 
-- [ ] bats currently 'pop' into existence due to the x,y position chosen
-    - [ ] this was initially to avoid them being removed from the scene early
-    - [ ] to fix this, extend the range for scene removal such that
+- [x] bats currently 'pop' into existence due to the x,y position chosen
+    - [x] this was initially to avoid them being removed from the scene early
+    - [x] to fix this, extend the range for scene removal such that
 
 ```
 removalboundary | spawnboundary | mainscreen | spawnboundary | removalboundary
@@ -229,8 +232,8 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 
 ### 13:02 CDT
 
-- [ ] we could spawn bats in groups of N
-- [ ] preparing for powerup texture color mods via JSON config file
+- [x] we could spawn bats in groups of N
+- [x] preparing for powerup texture color mods via JSON config file
 - [x] loading textures from config/textures.json
     - [x] RapidJSON parsing
 - [x] blood pixels defined in the texture.json file are not displaying at their configured width and height
