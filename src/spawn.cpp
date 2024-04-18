@@ -156,16 +156,18 @@ void spawn_eyeball() {
 }
 
 void spawn_bat() {
-  const int x = config["target_texture_width"] - w;
-  const int y = rand() % (config["target_texture_height"] - (h * 2));
-  const entity_id id = spawn_entity("bat", true, 2, x, y);
+  // we never define w here lol
+  const string key = "bat";
+  const entity_id id = spawn_entity(key, true, 2, 0, 0);
+  SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
+  const double x = config["target_texture_width"] + w;
+  // const double y = rand() % (config["target_texture_height"] - (h * 2));
+  const double y = texture_height_distribution(rng_generator) - h * 2;
   const double vy = 0.0;
   const double vx = eyeball_vx_distribution(rng_generator);
   const double angle = 0.0;
   const double scale = 1.0;
-  const double dx = x;
-  const double dy = y;
-  transforms[id] = {dx, dy, vx, vy, angle, scale};
+  transforms[id] = {x, y, vx, vy, angle, scale};
   is_collidable[id] = true;
   is_enemy[id] = true;
   entity_types[id] = ENTITY_TYPE_ENEMY;
@@ -195,11 +197,12 @@ void spawn_generator(enemy_type type, bool active, int cooldown,
 
 void spawn_powerup() {
   const powerup_type poweruptype = (powerup_type)(rand() % POWERUP_TYPE_COUNT);
-  SDL_Texture *t = textures["powerup"];
+  const string key = "powerup";
+  SDL_Texture *t = textures[key];
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
   entity_id id = -1;
-  const int x = config["target_texture_width"] - w;
-  const int y = texture_height_distribution(rng_generator) - h;
+  const double x = config["target_texture_width"] + w;
+  const double y = texture_height_distribution(rng_generator) - h * 2;
   switch (poweruptype) {
   case POWERUP_TYPE_KNIFE_LARGENESS:
     id = spawn_entity("powerup-knife-largeness", false, 1, x, y);

@@ -94,7 +94,6 @@ function<void()> handle_update_skull_collision_soulshard = []() {
   }
 };
 
-// function<void(entity_id)> handle_soulshard_magneticism = [](entity_id id) {
 function<void(entity_id)> handle_magneticism = [](entity_id id) {
   const sprite_component s = sprites[player_id];
   const sprite_component o = sprites[id];
@@ -160,29 +159,6 @@ function<void(entity_id)> handle_update_skull_collision_powerup =
         break;
       }
 
-      /*
-        if (type == POWERUP_TYPE_KNIFE_COOLDOWN) {
-          current_knife_cooldown -= 5;
-          if (current_knife_cooldown < 10) {
-            current_knife_cooldown = 10;
-          }
-        } else if (type == POWERUP_TYPE_KNIFE_QUANTITY) {
-          // this is worth examining
-          num_knives++;
-          max_num_knives++;
-          if (num_knives > max_num_knives) {
-            num_knives = max_num_knives;
-          }
-        } else if (type == POWERUP_TYPE_KNIFE_SPEED) {
-          current_knife_speed += 1;
-        } else if (type == POWERUP_TYPE_HEART) {
-          player_health++;
-          if (player_health > player_max_health) {
-            player_health = player_max_health;
-          }
-          // player_max_health++;
-        }
-      */
       powerups_collected[type]++;
     };
 
@@ -261,8 +237,14 @@ function<void(const entity_id, transform_component &)> handle_skull_transform =
 
 function<void(const entity_id)> handle_enemy_transform =
     [](const entity_id id) {
-      is_marked_for_deletion[id] = transforms[id].x < -sprites[id].src.w;
-      if (is_marked_for_deletion[id]) {
+      const int w = sprites[id].src.w;
+      const int left = 2 * -w;
+      const int window_width = config["window_width"];
+      const int right = window_width + 2 * w;
+      const int x = transforms[id].x;
+      const bool mark = x < left || x > right;
+      is_marked_for_deletion[id] = mark;
+      if (mark) {
         num_enemies_escaped++;
       }
     };

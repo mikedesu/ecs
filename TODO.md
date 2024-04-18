@@ -252,9 +252,7 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
         - [x] default window width and height
         - [x] debug panel font size
     - [x] config is now an unordered_map of string key and size_t value
-- [ ] magnetic pick-up of ALL items, not just soulshards
-- [ ] magnetic pick-up as a global variable that can be tuned with powerups
-- [ ] a powerup for magnetic pick-up range extension
+- [x] magnetic pick-up of ALL items, not just soulshards
 
 ### 11:10 CDT
 
@@ -262,5 +260,14 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
     - [ ] probably shouldn't allow this number to be set too high :X 
     - [x] fixed - re-wrote the knife-collision code to do explicit checks to make sure we aren't colliding with a blood pixel or other non-enemy
 
+## 17 April 2024
+
+### 23:19 CDT
+
+- [ ] define sprites and num_clips in a sprites.json 
+- [ ] magnetic pick-up as a global variable that can be tuned with powerups
+- [ ] a powerup for magnetic pick-up range extension
+- [ ] blood particle lifetime for removal before they reach the screen edge
+    - [ ] this might be computationally-expensive but a worthwhile experiment
 
 
