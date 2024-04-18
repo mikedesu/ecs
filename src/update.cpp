@@ -61,6 +61,7 @@ extern unordered_map<entity_id, bool> is_enemy;
 extern unordered_map<entity_id, bool> is_generator;
 extern unordered_map<entity_id, bool> is_powerup;
 extern unordered_map<entity_id, bool> is_marked_for_deletion;
+extern unordered_map<entity_id, bool> is_blood_pixel;
 extern unordered_map<enemy_type, int> enemies_killed;
 extern unordered_map<powerup_type, int> powerups_collected;
 extern unordered_map<entity_id, double> rotation_speeds;
@@ -119,9 +120,6 @@ function<void(entity_id)> handle_soulshard_magneticism = [](entity_id id) {
     } else {
       transforms[id].vy = 0;
     }
-
-    // transforms[id].vx = x1 < x - pad ? v : x1 > x + pad ? -v : 0;
-    // transforms[id].vy = y1 < y - pad ? v : y1 > y + pad ? -v : 0;
   } else {
     transforms[id].vx = -1;
     transforms[id].vy = 0;
@@ -131,27 +129,56 @@ function<void(entity_id)> handle_soulshard_magneticism = [](entity_id id) {
 function<void(entity_id)> handle_update_skull_collision_powerup =
     [](entity_id id) {
       powerup_type type = powerup_types[id];
-      if (type == POWERUP_TYPE_KNIFE_COOLDOWN) {
+      switch (type) {
+      case POWERUP_TYPE_KNIFE_COOLDOWN:
         current_knife_cooldown -= 5;
         if (current_knife_cooldown < 10) {
           current_knife_cooldown = 10;
         }
-      } else if (type == POWERUP_TYPE_KNIFE_QUANTITY) {
-        // this is worth examining
+        break;
+      case POWERUP_TYPE_KNIFE_QUANTITY:
         num_knives++;
         max_num_knives++;
         if (num_knives > max_num_knives) {
           num_knives = max_num_knives;
         }
-      } else if (type == POWERUP_TYPE_KNIFE_SPEED) {
+        break;
+      case POWERUP_TYPE_KNIFE_SPEED:
         current_knife_speed += 1;
-      } else if (type == POWERUP_TYPE_HEART) {
+        break;
+      case POWERUP_TYPE_HEART:
         player_health++;
         if (player_health > player_max_health) {
           player_health = player_max_health;
         }
-        // player_max_health++;
+        break;
+      default:
+        break;
       }
+
+      /*
+        if (type == POWERUP_TYPE_KNIFE_COOLDOWN) {
+          current_knife_cooldown -= 5;
+          if (current_knife_cooldown < 10) {
+            current_knife_cooldown = 10;
+          }
+        } else if (type == POWERUP_TYPE_KNIFE_QUANTITY) {
+          // this is worth examining
+          num_knives++;
+          max_num_knives++;
+          if (num_knives > max_num_knives) {
+            num_knives = max_num_knives;
+          }
+        } else if (type == POWERUP_TYPE_KNIFE_SPEED) {
+          current_knife_speed += 1;
+        } else if (type == POWERUP_TYPE_HEART) {
+          player_health++;
+          if (player_health > player_max_health) {
+            player_health = player_max_health;
+          }
+          // player_max_health++;
+        }
+      */
       powerups_collected[type]++;
     };
 
@@ -246,14 +273,17 @@ function<void(const entity_id)> handle_powerup_transform =
 
 function<void(const entity_id)> handle_blood_pixel_transform =
     [](const entity_id id) {
-      is_marked_for_deletion[id] =
-          transforms[id].x < 2 * -sprites[id].src.w ||
-          transforms[id].x > config["window_width"] + 2 * sprites[id].src.w ||
-          transforms[id].y < 2 * -sprites[id].src.h ||
-          transforms[id].y > config["window_width"] + 2 * sprites[id].src.h;
+      const int left = 2 * -sprites[id].src.w;
+      const int width = config["window_width"];
+      const int right = width + 2 * sprites[id].src.w;
+      const int top = 2 * -sprites[id].src.h;
+      const int bottom = width + 2 * sprites[id].src.h;
+      const int x = transforms[id].x;
+      const int y = transforms[id].y;
+      const bool mark = x < left || x > right || y < top || y > bottom;
+      is_marked_for_deletion[id] = mark;
     };
 
-extern unordered_map<entity_id, bool> is_blood_pixel;
 function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   entity_id id = t.first;
   transform_component transform = t.second;
@@ -280,11 +310,10 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
 
 function<void(rotation_pair)> handle_rotation = [](const rotation_pair p) {
   entity_id id = p.first;
-  bool is_rotating = p.second;
-  if (is_rotating) {
-    transform_component transform = transforms[id];
-    if (is_knife[id]) {
-      transform.angle += rotation_speeds[id];
+  if (p.second) {
+    transform_component transform = transforms[p.first];
+    if (is_knife[p.first]) {
+      transform.angle += rotation_speeds[p.first];
     } else {
       transform.angle += 1.0;
     }
@@ -298,16 +327,14 @@ function<void(entity_id, entity_id)> check_for_knife_collision_with_enemy =
       sprite_component enemy = sprites[enemy_id];
       sprite_component knife = sprites[id];
       if (SDL_HasIntersection(&knife.dest, &enemy.dest)) {
-        // mPrint("knife collision with entity id " + to_string(enemy_id) +
-        //        " of type " + to_string(type));
+        const int x = enemy.dest.x + enemy.dest.w / 2;
+        const int y = enemy.dest.y + enemy.dest.h / 2;
+        int num_pixels = config["blood_pixel_count"];
         is_marked_for_deletion[enemy_id] = true;
         is_marked_for_deletion[id] = true;
         num_collisions++;
         enemies_killed[type]++;
         spawn_soulshard(enemy.dest.x, enemy.dest.y);
-        int num_pixels = config["blood_pixel_count"];
-        const int x = enemy.dest.x + enemy.dest.w / 2;
-        const int y = enemy.dest.y + enemy.dest.h / 2;
         spawn_blood_pixels(x, y, num_pixels);
         if (is_marked_for_deletion[id]) {
           num_knives++;
