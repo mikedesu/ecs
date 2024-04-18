@@ -174,7 +174,7 @@ void spawn_bat() {
   enemy_types[id] = ENEMY_TYPE_BAT;
 }
 
-void spawn_generator(enemy_type type, bool active, int cooldown,
+void spawn_generator(enemy_type type, bool active, int group, int cooldown,
                      int cooldown_reduction) {
   if (type > ENEMY_TYPE_COUNT) {
     return;
@@ -182,6 +182,10 @@ void spawn_generator(enemy_type type, bool active, int cooldown,
   if (cooldown < 1) {
     return;
   }
+  if (group < 1) {
+    return;
+  }
+
   for (auto kv : generators) {
     const generator_component generator = kv.second;
     if (generator.type == type) {
@@ -189,7 +193,7 @@ void spawn_generator(enemy_type type, bool active, int cooldown,
     }
   }
   const entity_id id = get_next_entity_id();
-  generators[id] = {type, active, cooldown, cooldown_reduction};
+  generators[id] = {type, active, group, cooldown, cooldown_reduction};
   is_generator[id] = true;
   entity_types[id] = ENTITY_TYPE_GENERATOR;
   entities.push_back(id);

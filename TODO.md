@@ -269,5 +269,5 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 - [ ] a powerup for magnetic pick-up range extension
 - [ ] blood particle lifetime for removal before they reach the screen edge
     - [ ] this might be computationally-expensive but a worthwhile experiment
-
+- [ ] powerups inspired off of ouija boards, tarot cards, etc
 

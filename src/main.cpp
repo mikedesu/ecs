@@ -135,7 +135,7 @@ void load_textures();
 void load_main_config();
 void render_frame();
 void spawn_skull();
-void spawn_generator(enemy_type type, bool active, int cooldown,
+void spawn_generator(enemy_type type, bool active, int group, int cooldown,
                      int cooldown_reduction);
 void update();
 
@@ -164,7 +164,8 @@ int main() {
   spawn_skull();
   mPrint("spawn generator...");
   // spawn_generator(ENEMY_TYPE_EYEBALL, true, 120);
-  spawn_generator(ENEMY_TYPE_BAT, true, 120, 60 * 60);
+  // spawn_generator(ENEMY_TYPE_BAT, true, 120, 60 * 60);
+  spawn_generator(ENEMY_TYPE_BAT, true, 3, 240, 60 * 60);
   mPrint("main loop...");
   mPrint("player_id: " + to_string(player_id));
   while (!quit) {

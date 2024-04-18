@@ -6,6 +6,7 @@
 typedef struct {
   enemy_type type;
   bool active;
+  int group;
   int cooldown;
   int cooldown_reduction;
 } generator_component;

@@ -195,7 +195,7 @@ function<void(entity_id)> update_skull_collision = [](const entity_id id) {
 
   switch (entity_types[id]) {
   case ENTITY_TYPE_SOULSHARD:
-  case ENTITY_TYPE_ITEM:
+    // case ENTITY_TYPE_ITEM:
     handle_magneticism(id);
     break;
   default:
@@ -380,13 +380,19 @@ void update_bg_transform_components() {
 void update_generators() {
   for (auto kv : is_generator) {
     entity_id id = kv.first;
-    if (generators[id].active && frame_count % generators[id].cooldown == 0) {
+    const bool active = generators[id].active;
+    const int cooldown = generators[id].cooldown;
+    const int cooldown_reduction = generators[id].cooldown_reduction;
+    const int group = generators[id].group;
+    if (active && frame_count % cooldown == 0) {
       switch (generators[id].type) {
       case ENEMY_TYPE_EYEBALL:
         spawn_eyeball();
         break;
       case ENEMY_TYPE_BAT:
-        spawn_bat();
+        for (int i = 0; i < group; i++) {
+          spawn_bat();
+        }
         break;
       default:
         break;
@@ -394,10 +400,9 @@ void update_generators() {
     }
     // if the generator has a "cooldown reduction" set to non-zero,
     // then every N frames, reduce the cooldown by half until we hit a minimum
-    if (generators[id].cooldown_reduction && frame_count > 0 &&
-        frame_count % generators[id].cooldown_reduction == 0 &&
-        generators[id].cooldown > cooldown_min) {
-      generators[id].cooldown = generators[id].cooldown / 2;
+    if (cooldown_reduction && frame_count > 0 &&
+        frame_count % cooldown_reduction == 0 && cooldown > cooldown_min) {
+      generators[id].cooldown = cooldown / 2;
     }
   }
 }
