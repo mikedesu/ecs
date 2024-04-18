@@ -1,6 +1,7 @@
 #include "SDL_handler.h"
 #include "components.h"
 #include "entity_id.h"
+#include "entity_type.h"
 #include "mPrint.h"
 #include "powerup_type.h"
 #include <random>
@@ -35,6 +36,7 @@ extern uniform_real_distribution<double> blood_velocity_positive_distribution;
 extern uniform_real_distribution<double> blood_velocity_negative_distribution;
 extern uniform_real_distribution<double> blood_velocity_distribution;
 
+extern unordered_map<entity_id, entity_type> entity_types;
 extern unordered_map<entity_id, bool> is_blood_pixel;
 extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, enemy_type> enemy_types;
@@ -79,6 +81,7 @@ void spawn_skull() {
     const entity_id id = spawn_entity(key, is_anim, num_frames, x, y);
     inputs[id] = true;
     player_id = id;
+    entity_types[id] = ENTITY_TYPE_PLAYER;
   }
 }
 
@@ -90,6 +93,7 @@ void spawn_soulshard(const int x, const int y) {
   const double vx = -1.0;
   transforms[id].vx = vx;
   is_soulshard[id] = true;
+  entity_types[id] = ENTITY_TYPE_SOULSHARD;
 }
 
 void handle_knife_charge_decrement() {
@@ -126,6 +130,7 @@ void spawn_knife() {
     const double vy = 0;
     transforms[id] = {x, y, vx, vy, angle, scale};
     is_knife[id] = true;
+    entity_types[id] = ENTITY_TYPE_KNIFE;
     handle_knife_charge_rotation(id);
     knife_cooldown = current_knife_cooldown;
     num_knives_fired++;
@@ -145,6 +150,7 @@ void spawn_eyeball() {
   const double dx = x;
   const double dy = y;
   transforms[id] = {dx, dy, vx, vy, angle, scale};
+  entity_types[id] = ENTITY_TYPE_ENEMY;
   is_collidable[id] = true;
   is_enemy[id] = true;
 }
@@ -162,6 +168,7 @@ void spawn_bat() {
   transforms[id] = {dx, dy, vx, vy, angle, scale};
   is_collidable[id] = true;
   is_enemy[id] = true;
+  entity_types[id] = ENTITY_TYPE_ENEMY;
   enemy_types[id] = ENEMY_TYPE_BAT;
 }
 
@@ -182,6 +189,7 @@ void spawn_generator(enemy_type type, bool active, int cooldown,
   const entity_id id = get_next_entity_id();
   generators[id] = {type, active, cooldown, cooldown_reduction};
   is_generator[id] = true;
+  entity_types[id] = ENTITY_TYPE_GENERATOR;
   entities.push_back(id);
 }
 
@@ -219,6 +227,7 @@ void spawn_powerup() {
   transforms[id].vx = -1.0;
   is_powerup[id] = true;
   powerup_types[id] = poweruptype;
+  entity_types[id] = ENTITY_TYPE_ITEM;
 }
 
 void spawn_blood_pixels(const int x, const int y, const int n) {
@@ -240,10 +249,12 @@ void spawn_blood_pixels(const int x, const int y, const int n) {
                       blood_velocity_distribution(rng_generator),
                       blood_velocity_distribution(rng_generator), 0, 1};
     is_blood_pixel[id] = true;
+    entity_types[id] = ENTITY_TYPE_PARTICLE;
     entities.push_back(id);
   }
 }
 
+/*
 void spawn_blood_pixel(int x, int y) {
   const string key = "blood-pixel";
   SDL_Texture *t = textures[key];
@@ -260,4 +271,6 @@ void spawn_blood_pixel(int x, int y) {
                     1};
   entities.push_back(id);
   is_blood_pixel[id] = true;
+  entity_types[id] = ENTITY_TYPE_PARTICLE;
 }
+*/

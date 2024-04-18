@@ -3,6 +3,7 @@
 #include "components.h"
 #include "enemy_type.h"
 #include "entity_id.h"
+#include "entity_type.h"
 #include "mPrint.h"
 #include <algorithm>
 #include <functional>
@@ -43,6 +44,7 @@ extern unordered_map<entity_id, bool> is_generator;
 extern unordered_map<entity_id, bool> is_marked_for_deletion;
 extern unordered_map<entity_id, bool> is_blood_pixel;
 extern unordered_map<enemy_type, int> enemies_killed;
+extern unordered_map<entity_id, entity_type> entity_types;
 extern unordered_map<int, bool> is_pressed;
 
 extern vector<entity_id> entities;
@@ -62,6 +64,7 @@ function<void(pair<entity_id, bool>)> cleanup_entity_marked_for_deletion =
         is_soulshard.erase(id);
         is_flipped.erase(id);
         is_generator.erase(id);
+        entity_types.erase(id);
         // is_marked_for_deletion.erase(id);
         is_blood_pixel.erase(id);
         entities.erase(remove(entities.begin(), entities.end(), id),
@@ -103,6 +106,7 @@ void cleanup() {
   generators.clear();
   inputs.clear();
   is_blood_pixel.clear();
+  entity_types.clear();
   // mPrint("cleaning up SDL");
   // mPrint("cleaning up SDL textures");
   cleanup_textures();

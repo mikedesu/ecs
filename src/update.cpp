@@ -2,6 +2,7 @@
 #include "components.h"
 #include "enemy_type.h"
 #include "entity_id.h"
+#include "entity_type.h"
 // #include "gameconfig.h"
 #include "mPrint.h"
 #include "powerup_type.h"
@@ -49,6 +50,7 @@ extern uniform_real_distribution<double> soulshard_spawn_rate_distribution;
 
 extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, enemy_type> enemy_types;
+extern unordered_map<entity_id, entity_type> entity_types;
 extern unordered_map<entity_id, generator_component> generators;
 extern unordered_map<entity_id, sprite_component> sprites;
 extern unordered_map<entity_id, sprite_component> bg_sprites;
@@ -92,30 +94,32 @@ function<void()> handle_update_skull_collision_soulshard = []() {
   }
 };
 
-function<void(entity_id)> handle_soulshard_magneticism = [](entity_id id) {
-  sprite_component s = sprites[player_id];
-  sprite_component o = sprites[id];
-  int x = s.dest.x + s.dest.w / 2;
-  int y = s.dest.y + s.dest.h / 2;
-  int x1 = o.dest.x + o.dest.w / 2;
-  int y1 = o.dest.y + o.dest.h / 2;
-  double dist = distance(x, y, x1, y1);
-  const double threshold = 200.0;
-  const int v = 4;
+// function<void(entity_id)> handle_soulshard_magneticism = [](entity_id id) {
+function<void(entity_id)> handle_magneticism = [](entity_id id) {
+  const sprite_component s = sprites[player_id];
+  const sprite_component o = sprites[id];
+  const int pad_w = s.dest.w / 2;
+  const int pad_h = s.dest.h / 2;
+  const int x = s.dest.x + pad_w;
+  const int y = s.dest.y + pad_h;
+  const int x1 = o.dest.x + o.dest.w / 2;
+  const int y1 = o.dest.y + o.dest.h / 2;
+  const double dist = distance(x, y, x1, y1);
+  const double threshold = 400.0;
+  const int v = 8;
   if (dist < threshold) {
-    const int pad = 4;
     // magnetically move the soulshard towards the player
-    if (x1 < x - pad) {
+    if (x1 < x) {
       transforms[id].vx = v;
-    } else if (x1 > x + pad) {
+    } else if (x1 > x + pad_w) {
       transforms[id].vx = -v;
     } else {
       transforms[id].vx = 0;
     }
 
-    if (y1 < y - pad) {
+    if (y1 < y) {
       transforms[id].vy = v;
-    } else if (y1 > y + pad) {
+    } else if (y1 > y + pad_h) {
       transforms[id].vy = -v;
     } else {
       transforms[id].vy = 0;
@@ -190,21 +194,36 @@ function<void(entity_id)> update_skull_collision = [](const entity_id id) {
   sprite_component other = sprites[id];
   if (SDL_HasIntersection(&skull.dest, &other.dest)) {
     num_collisions++;
-    if (is_knife[id]) {
+    // might be able to optimize by using a map with the entity type
+    switch (entity_types[id]) {
+    case ENTITY_TYPE_KNIFE:
       is_marked_for_deletion[id] = true;
       handle_update_skull_collision_knife();
-    } else if (is_soulshard[id]) {
+      break;
+    case ENTITY_TYPE_SOULSHARD:
       is_marked_for_deletion[id] = true;
       handle_update_skull_collision_soulshard();
-    } else if (is_enemy[id]) {
+      break;
+    case ENTITY_TYPE_ENEMY:
       is_marked_for_deletion[id] = true;
       player_health--;
-    } else if (is_powerup[id]) {
+      break;
+    case ENTITY_TYPE_ITEM:
       is_marked_for_deletion[id] = true;
       handle_update_skull_collision_powerup(id);
-    } // else is blood pixel
-  } else if (is_soulshard[id]) {
-    handle_soulshard_magneticism(id);
+      break;
+    default:
+      break;
+    }
+  }
+
+  switch (entity_types[id]) {
+  case ENTITY_TYPE_SOULSHARD:
+  case ENTITY_TYPE_ITEM:
+    handle_magneticism(id);
+    break;
+  default:
+    break;
   }
 };
 

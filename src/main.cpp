@@ -3,6 +3,7 @@
 #include "components.h"
 #include "enemy_type.h"
 #include "entity_id.h"
+#include "entity_type.h"
 // #include "gameconfig.h"
 #include "mPrint.h"
 #include "powerup_type.h"
@@ -91,6 +92,7 @@ unordered_map<entity_id, transform_component> bg_transforms;
 unordered_map<entity_id, bg_entity_type> bg_entity_types;
 unordered_map<entity_id, double> rotation_speeds;
 unordered_map<entity_id, generator_component> generators;
+unordered_map<entity_id, entity_type> entity_types;
 unordered_map<entity_id, bool> inputs;
 unordered_map<entity_id, bool> is_rotating;
 unordered_map<entity_id, bool> is_collidable;
