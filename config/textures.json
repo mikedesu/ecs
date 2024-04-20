@@ -29,6 +29,14 @@
   },
   {
     "type": "texture_colormod",
+    "key": "candle",
+    "path": "img/candle0-sheet4x.png",
+    "r": 255,
+    "g": 255,
+    "b": 255
+  },
+  {
+    "type": "texture_colormod",
     "key": "powerup",
     "path": "img/powerup-sheet4x.png",
     "r": 255,

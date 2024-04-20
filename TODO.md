@@ -274,3 +274,14 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
     - [ ] this might be computationally-expensive but a worthwhile experiment
 - [ ] powerups inspired off of ouija boards, tarot cards, etc
 
+## 19 April 2024
+
+### 00:11 CDT
+
+- [ ] vampire bats could have teeth :E 
+
+### 16:19 CDT
+
+- [ ] when loading in textures from the JSON, we need to make sure we dont add an entry for a key that we have already defined, it might get overwritten otherwise
+
+

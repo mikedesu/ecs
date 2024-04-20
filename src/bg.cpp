@@ -52,6 +52,32 @@ extern vector<entity_id> entities;
 
 extern entity_id get_next_entity_id();
 
+void bg_spawn_candle() {
+  const string key = "candle";
+  const string target_texture_width_config_key = "target_texture_width";
+  const string target_texture_height_config_key = "target_texture_height";
+  const int num_clips = 3;
+  const bool is_animating = true;
+  const int src_x = 0;
+  const int src_y = 0;
+  const double vx = -1.0 * (rand() % 4);
+  const double vy = 0;
+  const double angle = 0.0;
+  const double scale = rand() % 5 + 1;
+  SDL_Texture *t = textures[key];
+  SDL_QueryTexture(t, NULL, NULL, &w, &h);
+  const int x = rand() % config[target_texture_width_config_key];
+  const int y = config[target_texture_height_config_key] - h * scale;
+  const double dest_x = x;
+  const double dest_y = y;
+  w = w / num_clips;
+  const entity_id id = get_next_entity_id();
+  bg_sprites[id] = {is_animating,         0,           num_clips, t,
+                    {src_x, src_y, w, h}, {x, y, w, h}};
+  bg_transforms[id] = {dest_x, dest_y, vx, vy, angle, scale};
+  entities.push_back(id);
+}
+
 void bg_spawn_moon() {
   const string moon_texture_key = "moon";
   const string target_texture_width_config_key = "target_texture_width";
@@ -79,6 +105,17 @@ void bg_spawn_moon() {
 
 void bg_init() {
   bg_spawn_moon();
+
+  bg_spawn_candle();
+  bg_spawn_candle();
+  bg_spawn_candle();
+  bg_spawn_candle();
+  bg_spawn_candle();
+  bg_spawn_candle();
+  bg_spawn_candle();
+  bg_spawn_candle();
+  bg_spawn_candle();
+
   // bg_spawn_stars();
   // bg_spawn_clouds();
   // bg_spawn_mountains();

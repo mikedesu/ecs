@@ -210,6 +210,15 @@ function<void(transform_pair)> handle_bg_transform =
       sprite_component sprite = bg_sprites[id];
       transform.x += transform.vx;
       transform.y += transform.vy;
+
+      // handle looping background
+      if (transform.x < -sprite.src.w) {
+        transform.x = config["window_width"];
+      }
+      // else if (transform.x > config["window_width"]) {
+      //     transform.x = -sprite.src.w;
+      //   }
+
       sprite.dest.x = transform.x;
       sprite.dest.y = transform.y;
       sprite.dest.w = sprite.src.w * transform.scale;
@@ -369,8 +378,17 @@ function<void(sprite_pair)> update_animation = [](const sprite_pair p) {
   }
 };
 
+function<void(sprite_pair)> update_bg_animation = [](const sprite_pair p) {
+  entity_id id = p.first;
+  if (bg_sprites[id].is_animating && frame_count % 10 == 0) {
+    bg_sprites[id].current_clip =
+        (bg_sprites[id].current_clip + 1) % bg_sprites[id].num_clips;
+    bg_sprites[id].src.x = bg_sprites[id].current_clip * bg_sprites[id].src.w;
+  }
+};
+
 void update_bg_animations() {
-  for_each(bg_sprites.begin(), bg_sprites.end(), update_animation);
+  for_each(bg_sprites.begin(), bg_sprites.end(), update_bg_animation);
 }
 
 void update_bg_transform_components() {
