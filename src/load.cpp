@@ -70,10 +70,9 @@ void handle_load_pixel(Value &v);
 bool json_value_has_member_is_string(Value &v, string member);
 void handle_load_texture_with_color_mod(Value &v);
 void handle_load_texture(Value &v);
-const Document load_textures_document();
-const Document load_main_config_document();
+const Document load_document(string path);
 void check_if_json_value_has_member_and_is_string(Value &v, string member);
-void handle_load_by_type(Value &v);
+void handle_load_texture_by_type(Value &v);
 void check_if_json_value_is_object(Value &v);
 void load_textures();
 
@@ -243,21 +242,22 @@ void handle_load_texture(Value &v) {
   load_texture(key, path);
 }
 
-const Document load_textures_document() {
-  string config_file_path = "config/textures.json";
+const Document load_document(string path) {
   const size_t read_buffer_size = 65536;
   char readBuffer[read_buffer_size];
   Document d;
-  FILE *fp = fopen(config_file_path.c_str(), "r");
+  FILE *fp = fopen(path.c_str(), "r");
   if (fp == nullptr) {
-    mPrint("Failed to open " + config_file_path);
+    mPrint("Failed to open " + path);
     cleanup_and_exit_with_failure();
   }
   fread(readBuffer, 1, read_buffer_size, fp);
   fclose(fp);
   d.Parse(readBuffer);
   if (d.HasParseError()) {
-    string msg = "Failed to parse config/textures.json";
+    string msg = "Failed to parse " + path;
+    mPrint(msg);
+    msg = "Error code: " + to_string(d.GetParseError());
     mPrint(msg);
     cleanup_and_exit_with_failure();
   }
@@ -280,7 +280,7 @@ void check_if_json_value_is_object(Value &v) {
   }
 }
 
-void handle_load_by_type(Value &v) {
+void handle_load_texture_by_type(Value &v) {
   string type = v["type"].GetString();
   if (type == "texture") {
     handle_load_texture(v);
@@ -296,36 +296,16 @@ void handle_load_by_type(Value &v) {
 }
 
 void load_textures() {
-  Document d = load_textures_document();
+  // Document d = load_textures_document();
+  Document d = load_document("config/textures.json");
   if (d.IsArray()) {
     for (auto &v : d.GetArray()) {
       check_if_json_value_is_object(v);
       check_if_json_value_has_member_and_is_string(v, "type");
       check_if_json_value_has_member_and_is_string(v, "key");
-      handle_load_by_type(v);
+      handle_load_texture_by_type(v);
     }
   }
-}
-
-const Document load_main_config_document() {
-  string config_file_path = "config/game.json";
-  const size_t read_buffer_size = 65536;
-  char readBuffer[read_buffer_size];
-  Document d;
-  FILE *fp = fopen(config_file_path.c_str(), "r");
-  if (fp == nullptr) {
-    mPrint("Failed to open " + config_file_path);
-    cleanup_and_exit_with_failure();
-  }
-  fread(readBuffer, 1, read_buffer_size, fp);
-  fclose(fp);
-  d.Parse(readBuffer);
-  if (d.HasParseError()) {
-    string msg = "Failed to parse " + config_file_path;
-    mPrint(msg);
-    cleanup_and_exit_with_failure();
-  }
-  return d;
 }
 
 void json_value_has_member_is_int_set_config(Document &d, string member) {
@@ -338,13 +318,11 @@ void json_value_has_member_is_int_set_config(Document &d, string member) {
 }
 
 void load_main_config() {
-  Document d = load_main_config_document();
-
+  Document d = load_document("config/game.json");
   json_value_has_member_is_int_set_config(d, "debug_font_size");
   json_value_has_member_is_int_set_config(d, "default_window_width");
   json_value_has_member_is_int_set_config(d, "default_window_height");
   json_value_has_member_is_int_set_config(d, "blood_pixel_count");
-
   // copy over default window width and height as default window width values
   config["window_width"] = config["default_window_width"];
   config["window_height"] = config["default_window_height"];
