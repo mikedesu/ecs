@@ -7,6 +7,7 @@
 #include "mPrint.h"
 #include <algorithm>
 #include <functional>
+#include <map>
 #include <string>
 #include <unordered_map>
 #include <utility>
@@ -15,6 +16,7 @@
 using std::exit;
 using std::for_each;
 using std::function;
+using std::map;
 using std::pair;
 using std::remove;
 using std::string;
@@ -31,6 +33,7 @@ extern TTF_Font *gFont;
 
 extern unordered_map<string, SDL_Texture *> textures;
 extern unordered_map<entity_id, sprite_component> sprites;
+extern map<entity_id, sprite_component> bg_sprites;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, generator_component> generators;
 extern unordered_map<entity_id, bool> inputs;
@@ -65,6 +68,7 @@ function<void(pair<entity_id, bool>)> cleanup_entity_marked_for_deletion =
         is_flipped.erase(id);
         is_generator.erase(id);
         entity_types.erase(id);
+        bg_sprites.erase(id);
         // is_marked_for_deletion.erase(id);
         is_blood_pixel.erase(id);
         entities.erase(remove(entities.begin(), entities.end(), id),
@@ -107,6 +111,7 @@ void cleanup() {
   inputs.clear();
   is_blood_pixel.clear();
   entity_types.clear();
+  bg_sprites.clear();
   // mPrint("cleaning up SDL");
   // mPrint("cleaning up SDL textures");
   cleanup_textures();
