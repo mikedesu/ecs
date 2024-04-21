@@ -37,7 +37,10 @@ extern uniform_real_distribution<double> blood_velocity_negative_distribution;
 extern uniform_real_distribution<double> blood_velocity_distribution;
 
 extern unordered_map<entity_id, entity_type> entity_types;
+
 extern unordered_map<entity_id, bool> is_blood_pixel;
+extern unordered_map<entity_id, int> blood_pixel_lifetime;
+
 extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, enemy_type> enemy_types;
 extern unordered_map<entity_id, sprite_component> sprites;
@@ -71,13 +74,11 @@ entity_id spawn_entity(const string key, const bool is_animating,
   return id;
 }
 
-void spawn_skull() {
+void spawn_skull(const int x, const int y) {
   if (player_id == -1) {
     const string key = "skull";
     const bool is_anim = false;
     const int num_frames = 2;
-    const int x = 0;
-    const int y = 0;
     const entity_id id = spawn_entity(key, is_anim, num_frames, x, y);
     inputs[id] = true;
     player_id = id;
@@ -158,11 +159,11 @@ void spawn_eyeball() {
 void spawn_bat() {
   // we never define w here lol
   const string key = "bat";
-  const entity_id id = spawn_entity(key, true, 2, 0, 0);
   SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
   const double x = config["target_texture_width"] + w;
   // const double y = rand() % (config["target_texture_height"] - (h * 2));
   const double y = texture_height_distribution(rng_generator) - h * 2;
+  const entity_id id = spawn_entity(key, true, 2, x, y);
   const double vy = 0.0;
   const double vx = eyeball_vx_distribution(rng_generator);
   const double angle = 0.0;
@@ -256,28 +257,8 @@ void spawn_blood_pixels(const int x, const int y, const int n) {
                       blood_velocity_distribution(rng_generator),
                       blood_velocity_distribution(rng_generator), 0, 1};
     is_blood_pixel[id] = true;
+    blood_pixel_lifetime[id] = 120;
     entity_types[id] = ENTITY_TYPE_PARTICLE;
     entities.push_back(id);
   }
 }
-
-/*
-void spawn_blood_pixel(int x, int y) {
-  const string key = "blood-pixel";
-  SDL_Texture *t = textures[key];
-  SDL_QueryTexture(t, NULL, NULL, &w, &h);
-  const bool is_animating = false;
-  const int num_clips = 1;
-  const entity_id id = get_next_entity_id();
-  sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {x, y, w, h}};
-  transforms[id] = {(double)x,
-                    (double)y,
-                    blood_velocity_negative_distribution(rng_generator),
-                    blood_velocity_distribution(rng_generator),
-                    0,
-                    1};
-  entities.push_back(id);
-  is_blood_pixel[id] = true;
-  entity_types[id] = ENTITY_TYPE_PARTICLE;
-}
-*/

@@ -95,21 +95,23 @@ void bg_spawn_candle(const int x, const int y, const double vx, const double vy,
   entities.push_back(id);
 }
 
-void bg_spawn_moon() {
+void bg_spawn_moon(const int x, const int y, const double vx, const double vy,
+                   const double scale) {
+
   const string moon_texture_key = "moon";
-  const string target_texture_width_config_key = "target_texture_width";
+  // const string target_texture_width_config_key = "target_texture_width";
   const int num_clips = 1;
   const bool is_animating = false;
   const int src_x = 0;
   const int src_y = 0;
-  const double vx = -0.2;
-  const double vy = 0;
+  // const double vx = -0.2;
+  // const double vy = 0;
   const double angle = 0.0;
-  const double scale = 1.0;
+  // const double scale = 1.0;
   SDL_Texture *t = textures[moon_texture_key];
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
-  const int x = config[target_texture_width_config_key];
-  const int y = 0;
+  // const int x = config[target_texture_width_config_key];
+  // const int y = 0;
   const double dest_x = x;
   const double dest_y = y;
   w = w / num_clips;
@@ -121,16 +123,21 @@ void bg_spawn_moon() {
 }
 
 void bg_init() {
-  bg_spawn_moon();
 
-  SDL_Texture *t = textures["candle"];
+  SDL_Texture *t = textures["moon"];
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
   const int target_texture_width = config["target_texture_width"];
   const int target_texture_height = config["target_texture_height"];
 
+  bg_spawn_moon(target_texture_width - w, 0, -0.2, 0, 1.0);
+
   double scale = 2.0;
   double vx = -1.0;
   const double vy = 0;
+
+  t = textures["candle"];
+  SDL_QueryTexture(t, NULL, NULL, &w, &h);
+
   int x = target_texture_width / 4;
   int y = target_texture_height - h * scale;
 

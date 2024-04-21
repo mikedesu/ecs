@@ -99,7 +99,10 @@ unordered_map<entity_id, entity_type> entity_types;
 unordered_map<entity_id, bool> inputs;
 unordered_map<entity_id, bool> is_rotating;
 unordered_map<entity_id, bool> is_collidable;
+
 unordered_map<entity_id, bool> is_blood_pixel;
+unordered_map<entity_id, int> blood_pixel_lifetime;
+
 unordered_map<entity_id, bool> is_enemy;
 unordered_map<entity_id, bool> is_soulshard;
 unordered_map<entity_id, bool> is_knife;
@@ -137,7 +140,7 @@ void load_debug_text();
 void load_textures();
 void load_main_config();
 void render_frame();
-void spawn_skull();
+void spawn_skull(const int x, const int y);
 void spawn_generator(enemy_type type, bool active, int group, int cooldown,
                      int cooldown_reduction);
 void update();
@@ -164,7 +167,7 @@ int main() {
   mPrint("bg init...");
   bg_init();
   mPrint("spawn skull...");
-  spawn_skull();
+  spawn_skull(0, 0);
   mPrint("spawn generator...");
   // spawn_generator(ENEMY_TYPE_EYEBALL, true, 120);
   // spawn_generator(ENEMY_TYPE_BAT, true, 120, 60 * 60);

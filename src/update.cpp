@@ -66,7 +66,10 @@ extern unordered_map<entity_id, bool> is_enemy;
 extern unordered_map<entity_id, bool> is_generator;
 extern unordered_map<entity_id, bool> is_powerup;
 extern unordered_map<entity_id, bool> is_marked_for_deletion;
+
 extern unordered_map<entity_id, bool> is_blood_pixel;
+extern unordered_map<entity_id, int> blood_pixel_lifetime;
+
 extern unordered_map<enemy_type, int> enemies_killed;
 extern unordered_map<powerup_type, int> powerups_collected;
 extern unordered_map<entity_id, double> rotation_speeds;
@@ -293,7 +296,9 @@ function<void(const entity_id)> handle_blood_pixel_transform =
       const int bottom = width + 2 * sprites[id].src.h;
       const int x = transforms[id].x;
       const int y = transforms[id].y;
-      const bool mark = x < left || x > right || y < top || y > bottom;
+      blood_pixel_lifetime[id]--;
+      const bool mark = x < left || x > right || y < top || y > bottom ||
+                        blood_pixel_lifetime[id] <= 0;
       is_marked_for_deletion[id] = mark;
     };
 
