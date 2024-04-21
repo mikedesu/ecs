@@ -15,10 +15,15 @@
 
 using std::default_random_engine;
 using std::map;
+using std::mt19937;
+using std::random_device;
 using std::string;
 using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
+
+random_device rd;
+mt19937 g;
 
 // gameconfig config;
 unordered_map<string, size_t> config;

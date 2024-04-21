@@ -5,18 +5,26 @@
 #include "mPrint.h"
 #include "powerup_type.h"
 #include <SDL_render.h>
+#include <algorithm>
 #include <cassert>
 #include <random>
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 using std::default_random_engine;
+using std::mt19937;
+using std::random_device;
+using std::set;
+using std::shuffle;
 using std::string;
 using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
 // using std::assert;
+
+extern mt19937 g;
 
 extern unordered_map<string, size_t> config;
 extern entity_id player_id;
@@ -171,29 +179,26 @@ void spawn_bat_group(const double x, const double y, const double scale,
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
   const int right = config["target_texture_width"] + w;
   const int bottom = config["target_texture_height"] - h * scale;
-  // mPrint(to_string(right));
-  // mPrint(to_string(x));
   assert(x > 0 && x < right);
   assert(y > 0 && y < bottom);
   double tmp_y = y;
-
-  double vx = -(rand() % 3 + 1);
-
+  vector<double> vx_vec;
+  double starting_vx = -1.0;
+  double decr_vx = 1.0;
   double vy = 0;
   int py = -1;
-  spawn_bat(x, tmp_y, vx, vy, scale);
-  for (int i = 0; i < number / 2; i++) {
-    py = (rand() % 4 + 1) * h;
-    tmp_y += py;
-    vx = -(rand() % 3 + 1);
-    spawn_bat(x, tmp_y, vx, vy, scale);
+  for (int i = 0; i < number; i++) {
+    vx_vec.push_back(starting_vx);
+    starting_vx -= decr_vx;
   }
-  tmp_y = y;
-  for (int i = 0; i < number / 2; i++) {
-    py = (rand() % 4 + 1) * h;
-    tmp_y -= py;
-    vx = -(rand() % 3 + 1);
-    spawn_bat(x, tmp_y, vx, vy, scale);
+  shuffle(vx_vec.begin(), vx_vec.end(), g);
+  spawn_bat(x, tmp_y, vx_vec.back(), vy, scale);
+  vx_vec.pop_back();
+  for (int i = 1; i < number; i++) {
+    py = i * h;
+    tmp_y += py;
+    spawn_bat(x, tmp_y, vx_vec.back(), vy, scale);
+    vx_vec.pop_back();
   }
 }
 

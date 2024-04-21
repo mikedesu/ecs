@@ -5,9 +5,14 @@
 #include <string>
 #include <unordered_map>
 
+using std::mt19937;
+using std::random_device;
 using std::string;
 using std::uniform_real_distribution;
 using std::unordered_map;
+
+extern random_device rd;
+extern mt19937 g;
 
 // extern gameconfig config;
 extern unordered_map<string, size_t> config;
@@ -61,6 +66,9 @@ void init_img() {
 
 void init_rng() {
   srand(time(nullptr));
+
+  g = mt19937(rd());
+
   eyeball_vx_distribution = uniform_real_distribution<double>(-4.0, -2.0);
   soulshard_spawn_rate_distribution =
       uniform_real_distribution<double>(0.0, 100.0);
