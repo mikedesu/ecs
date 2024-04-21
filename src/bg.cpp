@@ -4,12 +4,14 @@
 #include "entity_id.h"
 // #include "gameconfig.h"
 #include "powerup_type.h"
+#include <map>
 #include <random>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 using std::default_random_engine;
+using std::map;
 using std::string;
 using std::uniform_real_distribution;
 using std::unordered_map;
@@ -35,7 +37,8 @@ extern uniform_real_distribution<double> texture_height_distribution;
 extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, enemy_type> enemy_types;
 extern unordered_map<entity_id, sprite_component> sprites;
-extern unordered_map<entity_id, sprite_component> bg_sprites;
+extern map<entity_id, sprite_component> bg_sprites;
+// extern unordered_map<entity_id, sprite_component> bg_sprites;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, transform_component> bg_transforms;
 extern unordered_map<entity_id, generator_component> generators;
@@ -51,6 +54,26 @@ extern unordered_map<powerup_type, int> powerups_collected;
 extern vector<entity_id> entities;
 
 extern entity_id get_next_entity_id();
+
+void bg_spawn_grave(const int x, const int y, const double vx, const double vy,
+                    const double scale) {
+  const string key = "grave";
+  const int num_clips = 1;
+  const bool is_animating = false;
+  const int src_x = 0;
+  const int src_y = 0;
+  const double angle = 0.0;
+  SDL_Texture *t = textures[key];
+  SDL_QueryTexture(t, NULL, NULL, &w, &h);
+  const double dx = x;
+  const double dy = y;
+  w = w / num_clips;
+  const entity_id id = get_next_entity_id();
+  bg_sprites[id] = {is_animating,         0,           num_clips, t,
+                    {src_x, src_y, w, h}, {x, y, w, h}};
+  bg_transforms[id] = {dx, dy, vx, vy, angle, scale};
+  entities.push_back(id);
+}
 
 void bg_spawn_candle(const int x, const int y, const double vx, const double vy,
                      const double scale) {
@@ -105,25 +128,30 @@ void bg_init() {
   const int target_texture_width = config["target_texture_width"];
   const int target_texture_height = config["target_texture_height"];
 
+  double scale = 2.0;
+  double vx = -1.0;
   const double vy = 0;
-
-  double scale = 3.0;
-  int x = target_texture_width / 2;
+  int x = target_texture_width / 4;
   int y = target_texture_height - h * scale;
-  double vx = -3.0;
-  bg_spawn_candle(x, y, vx, vy, scale);
 
-  scale -= 1.0;
-  x += w;
-  y = target_texture_height - h * scale;
-  vx += 0.5;
-  bg_spawn_candle(x, y, vx, vy, scale);
+  for (int i = 0; i < 13; i++) {
+    bg_spawn_candle(x, y, vx, vy, scale);
+    x += w * scale * 2;
+  }
 
-  scale -= 1.0;
-  x += w;
+  t = textures["grave"];
+  SDL_QueryTexture(t, NULL, NULL, &w, &h);
+  vx = -0.5;
+  scale = 4.0;
+  x = target_texture_width / 4;
   y = target_texture_height - h * scale;
-  vx += 0.5;
-  bg_spawn_candle(x, y, vx, vy, scale);
+  bg_spawn_grave(x, y, vx, vy, scale);
+  x = target_texture_width / 4 + (2 * w * scale);
+  bg_spawn_grave(x, y, vx, vy, scale);
+  x = target_texture_width / 4 + (4 * w * scale);
+  bg_spawn_grave(x, y, vx, vy, scale);
+  x = target_texture_width / 4 + (6 * w * scale);
+  bg_spawn_grave(x, y, vx, vy, scale);
 
   // bg_spawn_candle();
   // bg_spawn_candle();

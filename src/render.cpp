@@ -4,15 +4,18 @@
 #include "sprite_pair.h"
 #include <algorithm>
 #include <functional>
+#include <map>
 #include <unordered_map>
 
 using std::for_each;
 using std::function;
+using std::map;
 using std::unordered_map;
 
 extern SDL_Renderer *renderer;
 extern unordered_map<entity_id, sprite_component> sprites;
-extern unordered_map<entity_id, sprite_component> bg_sprites;
+extern map<entity_id, sprite_component> bg_sprites;
+// extern unordered_map<entity_id, sprite_component> bg_sprites;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, transform_component> bg_transforms;
 extern unordered_map<entity_id, bool> is_flipped;
@@ -35,7 +38,7 @@ function<void(sprite_pair)> draw_sprite = [](const sprite_pair p) {
 };
 
 void render_debug_panel() {
-  const SDL_Color color = {0, 0, 0, 128};
+  SDL_Color color = {0, 0, 0, 128};
   SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
   SDL_RenderFillRect(renderer, &debug_texture_dest);
   SDL_RenderCopy(renderer, debug_texture, &debug_texture_src,
@@ -44,7 +47,8 @@ void render_debug_panel() {
 
 void render_sprites() { for_each(sprites.begin(), sprites.end(), draw_sprite); }
 void render_bg_sprites() {
-  for_each(bg_sprites.begin(), bg_sprites.end(), draw_sprite);
+  for_each(bg_sprites.rbegin(), bg_sprites.rend(), draw_sprite);
+  // for_each(bg_sprites.begin(), bg_sprites.end(), draw_sprite);
 }
 
 void render_frame() {

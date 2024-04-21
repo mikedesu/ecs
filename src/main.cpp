@@ -7,12 +7,14 @@
 // #include "gameconfig.h"
 #include "mPrint.h"
 #include "powerup_type.h"
+#include <map>
 #include <random>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 using std::default_random_engine;
+using std::map;
 using std::string;
 using std::uniform_real_distribution;
 using std::unordered_map;
@@ -87,7 +89,8 @@ unordered_map<entity_id, powerup_type> powerup_types;
 unordered_map<entity_id, enemy_type> enemy_types;
 unordered_map<entity_id, sprite_component> sprites;
 unordered_map<entity_id, transform_component> transforms;
-unordered_map<entity_id, sprite_component> bg_sprites;
+// unordered_map<entity_id, sprite_component> bg_sprites;
+map<entity_id, sprite_component> bg_sprites;
 unordered_map<entity_id, transform_component> bg_transforms;
 unordered_map<entity_id, bg_entity_type> bg_entity_types;
 unordered_map<entity_id, double> rotation_speeds;

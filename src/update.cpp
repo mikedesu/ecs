@@ -11,6 +11,7 @@
 #include "transform_pair.h"
 #include <algorithm>
 #include <functional>
+#include <map>
 #include <random>
 #include <string>
 #include <unordered_map>
@@ -21,6 +22,7 @@
 using std::default_random_engine;
 using std::for_each;
 using std::function;
+using std::map;
 using std::string;
 using std::uniform_real_distribution;
 using std::unordered_map;
@@ -53,7 +55,8 @@ extern unordered_map<entity_id, enemy_type> enemy_types;
 extern unordered_map<entity_id, entity_type> entity_types;
 extern unordered_map<entity_id, generator_component> generators;
 extern unordered_map<entity_id, sprite_component> sprites;
-extern unordered_map<entity_id, sprite_component> bg_sprites;
+extern map<entity_id, sprite_component> bg_sprites;
+// extern unordered_map<entity_id, sprite_component> bg_sprites;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, transform_component> bg_transforms;
 extern unordered_map<entity_id, bool> is_soulshard;
