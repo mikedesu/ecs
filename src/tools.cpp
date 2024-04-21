@@ -3,15 +3,16 @@
 #include "enemy_type.h"
 #include "entity_id.h"
 // #include "gameconfig.h"
+// #include <random>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 using std::string;
+// using std::uniform_int_distribution;
 using std::unordered_map;
 using std::vector;
 
-// extern gameconfig config;
 extern entity_id next_entity_id;
 extern bool is_fullscreen;
 extern int frame_count;

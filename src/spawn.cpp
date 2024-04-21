@@ -4,6 +4,8 @@
 #include "entity_type.h"
 #include "mPrint.h"
 #include "powerup_type.h"
+#include <SDL_render.h>
+#include <cassert>
 #include <random>
 #include <string>
 #include <unordered_map>
@@ -14,6 +16,7 @@ using std::string;
 using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
+// using std::assert;
 
 extern unordered_map<string, size_t> config;
 extern entity_id player_id;
@@ -59,6 +62,9 @@ extern unordered_map<entity_id, double> rotation_speeds;
 extern vector<entity_id> entities;
 
 extern entity_id get_next_entity_id();
+
+void spawn_bat(const double x, const double y, const double vx, const double vy,
+               const double scale);
 
 entity_id spawn_entity(const string key, const bool is_animating,
                        const int num_clips, const int x, const int y) {
@@ -140,34 +146,66 @@ void spawn_knife() {
   }
 }
 
-void spawn_eyeball() {
-  const int x = config["target_texture_width"] - w;
-  const int y = rand() % (config["target_texture_height"] - h);
-  const entity_id id = spawn_entity("eyeball", true, 18, x, y);
-  const double vy = 0.0;
-  const double vx = eyeball_vx_distribution(rng_generator);
-  const double angle = 0.0;
-  const double scale = 1.0;
-  const double dx = x;
-  const double dy = y;
-  transforms[id] = {dx, dy, vx, vy, angle, scale};
-  entity_types[id] = ENTITY_TYPE_ENEMY;
-  is_collidable[id] = true;
-  is_enemy[id] = true;
+// void spawn_eyeball() {
+//   const int x = config["target_texture_width"] - w;
+//   const int y = rand() % (config["target_texture_height"] - h);
+//   const entity_id id = spawn_entity("eyeball", true, 18, x, y);
+//   const double vy = 0.0;
+//   const double vx = eyeball_vx_distribution(rng_generator);
+//   const double angle = 0.0;
+//   const double scale = 1.0;
+//   const double dx = x;
+//   const double dy = y;
+//   transforms[id] = {dx, dy, vx, vy, angle, scale};
+//   entity_types[id] = ENTITY_TYPE_ENEMY;
+//   is_collidable[id] = true;
+//   is_enemy[id] = true;
+// }
+
+void spawn_bat_group(const double x, const double y, const double scale,
+                     const int number) {
+  assert(number > 0);
+  assert(number < 10);
+  string key = "bat";
+  SDL_Texture *t = textures[key];
+  SDL_QueryTexture(t, NULL, NULL, &w, &h);
+  const int right = config["target_texture_width"] + w;
+  const int bottom = config["target_texture_height"] - h * scale;
+  // mPrint(to_string(right));
+  // mPrint(to_string(x));
+  assert(x > 0 && x < right);
+  assert(y > 0 && y < bottom);
+  double tmp_y = y;
+
+  double vx = -(rand() % 3 + 1);
+
+  double vy = 0;
+  int py = -1;
+  spawn_bat(x, tmp_y, vx, vy, scale);
+  for (int i = 0; i < number / 2; i++) {
+    py = (rand() % 4 + 1) * h;
+    tmp_y += py;
+    vx = -(rand() % 3 + 1);
+    spawn_bat(x, tmp_y, vx, vy, scale);
+  }
+  tmp_y = y;
+  for (int i = 0; i < number / 2; i++) {
+    py = (rand() % 4 + 1) * h;
+    tmp_y -= py;
+    vx = -(rand() % 3 + 1);
+    spawn_bat(x, tmp_y, vx, vy, scale);
+  }
 }
 
-void spawn_bat() {
-  // we never define w here lol
+void spawn_bat(const double x, const double y, const double vx, const double vy,
+               const double scale) {
+  assert(x > 0);
+  assert(y > 0);
+  assert(y < config["target_texture_height"]);
   const string key = "bat";
   SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
-  const double x = config["target_texture_width"] + w;
-  // const double y = rand() % (config["target_texture_height"] - (h * 2));
-  const double y = texture_height_distribution(rng_generator) - h * 2;
   const entity_id id = spawn_entity(key, true, 2, x, y);
-  const double vy = 0.0;
-  const double vx = eyeball_vx_distribution(rng_generator);
   const double angle = 0.0;
-  const double scale = 1.0;
   transforms[id] = {x, y, vx, vy, angle, scale};
   is_collidable[id] = true;
   is_enemy[id] = true;

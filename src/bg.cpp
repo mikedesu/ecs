@@ -123,31 +123,41 @@ void bg_spawn_moon(const int x, const int y, const double vx, const double vy,
 }
 
 void bg_init() {
-
-  SDL_Texture *t = textures["moon"];
-  SDL_QueryTexture(t, NULL, NULL, &w, &h);
+  int w = -1;
+  int h = -1;
+  int x = -1;
+  int y = -1;
+  double vx = 0;
+  double vy = 0;
+  double scale = 0;
   const int target_texture_width = config["target_texture_width"];
   const int target_texture_height = config["target_texture_height"];
+  SDL_Texture *t[] = {
+      textures["moon"],
+      textures["candle"],
+      textures["grave"],
+  };
 
-  bg_spawn_moon(target_texture_width - w, 0, -0.2, 0, 1.0);
+  SDL_QueryTexture(t[0], NULL, NULL, &w, &h);
+  x = target_texture_width - w;
+  y = 0;
+  vx = -0.2;
+  vy = 0;
+  scale = 1.0;
+  bg_spawn_moon(x, y, vx, vy, scale);
 
-  double scale = 2.0;
-  double vx = -1.0;
-  const double vy = 0;
-
-  t = textures["candle"];
-  SDL_QueryTexture(t, NULL, NULL, &w, &h);
-
-  int x = target_texture_width / 4;
-  int y = target_texture_height - h * scale;
-
+  scale = 2.0;
+  vx = -1.0;
+  vy = 0;
+  SDL_QueryTexture(t[1], NULL, NULL, &w, &h);
+  x = target_texture_width / 4;
+  y = target_texture_height - h * scale;
   for (int i = 0; i < 13; i++) {
     bg_spawn_candle(x, y, vx, vy, scale);
     x += w * scale * 2;
   }
 
-  t = textures["grave"];
-  SDL_QueryTexture(t, NULL, NULL, &w, &h);
+  SDL_QueryTexture(t[2], NULL, NULL, &w, &h);
   vx = -0.5;
   scale = 4.0;
   x = target_texture_width / 4;

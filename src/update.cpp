@@ -76,9 +76,12 @@ extern unordered_map<entity_id, double> rotation_speeds;
 extern vector<entity_id> entities;
 
 extern void spawn_soulshard(const int x, const int y);
-extern void spawn_eyeball();
+// extern void spawn_eyeball();
 extern void spawn_powerup();
-extern void spawn_bat();
+extern void spawn_bat(const double x, const double y, const double vx,
+                      const double vy, const double scale);
+void spawn_bat_group(const double x, const double y, const double scale,
+                     const int number);
 extern void spawn_blood_pixels(const int x, const int y, const int n);
 extern double distance(const int x1, const int y1, const int x2, const int y2);
 
@@ -218,7 +221,7 @@ function<void(transform_pair)> handle_bg_transform =
       transform.y += transform.vy;
 
       // handle looping background
-      if (transform.x < -sprite.src.w) {
+      if (transform.x < -sprite.src.w * transform.scale) {
         transform.x = config["window_width"];
       }
       // else if (transform.x > config["window_width"]) {
@@ -412,13 +415,20 @@ void update_generators() {
     const int group = generators[id].group;
     if (active && frame_count % cooldown == 0) {
       switch (generators[id].type) {
-      case ENEMY_TYPE_EYEBALL:
-        spawn_eyeball();
-        break;
+      // case ENEMY_TYPE_EYEBALL:
+      // spawn_eyeball();
+      // break;
       case ENEMY_TYPE_BAT:
-        for (int i = 0; i < group; i++) {
-          spawn_bat();
-        }
+        spawn_bat_group(config["target_texture_width"],
+                        config["target_texture_height"] / 2, 1.0, group);
+        // for (int i = 0; i < group; i++) {
+        //   int x = 0;
+        //   int y = 0;
+        //   double vx = 0;
+        //   double vy = 0;
+        //   double scale = 1.0;
+        //   spawn_bat(x, y, vx, vy, scale);
+        // }
         break;
       default:
         break;

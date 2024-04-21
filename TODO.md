@@ -284,4 +284,12 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 
 - [ ] when loading in textures from the JSON, we need to make sure we dont add an entry for a key that we have already defined, it might get overwritten otherwise
 
+## 21 April 2024
+
+### 16:40 CDT
+
+- [ ] when spawning groups of bats, we want to configure them such that
+    - [ ] each bat has a different vx
+    - [ ] each bat is spawned an equal distance away from each other
+    - [ ] each bat is spawned on-screen and able to be hit by the player
 
