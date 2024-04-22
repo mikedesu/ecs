@@ -46,6 +46,8 @@ char texture_text[1024] = "a bunch of random text";
 bool quit = false;
 bool do_render_debug_panel = true;
 bool is_fullscreen = false;
+bool is_paused = false;
+
 int num_collisions = 0;
 int img_flags = IMG_INIT_PNG;
 int result = -1;
@@ -159,37 +161,39 @@ int main() {
   create_window();
   create_renderer();
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-  mPrint("init...");
+  // mPrint("init...");
   init();
-  mPrint("handle init...");
+  // mPrint("handle init...");
   handle_init_target_texture();
-  mPrint("load textures...");
+  // mPrint("load textures...");
   load_textures();
-  mPrint("load debug text...");
+  // mPrint("load debug text...");
   load_debug_text();
-  mPrint("init debug texture rects...");
+  // mPrint("init debug texture rects...");
   init_debug_texture_rects();
   // get the width and height of the texture
-  mPrint("init target texture rects...");
+  // mPrint("init target texture rects...");
   init_target_texture_rects();
-  mPrint("bg init...");
+  // mPrint("bg init...");
   bg_init();
-  mPrint("init after load textures...");
+  // mPrint("init after load textures...");
   init_after_load_textures();
-  mPrint("spawn skull...");
+  // mPrint("spawn skull...");
   spawn_skull(0, 0);
-  mPrint("spawn generator...");
-  // spawn_generator(ENEMY_TYPE_EYEBALL, true, 120);
-  // spawn_generator(ENEMY_TYPE_BAT, true, 120, 60 * 60);
+  // mPrint("spawn generator...");
+  //  spawn_generator(ENEMY_TYPE_EYEBALL, true, 120);
+  //  spawn_generator(ENEMY_TYPE_BAT, true, 120, 60 * 60);
   spawn_generator(ENEMY_TYPE_BAT, true, 3, 300, 60 * 60);
   mPrint("main loop...");
-  mPrint("player_id: " + to_string(player_id));
+  // mPrint("player_id: " + to_string(player_id));
   while (!quit) {
     handle_input();
-    handle_input_component();
-    update();
-    render_frame();
-    cleanup_entities_marked_for_deletion();
+    if (!is_paused) {
+      handle_input_component();
+      update();
+      render_frame();
+      cleanup_entities_marked_for_deletion();
+    }
   }
   cleanup();
   return EXIT_SUCCESS;

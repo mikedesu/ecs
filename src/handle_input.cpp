@@ -1,6 +1,7 @@
 #include "SDL_handler.h"
 #include "components.h"
 #include "entity_id.h"
+#include "mPrint.h"
 #include <string>
 #include <unordered_map>
 
@@ -8,6 +9,7 @@ using std::string;
 using std::unordered_map;
 
 extern bool quit;
+extern bool is_paused;
 extern bool is_fullscreen;
 extern bool do_render_debug_panel;
 extern entity_id player_id;
@@ -86,6 +88,12 @@ void handle_keydown() {
     //     player_money -= 1;
     //   }
     //   break;
+  case SDLK_ESCAPE:
+    mPrint("Escape pressed");
+
+    is_paused = !is_paused;
+
+    break;
 
   default:
     break;
