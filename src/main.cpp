@@ -44,7 +44,8 @@ int current_knife_cooldown = default_knife_cooldown;
 char texture_text[1024] = "a bunch of random text";
 
 bool quit = false;
-bool do_render_debug_panel = true;
+bool do_render_debug_panel = false;
+// bool do_render_debug_panel = true;
 bool is_fullscreen = false;
 bool is_paused = false;
 
@@ -183,7 +184,7 @@ int main() {
   // mPrint("spawn generator...");
   //  spawn_generator(ENEMY_TYPE_EYEBALL, true, 120);
   //  spawn_generator(ENEMY_TYPE_BAT, true, 120, 60 * 60);
-  spawn_generator(ENEMY_TYPE_BAT, true, 3, 300, 60 * 60);
+  spawn_generator(ENEMY_TYPE_BAT, true, 2, 240, 60 * 60);
   mPrint("main loop...");
   // mPrint("player_id: " + to_string(player_id));
   while (!quit) {

@@ -129,11 +129,18 @@ void handle_knife_charge_rotation(const entity_id id) {
 
 void spawn_knife() {
   if (!knife_cooldown && num_knives) {
-    string key = knife_charge >= 2 ? "knife-blue" : "knife";
+    string key = "knife";
+    if (knife_charge >= 2) {
+      key = "knife-blue";
+    }
     const int largeness = powerups_collected[POWERUP_TYPE_KNIFE_LARGENESS];
-    const double scale = 1.0 + (0.1 * largeness);
+    const double scale = 5;
+    //  const double scale = 1.0 + (1.1 * largeness);
+    // const double scale = 1.0 + (0.1 * largeness);
     const sprite_component player = sprites[player_id];
-    const int padding_right = player.dest.w + 4;
+    // const int padding_right = player.dest.w + 4;
+    // const int padding_right = player.dest.w + 4;
+    const int padding_right = player.dest.w;
     SDL_Texture *t = textures[key];
     SDL_QueryTexture(t, NULL, NULL, &w, &h);
     const int padding_left = w * scale;
