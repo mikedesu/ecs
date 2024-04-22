@@ -11,6 +11,7 @@ using std::unordered_map;
 extern bool quit;
 extern bool is_paused;
 extern bool is_fullscreen;
+extern bool is_gameover;
 extern bool do_render_debug_panel;
 extern entity_id player_id;
 extern int color_index;
@@ -18,6 +19,8 @@ extern int num_color_indices;
 extern int fullscreen_width;
 extern int fullscreen_height;
 extern int window_width;
+extern int player_health;
+extern int player_max_health;
 extern int window_height;
 extern int target_texture_width;
 extern int target_texture_height;
@@ -37,6 +40,12 @@ extern unordered_map<string, SDL_Texture *> textures;
 extern void generator_set_all_active_flip();
 extern void toggle_fullscreen();
 extern void spawn_knife();
+extern void cleanup_data_structures();
+extern void init_after_load_textures();
+extern void bg_init();
+extern void spawn_skull(const int x, const int y);
+extern void spawn_generator(enemy_type type, bool active, int group,
+                            int cooldown, int cooldown_reduction);
 
 void handle_keyup() {
   switch (e.key.keysym.sym) {
@@ -84,6 +93,21 @@ void handle_keydown() {
     is_paused = !is_paused;
     break;
   default:
+    if (is_gameover) {
+      mPrint("gameover key press");
+
+      cleanup_data_structures();
+      player_id = -1;
+      player_health = 3;
+      player_max_health = 3;
+
+      // these are also called in main on game start
+      bg_init();
+      init_after_load_textures();
+      spawn_skull(0, 0);
+      spawn_generator(ENEMY_TYPE_BAT, true, 2, 240, 60 * 60);
+      is_gameover = false;
+    }
     break;
   }
 }

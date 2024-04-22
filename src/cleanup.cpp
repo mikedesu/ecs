@@ -53,6 +53,9 @@ extern unordered_map<int, bool> is_pressed;
 extern vector<entity_id> entities;
 extern vector<entity_id> entities_marked_for_deletion_tmp;
 
+extern vector<double> bat_vx_vec;
+extern vector<int> bat_y_vec;
+
 function<void(pair<entity_id, bool>)> cleanup_entity_marked_for_deletion =
     [](auto kv) {
       entity_id id = kv.first;
@@ -108,6 +111,8 @@ void cleanup_data_structures() {
   is_blood_pixel.clear();
   entity_types.clear();
   bg_sprites.clear();
+  bat_y_vec.clear();
+  bat_vx_vec.clear();
 }
 
 void cleanup() {

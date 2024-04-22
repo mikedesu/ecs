@@ -63,8 +63,10 @@ int num_knives_fired = 0;
 int num_enemies_escaped = 0;
 int fullscreen_width = -1;
 int fullscreen_height = -1;
+
 int player_health = 3;
 int player_max_health = 3;
+
 int player_soulshards = 0;
 int total_soulshards_collected = 0;
 int color_index = 0;
@@ -140,6 +142,7 @@ entity_id get_next_entity_id();
 void bg_init();
 void cleanup();
 void cleanup_entities_marked_for_deletion();
+// void cleanup_data_structures();
 void create_window();
 void create_renderer();
 void handle_input();
@@ -177,6 +180,7 @@ int main() {
   init_after_load_textures();
   spawn_skull(0, 0);
   spawn_generator(ENEMY_TYPE_BAT, true, 2, 240, 60 * 60);
+
   mPrint("main loop...");
   // mPrint("player_id: " + to_string(player_id));
   while (!quit) {

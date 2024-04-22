@@ -299,7 +299,10 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 
 - [ ] gameover text is not properly centered on fullscreen
 
+### 15:34 CDT
 
+- [ ] all of the various in-game variables need initialization-functions because they are currently hardcoded in at the start and need to be reset on gameover-continue
+    - [ ] will also be useful for saving state later on for implementing save game
 
 
 
