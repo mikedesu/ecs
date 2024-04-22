@@ -26,6 +26,7 @@ using std::vector;
 
 extern mt19937 g;
 
+extern vector<int> bat_y_vec;
 extern unordered_map<string, size_t> config;
 extern entity_id player_id;
 extern unordered_map<entity_id, bool> inputs;
@@ -183,27 +184,20 @@ void spawn_bat_group(const double x, const double y, const double scale,
   assert(x > 0 && x < right);
   assert(y > 0 && y < bottom);
   double tmp_y = y;
-  // vector<double> vx_vec;
-  // double starting_vx = -1.0;
-  // double decr_vx = 1.0;
   double vy = 0;
-  // int py = -1;
-  // for (int i = 0; i < number; i++) {
-  //   vx_vec.push_back(starting_vx);
-  //   starting_vx -= decr_vx;
-  // }
   shuffle(bat_vx_vec.begin(), bat_vx_vec.end(), g);
-
-  for (auto vx : bat_vx_vec) {
+  shuffle(bat_y_vec.begin(), bat_y_vec.end(), g);
+  for (int i = 0; i < number; i++) {
+    double vx = bat_vx_vec[i];
+    tmp_y = bat_y_vec[i];
     spawn_bat(x, tmp_y, vx, vy, scale);
-    tmp_y += h * scale * 4;
   }
 }
 
 void spawn_bat(const double x, const double y, const double vx, const double vy,
                const double scale) {
   assert(x > 0);
-  assert(y > 0);
+  assert(y >= 0);
   assert(y < config["target_texture_height"]);
   const string key = "bat";
   SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);

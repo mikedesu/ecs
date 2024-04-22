@@ -1,6 +1,7 @@
 #include "SDL_handler.h"
 // #include "gameconfig.h"
 #include "mPrint.h"
+#include <SDL_render.h>
 #include <random>
 #include <string>
 #include <unordered_map>
@@ -16,7 +17,9 @@ using std::vector;
 extern random_device rd;
 extern mt19937 g;
 
+extern unordered_map<string, SDL_Texture *> textures;
 extern vector<double> bat_vx_vec;
+extern vector<int> bat_y_vec;
 extern unordered_map<string, size_t> config;
 extern SDL_Rect debug_texture_src;
 extern SDL_Rect debug_texture_dest;
@@ -145,8 +148,24 @@ void init() {
   init_ttf();
   init_gfont();
   init_rng();
+}
 
+void init_after_load_textures() {
+
+  bat_vx_vec.push_back(-4.0);
+  bat_vx_vec.push_back(-3.5);
   bat_vx_vec.push_back(-3.0);
+  bat_vx_vec.push_back(-2.5);
   bat_vx_vec.push_back(-2.0);
-  bat_vx_vec.push_back(-1.0);
+  bat_vx_vec.push_back(-1.5);
+
+  SDL_Texture *t = textures["bat"];
+  int w, h;
+  SDL_QueryTexture(t, NULL, NULL, &w, &h);
+
+  size_t y = 0;
+  while (y < config["target_texture_height"] - h) {
+    bat_y_vec.push_back(y);
+    y += h * 2;
+  }
 }

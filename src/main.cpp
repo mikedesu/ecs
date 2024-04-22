@@ -4,7 +4,6 @@
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "entity_type.h"
-// #include "gameconfig.h"
 #include "mPrint.h"
 #include "powerup_type.h"
 #include <map>
@@ -90,6 +89,7 @@ SDL_Texture *debug_bg_texture = nullptr;
 vector<entity_id> entities;
 vector<entity_id> entities_marked_for_deletion_tmp;
 vector<double> bat_vx_vec;
+vector<int> bat_y_vec;
 
 unordered_map<int, bool> is_pressed;
 unordered_map<entity_id, powerup_type> powerup_types;
@@ -143,6 +143,7 @@ void handle_init_target_texture();
 void init_debug_texture_rects();
 void init_target_texture_rects();
 void init();
+void init_after_load_textures();
 void load_debug_text();
 void load_textures();
 void load_main_config();
@@ -173,6 +174,8 @@ int main() {
   init_target_texture_rects();
   mPrint("bg init...");
   bg_init();
+  mPrint("init after load textures...");
+  init_after_load_textures();
   mPrint("spawn skull...");
   spawn_skull(0, 0);
   mPrint("spawn generator...");
