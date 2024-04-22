@@ -373,7 +373,7 @@ function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
   for (auto p : is_enemy) {
     entity_id enemy_id = p.first;
     if (id == enemy_id || is_blood_pixel[enemy_id] || is_soulshard[enemy_id] ||
-        is_powerup[enemy_id]) {
+        is_powerup[enemy_id] || is_knife[enemy_id]) {
       continue;
     }
     check_for_knife_collision_with_enemy(id, enemy_id);
