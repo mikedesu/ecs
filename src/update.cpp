@@ -169,6 +169,15 @@ function<void(entity_id)> handle_update_skull_collision_powerup =
       powerups_collected[type]++;
     };
 
+function<void(entity_id)> handle_update_skull_collision_enemy =
+    [](const entity_id id) {
+      is_marked_for_deletion[id] = true;
+      player_health--;
+      if (player_health <= 0) {
+        mPrint("Gameover!");
+      }
+    };
+
 function<void(entity_id)> update_skull_collision = [](const entity_id id) {
   if (id == player_id) {
     return;
@@ -188,8 +197,9 @@ function<void(entity_id)> update_skull_collision = [](const entity_id id) {
       handle_update_skull_collision_soulshard();
       break;
     case ENTITY_TYPE_ENEMY:
-      is_marked_for_deletion[id] = true;
-      player_health--;
+      // is_marked_for_deletion[id] = true;
+      // player_health--;
+      handle_update_skull_collision_enemy(id);
       break;
     case ENTITY_TYPE_ITEM:
       is_marked_for_deletion[id] = true;
