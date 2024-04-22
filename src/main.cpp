@@ -89,6 +89,8 @@ SDL_Texture *debug_bg_texture = nullptr;
 
 vector<entity_id> entities;
 vector<entity_id> entities_marked_for_deletion_tmp;
+vector<double> bat_vx_vec;
+
 unordered_map<int, bool> is_pressed;
 unordered_map<entity_id, powerup_type> powerup_types;
 unordered_map<entity_id, enemy_type> enemy_types;
@@ -176,7 +178,7 @@ int main() {
   mPrint("spawn generator...");
   // spawn_generator(ENEMY_TYPE_EYEBALL, true, 120);
   // spawn_generator(ENEMY_TYPE_BAT, true, 120, 60 * 60);
-  spawn_generator(ENEMY_TYPE_BAT, true, 3, 240, 60 * 60);
+  spawn_generator(ENEMY_TYPE_BAT, true, 3, 300, 60 * 60);
   mPrint("main loop...");
   mPrint("player_id: " + to_string(player_id));
   while (!quit) {

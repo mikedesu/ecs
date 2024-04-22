@@ -49,6 +49,7 @@ extern uniform_real_distribution<double> blood_velocity_distribution;
 
 extern unordered_map<entity_id, entity_type> entity_types;
 
+extern vector<double> bat_vx_vec;
 extern unordered_map<entity_id, bool> is_blood_pixel;
 extern unordered_map<entity_id, int> blood_pixel_lifetime;
 
@@ -182,23 +183,20 @@ void spawn_bat_group(const double x, const double y, const double scale,
   assert(x > 0 && x < right);
   assert(y > 0 && y < bottom);
   double tmp_y = y;
-  vector<double> vx_vec;
-  double starting_vx = -1.0;
-  double decr_vx = 1.0;
+  // vector<double> vx_vec;
+  // double starting_vx = -1.0;
+  // double decr_vx = 1.0;
   double vy = 0;
-  int py = -1;
-  for (int i = 0; i < number; i++) {
-    vx_vec.push_back(starting_vx);
-    starting_vx -= decr_vx;
-  }
-  shuffle(vx_vec.begin(), vx_vec.end(), g);
-  spawn_bat(x, tmp_y, vx_vec.back(), vy, scale);
-  vx_vec.pop_back();
-  for (int i = 1; i < number; i++) {
-    py = i * h;
-    tmp_y += py;
-    spawn_bat(x, tmp_y, vx_vec.back(), vy, scale);
-    vx_vec.pop_back();
+  // int py = -1;
+  // for (int i = 0; i < number; i++) {
+  //   vx_vec.push_back(starting_vx);
+  //   starting_vx -= decr_vx;
+  // }
+  shuffle(bat_vx_vec.begin(), bat_vx_vec.end(), g);
+
+  for (auto vx : bat_vx_vec) {
+    spawn_bat(x, tmp_y, vx, vy, scale);
+    tmp_y += h * scale * 4;
   }
 }
 

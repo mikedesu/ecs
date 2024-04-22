@@ -4,17 +4,19 @@
 #include <random>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 using std::mt19937;
 using std::random_device;
 using std::string;
 using std::uniform_real_distribution;
 using std::unordered_map;
+using std::vector;
 
 extern random_device rd;
 extern mt19937 g;
 
-// extern gameconfig config;
+extern vector<double> bat_vx_vec;
 extern unordered_map<string, size_t> config;
 extern SDL_Rect debug_texture_src;
 extern SDL_Rect debug_texture_dest;
@@ -143,4 +145,8 @@ void init() {
   init_ttf();
   init_gfont();
   init_rng();
+
+  bat_vx_vec.push_back(-3.0);
+  bat_vx_vec.push_back(-2.0);
+  bat_vx_vec.push_back(-1.0);
 }
