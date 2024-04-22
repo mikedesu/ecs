@@ -293,3 +293,13 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
     - [ ] each bat is spawned an equal distance away from each other
     - [ ] each bat is spawned on-screen and able to be hit by the player
 
+## 22 April 2024
+
+### 13:34 CDT
+
+- [ ] gameover text is not properly centered on fullscreen
+
+
+
+
+

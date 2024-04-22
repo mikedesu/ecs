@@ -29,6 +29,7 @@ using std::vector;
 
 const int cooldown_min = 10;
 
+extern bool is_gameover;
 extern unordered_map<string, size_t> config;
 extern int current_knife_speed;
 extern int frame_count;
@@ -82,6 +83,7 @@ void spawn_bat_group(const double x, const double y, const double scale,
                      const int number);
 extern void spawn_blood_pixels(const int x, const int y, const int n);
 extern double distance(const int x1, const int y1, const int x2, const int y2);
+extern void cleanup();
 
 function<void()> handle_update_skull_collision_knife = []() {
   num_knives++;
@@ -175,6 +177,10 @@ function<void(entity_id)> handle_update_skull_collision_enemy =
       player_health--;
       if (player_health <= 0) {
         mPrint("Gameover!");
+
+        is_gameover = true;
+        // cleanup();
+        // quit = true;
       }
     };
 

@@ -46,6 +46,7 @@ bool quit = false;
 bool do_render_debug_panel = false;
 bool is_fullscreen = false;
 bool is_paused = false;
+bool is_gameover = false;
 
 int num_collisions = 0;
 int img_flags = IMG_INIT_PNG;
@@ -73,6 +74,7 @@ entity_id next_entity_id = 0;
 entity_id player_id = -1;
 
 TTF_Font *gFont = nullptr;
+TTF_Font *gameover_font = nullptr;
 
 SDL_Color textColor = {255, 255, 255, 255};
 SDL_Event e;
@@ -83,8 +85,10 @@ SDL_Rect target_texture_dest;
 SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
 SDL_Surface *text_surface = nullptr;
+SDL_Surface *gameover_surface = nullptr;
 SDL_Texture *target_texture = nullptr;
 SDL_Texture *debug_texture = nullptr;
+SDL_Texture *gameover_texture = nullptr;
 SDL_Texture *debug_bg_texture = nullptr;
 
 vector<entity_id> entities;
@@ -149,6 +153,7 @@ void load_debug_text();
 void load_textures();
 void load_main_config();
 void render_frame();
+void render_gameover();
 void spawn_skull(const int x, const int y);
 void spawn_generator(enemy_type type, bool active, int group, int cooldown,
                      int cooldown_reduction);
@@ -160,38 +165,30 @@ int main() {
   create_window();
   create_renderer();
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-  // mPrint("init...");
   init();
-  // mPrint("handle init...");
   handle_init_target_texture();
-  // mPrint("load textures...");
   load_textures();
-  // mPrint("load debug text...");
   load_debug_text();
-  // mPrint("init debug texture rects...");
   init_debug_texture_rects();
   // get the width and height of the texture
-  // mPrint("init target texture rects...");
   init_target_texture_rects();
-  // mPrint("bg init...");
+
   bg_init();
-  // mPrint("init after load textures...");
   init_after_load_textures();
-  // mPrint("spawn skull...");
   spawn_skull(0, 0);
-  // mPrint("spawn generator...");
-  //  spawn_generator(ENEMY_TYPE_EYEBALL, true, 120);
-  //  spawn_generator(ENEMY_TYPE_BAT, true, 120, 60 * 60);
   spawn_generator(ENEMY_TYPE_BAT, true, 2, 240, 60 * 60);
   mPrint("main loop...");
   // mPrint("player_id: " + to_string(player_id));
   while (!quit) {
     handle_input();
-    if (!is_paused) {
+    if (!is_paused && !is_gameover) {
       handle_input_component();
       update();
       render_frame();
       cleanup_entities_marked_for_deletion();
+    } else if (is_gameover) {
+      // mPrint("gameover");
+      render_gameover();
     }
   }
   cleanup();

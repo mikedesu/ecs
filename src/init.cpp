@@ -31,6 +31,7 @@ extern int debug_font_size;
 extern int img_flags;
 extern int result;
 extern TTF_Font *gFont;
+extern TTF_Font *gameover_font;
 extern SDL_Renderer *renderer;
 extern SDL_Texture *target_texture;
 extern uniform_real_distribution<double> eyeball_vx_distribution;
@@ -50,10 +51,17 @@ void init_debug_texture_rects() {
   debug_texture_src.h = debug_texture_dest.h = mHeight;
 }
 
-void init_gfont() {
+void init_fonts() {
   string path = "ttf/hack.ttf";
   gFont = TTF_OpenFont(path.c_str(), config["debug_font_size"]);
   if (gFont == nullptr) {
+    mPrint("Failed to load font: " + path);
+    cleanup_and_exit_with_failure();
+  }
+
+  const int gameover_fontsize = 128;
+  gameover_font = TTF_OpenFont(path.c_str(), gameover_fontsize);
+  if (gameover_font == nullptr) {
     mPrint("Failed to load font: " + path);
     cleanup_and_exit_with_failure();
   }
@@ -144,7 +152,7 @@ void init_ttf() {
 void init() {
   init_img();
   init_ttf();
-  init_gfont();
+  init_fonts();
   init_rng();
 }
 

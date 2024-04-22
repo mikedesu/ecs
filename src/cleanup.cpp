@@ -29,6 +29,7 @@ extern SDL_Texture *target_texture;
 extern SDL_Window *window;
 extern SDL_Surface *text_surface;
 extern TTF_Font *gFont;
+extern TTF_Font *gameover_font;
 
 extern unordered_map<string, SDL_Texture *> textures;
 extern unordered_map<entity_id, sprite_component> sprites;
@@ -87,13 +88,9 @@ void cleanup_textures() {
   textures.clear();
 }
 
-void cleanup() {
-  // mPrint("cleaning up");
-  // mPrint("cleaning up entities");
+void cleanup_data_structures() {
   entities.clear();
-  // mPrint("cleaning up entities_marked_for_deletion");
   entities_marked_for_deletion_tmp.clear();
-  // mPrint("cleaning up maps");
   is_pressed.clear();
   is_rotating.clear();
   is_collidable.clear();
@@ -111,8 +108,14 @@ void cleanup() {
   is_blood_pixel.clear();
   entity_types.clear();
   bg_sprites.clear();
+}
+
+void cleanup() {
+  // mPrint("cleaning up");
+  // mPrint("cleaning up entities");
   // mPrint("cleaning up SDL");
   // mPrint("cleaning up SDL textures");
+  cleanup_data_structures();
   cleanup_textures();
   // mPrint("cleaning up debug texture");
   SDL_DestroyTexture(debug_texture);
@@ -130,6 +133,7 @@ void cleanup() {
   SDL_DestroyWindow(window);
   // mPrint("cleaning up TTF");
   TTF_CloseFont(gFont);
+  TTF_CloseFont(gameover_font);
   TTF_Quit();
   IMG_Quit();
   SDL_Quit();

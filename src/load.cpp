@@ -40,9 +40,12 @@ extern int w, h;
 extern double zoom;
 extern char texture_text[1024];
 extern SDL_Texture *debug_texture;
+extern SDL_Texture *gameover_texture;
 extern SDL_Surface *text_surface;
+extern SDL_Surface *gameover_surface;
 extern SDL_Color textColor;
 extern TTF_Font *gFont;
+extern TTF_Font *gameover_font;
 extern SDL_Renderer *renderer;
 extern int mWidth;
 extern int mHeight;
@@ -75,6 +78,31 @@ void check_if_json_value_is_object(Value &v);
 void load_textures();
 // void load_bg_sprites();
 bool check_if_json_has_member_and_is_double(Value &v, string member);
+
+void load_gameover_texture() {
+  mPrint("load gameover texture");
+  const string gameover_text = "GAMEOVER";
+  gameover_surface = TTF_RenderText_Blended_Wrapped(
+      gameover_font, gameover_text.c_str(), textColor, DEBUG_TEXT_WRAP_LEN);
+  if (!gameover_surface) {
+    mPrint("text_surface == nullptr");
+    mPrint("Unable to render text_surface! SDL_ttf Error: " +
+           string(TTF_GetError()));
+  } else {
+    // Create texture from surface pixels
+    if (gameover_texture != nullptr) {
+      SDL_DestroyTexture(debug_texture);
+      gameover_texture = nullptr;
+    }
+    gameover_texture = SDL_CreateTextureFromSurface(renderer, gameover_surface);
+    if (gameover_texture == nullptr) {
+      mPrint("gameover_texture == NULL");
+      mPrint("Unable to create texture from rendered text! SDL Error: " +
+             string(SDL_GetError()));
+    }
+    SDL_FreeSurface(gameover_surface);
+  }
+}
 
 void load_debug_text() {
   snprintf(texture_text, 1024,
@@ -306,6 +334,8 @@ void load_textures() {
       handle_load_texture_by_type(v);
     }
   }
+
+  load_gameover_texture();
 }
 
 bool check_if_json_has_member_and_is_int(Value &v, string member) {
