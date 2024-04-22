@@ -1,4 +1,3 @@
-
 #include "SDL_handler.h"
 extern unsigned int frame_count;
 

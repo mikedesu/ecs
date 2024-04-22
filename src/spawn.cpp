@@ -8,15 +8,15 @@
 #include <algorithm>
 #include <cassert>
 #include <random>
-#include <set>
+// #include <set>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 using std::default_random_engine;
 using std::mt19937;
-using std::random_device;
-using std::set;
+// using std::random_device;
+// using std::set;
 using std::shuffle;
 using std::string;
 using std::uniform_real_distribution;
@@ -134,12 +134,9 @@ void spawn_knife() {
       key = "knife-blue";
     }
     const int largeness = powerups_collected[POWERUP_TYPE_KNIFE_LARGENESS];
-    const double scale = 5;
-    //  const double scale = 1.0 + (1.1 * largeness);
-    // const double scale = 1.0 + (0.1 * largeness);
+    const double scale = 1 + (0.1 * largeness);
+    // const double scale = 1;
     const sprite_component player = sprites[player_id];
-    // const int padding_right = player.dest.w + 4;
-    // const int padding_right = player.dest.w + 4;
     const int padding_right = player.dest.w;
     SDL_Texture *t = textures[key];
     SDL_QueryTexture(t, NULL, NULL, &w, &h);

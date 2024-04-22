@@ -1,5 +1,4 @@
 #include "SDL_handler.h"
-// #include "gameconfig.h"
 #include "mPrint.h"
 #include <SDL_render.h>
 #include <random>
@@ -78,7 +77,6 @@ void init_rng() {
   soulshard_spawn_rate_distribution =
       uniform_real_distribution<double>(0.0, 100.0);
 
-  // if (config.target_texture_width > 0) {
   if (config["target_texture_height"] > 0) {
     texture_height_distribution =
         uniform_real_distribution<double>(0.0, config["target_texture_height"]);

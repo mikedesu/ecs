@@ -2,14 +2,11 @@
 #include "components.h"
 #include "enemy_type.h"
 #include "entity_id.h"
-// #include "gameconfig.h"
-// #include <random>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 using std::string;
-// using std::uniform_int_distribution;
 using std::unordered_map;
 using std::vector;
 

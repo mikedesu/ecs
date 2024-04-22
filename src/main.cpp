@@ -24,7 +24,6 @@ using std::vector;
 random_device rd;
 mt19937 g;
 
-// gameconfig config;
 unordered_map<string, size_t> config;
 
 int DEBUG_TEXT_WRAP_LEN = 2048;
@@ -45,7 +44,6 @@ char texture_text[1024] = "a bunch of random text";
 
 bool quit = false;
 bool do_render_debug_panel = false;
-// bool do_render_debug_panel = true;
 bool is_fullscreen = false;
 bool is_paused = false;
 
@@ -94,25 +92,21 @@ vector<entity_id> entities_marked_for_deletion_tmp;
 vector<double> bat_vx_vec;
 vector<int> bat_y_vec;
 
-unordered_map<int, bool> is_pressed;
 unordered_map<entity_id, powerup_type> powerup_types;
 unordered_map<entity_id, enemy_type> enemy_types;
 unordered_map<entity_id, sprite_component> sprites;
 unordered_map<entity_id, transform_component> transforms;
-// unordered_map<entity_id, sprite_component> bg_sprites;
-map<entity_id, sprite_component> bg_sprites;
 unordered_map<entity_id, transform_component> bg_transforms;
 unordered_map<entity_id, bg_entity_type> bg_entity_types;
 unordered_map<entity_id, double> rotation_speeds;
 unordered_map<entity_id, generator_component> generators;
 unordered_map<entity_id, entity_type> entity_types;
+
+unordered_map<int, bool> is_pressed;
 unordered_map<entity_id, bool> inputs;
 unordered_map<entity_id, bool> is_rotating;
 unordered_map<entity_id, bool> is_collidable;
-
 unordered_map<entity_id, bool> is_blood_pixel;
-unordered_map<entity_id, int> blood_pixel_lifetime;
-
 unordered_map<entity_id, bool> is_enemy;
 unordered_map<entity_id, bool> is_soulshard;
 unordered_map<entity_id, bool> is_knife;
@@ -120,9 +114,13 @@ unordered_map<entity_id, bool> is_powerup;
 unordered_map<entity_id, bool> is_flipped;
 unordered_map<entity_id, bool> is_generator;
 unordered_map<entity_id, bool> is_marked_for_deletion;
+
+unordered_map<entity_id, int> blood_pixel_lifetime;
 unordered_map<enemy_type, int> enemies_killed;
 unordered_map<powerup_type, int> powerups_collected;
 unordered_map<string, SDL_Texture *> textures;
+
+map<entity_id, sprite_component> bg_sprites;
 
 // random number generator
 default_random_engine rng_generator;

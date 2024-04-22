@@ -1,7 +1,6 @@
 #include "SDL_handler.h"
 #include "components.h"
 #include "entity_id.h"
-// #include "gameconfig.h"
 #include "mPrint.h"
 #include "rapidjson/document.h"
 #include "rapidjson/stringbuffer.h"
@@ -23,7 +22,6 @@ using std::unordered_map;
 using std::vector;
 
 // external variables
-// extern gameconfig config;
 extern unordered_map<string, size_t> config;
 extern int frame_count;
 extern int num_collisions;

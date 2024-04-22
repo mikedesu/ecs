@@ -1,5 +1,4 @@
 #include "SDL_handler.h"
-// #include "gameconfig.h"
 #include "mPrint.h"
 #include <string>
 #include <unordered_map>
@@ -7,10 +6,7 @@
 using std::string;
 using std::unordered_map;
 
-// extern gameconfig config;
 extern unordered_map<string, size_t> config;
-// extern int window_width;
-// extern int window_height;
 extern SDL_Window *window;
 extern SDL_Renderer *renderer;
 

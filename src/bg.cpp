@@ -2,7 +2,6 @@
 #include "SDL_handler.h"
 #include "components.h"
 #include "entity_id.h"
-// #include "gameconfig.h"
 #include "powerup_type.h"
 #include <map>
 #include <random>
@@ -17,7 +16,6 @@ using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
 
-// extern gameconfig config;
 extern unordered_map<string, size_t> config;
 extern entity_id player_id;
 extern unordered_map<entity_id, bool> inputs;
@@ -38,7 +36,6 @@ extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, enemy_type> enemy_types;
 extern unordered_map<entity_id, sprite_component> sprites;
 extern map<entity_id, sprite_component> bg_sprites;
-// extern unordered_map<entity_id, sprite_component> bg_sprites;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, transform_component> bg_transforms;
 extern unordered_map<entity_id, generator_component> generators;
@@ -99,19 +96,13 @@ void bg_spawn_moon(const int x, const int y, const double vx, const double vy,
                    const double scale) {
 
   const string moon_texture_key = "moon";
-  // const string target_texture_width_config_key = "target_texture_width";
   const int num_clips = 1;
   const bool is_animating = false;
   const int src_x = 0;
   const int src_y = 0;
-  // const double vx = -0.2;
-  // const double vy = 0;
   const double angle = 0.0;
-  // const double scale = 1.0;
   SDL_Texture *t = textures[moon_texture_key];
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
-  // const int x = config[target_texture_width_config_key];
-  // const int y = 0;
   const double dest_x = x;
   const double dest_y = y;
   w = w / num_clips;

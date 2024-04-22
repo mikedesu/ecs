@@ -36,7 +36,6 @@ extern unordered_map<string, SDL_Texture *> textures;
 
 extern void generator_set_all_active_flip();
 extern void toggle_fullscreen();
-// extern void spawn_powerup();
 extern void spawn_knife();
 
 void handle_keyup() {
@@ -47,7 +46,6 @@ void handle_keyup() {
   case SDLK_DOWN:
   case SDLK_z:
   case SDLK_x:
-  // case SDLK_z:
   case SDLK_LSHIFT:
   case SDLK_RSHIFT:
     is_pressed[e.key.keysym.sym] = false;
@@ -65,7 +63,6 @@ void handle_keydown() {
   case SDLK_DOWN:
   case SDLK_z:
   case SDLK_x:
-  // case SDLK_z:
   case SDLK_LSHIFT:
   case SDLK_RSHIFT:
     is_pressed[e.key.keysym.sym] = true;
@@ -82,19 +79,10 @@ void handle_keydown() {
   case SDLK_f:
     toggle_fullscreen();
     break;
-    // case SDLK_s:
-    //   if (player_money > 0) {
-    //     spawn_powerup();
-    //     player_money -= 1;
-    //   }
-    //   break;
   case SDLK_ESCAPE:
     mPrint("Escape pressed");
-
     is_paused = !is_paused;
-
     break;
-
   default:
     break;
   }

@@ -3,7 +3,6 @@
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "entity_type.h"
-// #include "gameconfig.h"
 #include "mPrint.h"
 #include "powerup_type.h"
 #include "rotation_pair.h"
@@ -30,7 +29,6 @@ using std::vector;
 
 const int cooldown_min = 10;
 
-// extern gameconfig config;
 extern unordered_map<string, size_t> config;
 extern int current_knife_speed;
 extern int frame_count;
@@ -219,15 +217,10 @@ function<void(transform_pair)> handle_bg_transform =
       sprite_component sprite = bg_sprites[id];
       transform.x += transform.vx;
       transform.y += transform.vy;
-
       // handle looping background
       if (transform.x < -sprite.src.w * transform.scale) {
         transform.x = config["window_width"];
       }
-      // else if (transform.x > config["window_width"]) {
-      //     transform.x = -sprite.src.w;
-      //   }
-
       sprite.dest.x = transform.x;
       sprite.dest.y = transform.y;
       sprite.dest.w = sprite.src.w * transform.scale;
@@ -416,20 +409,12 @@ void update_generators() {
     if (active && frame_count % cooldown == 0) {
       switch (generators[id].type) {
       // case ENEMY_TYPE_EYEBALL:
-      // spawn_eyeball();
       // break;
-      case ENEMY_TYPE_BAT:
-        spawn_bat_group(config["target_texture_width"],
-                        config["target_texture_height"] / 2, 1.0, group);
-        // for (int i = 0; i < group; i++) {
-        //   int x = 0;
-        //   int y = 0;
-        //   double vx = 0;
-        //   double vy = 0;
-        //   double scale = 1.0;
-        //   spawn_bat(x, y, vx, vy, scale);
-        // }
-        break;
+      case ENEMY_TYPE_BAT: {
+        int x = config["target_texture_width"];
+        int y = config["target_texture_height"] / 2;
+        spawn_bat_group(x, y, 1.0, group);
+      } break;
       default:
         break;
       }
