@@ -10,6 +10,7 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
+extern SDL_Renderer *renderer;
 extern entity_id next_entity_id;
 extern bool is_fullscreen;
 extern int frame_count;
@@ -84,4 +85,16 @@ void generator_set_all_inactive() {
   for (auto id : entities) {
     generator_set_active(id, false);
   }
+}
+
+void screenshot() {
+  int w, h;
+  SDL_GetRendererOutputSize(renderer, &w, &h);
+  const char *filepath = "screenshot.bmp";
+  SDL_Surface *screenshot = SDL_CreateRGBSurface(
+      0, w, h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+  SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_ARGB8888,
+                       screenshot->pixels, screenshot->pitch);
+  SDL_SaveBMP(screenshot, filepath);
+  SDL_FreeSurface(screenshot);
 }

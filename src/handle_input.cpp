@@ -46,6 +46,7 @@ extern void bg_init();
 extern void spawn_skull(const int x, const int y);
 extern void spawn_generator(enemy_type type, bool active, int group,
                             int cooldown, int cooldown_reduction);
+extern void screenshot();
 
 void handle_keyup() {
   switch (e.key.keysym.sym) {
@@ -75,6 +76,9 @@ void handle_keydown() {
   case SDLK_LSHIFT:
   case SDLK_RSHIFT:
     is_pressed[e.key.keysym.sym] = true;
+    break;
+  case SDLK_s:
+    screenshot();
     break;
   case SDLK_q:
     quit = true;
