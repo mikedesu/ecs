@@ -11,3 +11,5 @@ game
 */game
 .cache
 compile_commands.json
+img.tar.gz
+zip_images.sh

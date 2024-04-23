@@ -201,11 +201,11 @@
     - [ ] magnet range
     - [ ] magnet speed
 - [ ] gameover
-    - [ ] on player death, need to trigger some gameover event / state
+    - [x] on player death, need to trigger some gameover event / state
     - [ ] need to reset the game state
         - [ ] will require a function
         - [ ] a lot of the functionality needed to do this exists now, but we need to organize it into a single function
-        - [ ] this way, on either game load or gameover, we can start a new game
+        - [x] this way, on either game load or gameover, we can start a new game
 
 ### 23:08 CDT
 
@@ -304,5 +304,16 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 - [ ] all of the various in-game variables need initialization-functions because they are currently hardcoded in at the start and need to be reset on gameover-continue
     - [ ] will also be useful for saving state later on for implementing save game
 
+## 23 April 2024
 
+### 23:13 CDT
 
+- [ ] implement a 'screenshot' key function
+    - [ ] `void screenshot()`
+    - [ ] hook into `handle_keydown()`
+
+## 24 April 2024
+
+## 25 April 2024
+
+## 26 April 2024
