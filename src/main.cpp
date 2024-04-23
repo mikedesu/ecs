@@ -35,6 +35,8 @@ double zoom = 1.0; // has to appear
 const int default_knife_speed = 4;
 int current_knife_speed = default_knife_speed;
 
+int current_soulshard_magnetism_threshold = 100;
+
 // moving into gameconfig soon
 const int default_knife_cooldown = 30;
 int knife_cooldown = 0;

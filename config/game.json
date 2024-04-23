@@ -2,5 +2,6 @@
   "debug_font_size": 24,
   "default_window_width": 1600,
   "default_window_height": 960,
-  "blood_pixel_count": 10
+  "blood_pixel_count": 10,
+  "default_magnetism_threshold": 100
 }

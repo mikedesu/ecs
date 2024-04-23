@@ -23,6 +23,7 @@ using std::vector;
 
 // external variables
 extern unordered_map<string, size_t> config;
+extern int current_soulshard_magnetism_threshold;
 extern int frame_count;
 extern int num_collisions;
 extern int knife_cooldown;
@@ -386,9 +387,12 @@ void load_main_config() {
   json_value_has_member_is_int_set_config(d, "default_window_width");
   json_value_has_member_is_int_set_config(d, "default_window_height");
   json_value_has_member_is_int_set_config(d, "blood_pixel_count");
+  json_value_has_member_is_int_set_config(d, "default_magnetism_threshold");
   // copy over default window width and height as default window width values
   config["window_width"] = config["default_window_width"];
   config["window_height"] = config["default_window_height"];
   config["target_texture_width"] = config["default_window_width"];
   config["target_texture_height"] = config["default_window_height"];
+
+  current_soulshard_magnetism_threshold = config["default_magnetism_threshold"];
 }

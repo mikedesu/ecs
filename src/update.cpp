@@ -31,6 +31,7 @@ const int cooldown_min = 10;
 
 extern bool is_gameover;
 extern unordered_map<string, size_t> config;
+extern int current_soulshard_magnetism_threshold;
 extern int current_knife_speed;
 extern int frame_count;
 extern int num_collisions;
@@ -113,9 +114,9 @@ function<void(entity_id)> handle_magneticism = [](entity_id id) {
   const int x1 = o.dest.x + o.dest.w / 2;
   const int y1 = o.dest.y + o.dest.h / 2;
   const double dist = distance(x, y, x1, y1);
-  const double threshold = 400.0;
+  // const double threshold = config["default_magnetism_threshold"];
   const int v = 8;
-  if (dist < threshold) {
+  if (dist < current_soulshard_magnetism_threshold) {
     // magnetically move the soulshard towards the player
     if (x1 < x) {
       transforms[id].vx = v;

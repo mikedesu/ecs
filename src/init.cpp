@@ -31,6 +31,8 @@ extern int mHeight;
 
 extern entity_id player_id;
 extern bool is_gameover;
+extern int current_soulshard_magnetism_threshold;
+extern int current_soulshard_magnetism_threshold;
 extern int num_knives;
 extern int max_num_knives;
 extern int knife_charge;
@@ -224,6 +226,7 @@ void init_game_vars() {
   player_soulshards = 0;
   total_soulshards_collected = 0;
   is_gameover = false;
+  current_soulshard_magnetism_threshold = config["default_magnetism_threshold"];
 }
 
 void init_game() {
