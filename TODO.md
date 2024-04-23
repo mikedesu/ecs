@@ -288,10 +288,10 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 
 ### 16:40 CDT
 
-- [ ] when spawning groups of bats, we want to configure them such that
-    - [ ] each bat has a different vx
-    - [ ] each bat is spawned an equal distance away from each other
-    - [ ] each bat is spawned on-screen and able to be hit by the player
+- [x] when spawning groups of bats, we want to configure them such that
+    - [x] each bat has a different vx
+    - [x] each bat is spawned an equal distance away from each other
+    - [x] each bat is spawned on-screen and able to be hit by the player
 
 ## 22 April 2024
 
@@ -301,16 +301,16 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 
 ### 15:34 CDT
 
-- [ ] all of the various in-game variables need initialization-functions because they are currently hardcoded in at the start and need to be reset on gameover-continue
+- [x] all of the various in-game variables need initialization-functions because they are currently hardcoded in at the start and need to be reset on gameover-continue
     - [ ] will also be useful for saving state later on for implementing save game
 
 ## 23 April 2024
 
 ### 23:13 CDT
 
-- [ ] implement a 'screenshot' key function
-    - [ ] `void screenshot()`
-    - [ ] hook into `handle_keydown()`
+- [x] implement a 'screenshot' key function
+    - [x] `void screenshot()`
+    - [x] hook into `handle_keydown()`
 
 ## 24 April 2024
 
