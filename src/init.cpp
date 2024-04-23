@@ -1,4 +1,6 @@
 #include "SDL_handler.h"
+#include "enemy_type.h"
+#include "entity_id.h"
 #include "mPrint.h"
 #include <SDL_render.h>
 #include <random>
@@ -26,7 +28,19 @@ extern SDL_Rect target_texture_src;
 extern SDL_Rect target_texture_dest;
 extern int mWidth;
 extern int mHeight;
-extern int soulshard_spawn_rate;
+
+extern entity_id player_id;
+extern bool is_gameover;
+extern int num_knives;
+extern int max_num_knives;
+extern int knife_charge;
+extern int num_knives_fired;
+extern int num_enemies_escaped;
+extern int player_health;
+extern int player_max_health;
+extern int player_soulshards;
+extern int total_soulshards_collected;
+
 extern int debug_font_size;
 extern int img_flags;
 extern int result;
@@ -43,6 +57,24 @@ extern uniform_real_distribution<double> blood_velocity_distribution;
 
 extern void cleanup_and_exit_with_failure();
 extern void cleanup_and_exit_with_failure_mprint(string message);
+extern void cleanup_data_structures();
+extern void bg_init();
+extern void spawn_skull(const int x, const int y);
+extern void spawn_generator(enemy_type type, bool active, int group,
+                            int cooldown, int cooldown_reduction);
+
+void init_game_vars();
+void init_bat_vectors();
+void init_after_load_textures();
+void init_debug_texture_rects();
+void init_fonts();
+void init_img();
+void init_rng();
+int init_target_texture();
+void init_ttf();
+void handle_init_target_texture();
+void init_target_texture_rects();
+void init();
 
 void init_debug_texture_rects() {
   debug_texture_src.x = debug_texture_src.y = debug_texture_dest.x =
@@ -156,8 +188,7 @@ void init() {
   init_rng();
 }
 
-void init_after_load_textures() {
-
+void init_bat_vectors() {
   bat_vx_vec.push_back(-4.0);
   bat_vx_vec.push_back(-3.5);
   bat_vx_vec.push_back(-3.0);
@@ -174,4 +205,31 @@ void init_after_load_textures() {
     bat_y_vec.push_back(y);
     y += h * 2;
   }
+}
+
+void init_after_load_textures() {
+  init_bat_vectors();
+  init_game_vars();
+}
+
+void init_game_vars() {
+  player_id = -1;
+  num_knives = 2;
+  max_num_knives = 2;
+  knife_charge = 2;
+  num_knives_fired = 0;
+  num_enemies_escaped = 0;
+  player_health = 3;
+  player_max_health = 3;
+  player_soulshards = 0;
+  total_soulshards_collected = 0;
+  is_gameover = false;
+}
+
+void init_game() {
+  cleanup_data_structures();
+  bg_init();
+  init_after_load_textures();
+  spawn_skull(0, 0);
+  spawn_generator(ENEMY_TYPE_BAT, true, 2, 240, 60 * 60);
 }

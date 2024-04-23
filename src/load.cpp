@@ -54,6 +54,7 @@ extern vector<entity_id> entities;
 extern unordered_map<string, SDL_Texture *> textures;
 extern unordered_map<entity_id, transform_component> transforms;
 extern entity_id player_id;
+extern int gameover_count;
 
 // external functions
 extern double fps();
@@ -114,7 +115,7 @@ void load_debug_text() {
            "%d\nknife_charge: %d\nnum_enemies_escaped: "
            "%d\nnum_enemies_killed: %ld\nplayer_health: "
            "%d/%d\nsoulshards_collected: %d\ntotal_soulshards_collected: "
-           "%d\nplayer position: %.02f,%.02f\n",
+           "%d\nplayer position: %.02f,%.02f\ngameover count: %d\n",
            config["target_texture_width"], config["target_texture_height"],
            config["window_width"], config["window_height"], frame_count,
            entities.size(), fps(), zoom, num_collisions, knife_cooldown,
@@ -122,7 +123,7 @@ void load_debug_text() {
            knife_charge, num_enemies_escaped, get_num_enemies_killed(),
            player_health, player_max_health, player_soulshards,
            total_soulshards_collected, transforms[player_id].x,
-           transforms[player_id].y);
+           transforms[player_id].y, gameover_count);
   text_surface = TTF_RenderText_Blended_Wrapped(gFont, texture_text, textColor,
                                                 DEBUG_TEXT_WRAP_LEN);
   if (text_surface == nullptr) {

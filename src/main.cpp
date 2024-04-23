@@ -58,6 +58,7 @@ int mWidth = -1;
 int mHeight = -1;
 int fullscreen_width = -1;
 int fullscreen_height = -1;
+int gameover_count = 0;
 
 int num_knives = 2;
 int max_num_knives = 2;
@@ -66,11 +67,11 @@ int num_knives_fired = 0;
 int num_enemies_escaped = 0;
 int player_health = 3;
 int player_max_health = 3;
-
 int player_soulshards = 0;
 int total_soulshards_collected = 0;
-int color_index = 0;
-int num_color_indices = 3;
+
+// int color_index = 0;
+// int num_color_indices = 3;
 
 entity_id next_entity_id = 0;
 entity_id player_id = -1;
@@ -161,6 +162,7 @@ void spawn_skull(const int x, const int y);
 void spawn_generator(enemy_type type, bool active, int group, int cooldown,
                      int cooldown_reduction);
 void update();
+void init_game();
 
 int main() {
   SDL_Init(SDL_INIT_VIDEO);
@@ -176,10 +178,11 @@ int main() {
   // get the width and height of the texture
   init_target_texture_rects();
 
-  bg_init();
-  init_after_load_textures();
-  spawn_skull(0, 0);
-  spawn_generator(ENEMY_TYPE_BAT, true, 2, 240, 60 * 60);
+  init_game();
+  // bg_init();
+  // init_after_load_textures();
+  // spawn_skull(0, 0);
+  // spawn_generator(ENEMY_TYPE_BAT, true, 2, 240, 60 * 60);
 
   mPrint("main loop...");
   // mPrint("player_id: " + to_string(player_id));
