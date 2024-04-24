@@ -169,6 +169,8 @@ void spawn_generator(enemy_type type, bool active, int group, int cooldown,
 void update();
 void init_game();
 
+void do_joystick();
+
 int main() {
   load_main_config();
 
@@ -183,18 +185,9 @@ int main() {
 
   if (SDL_WasInit(SDL_INIT_JOYSTICK)) {
     mPrint("SDL Joystick initialized");
+    do_joystick();
   } else {
     mPrint("failed to init SDL Joystick");
-  }
-
-  if (SDL_NumJoysticks() < 1) {
-    mPrint("No joysticks plugged in");
-  } else {
-
-    joystick = SDL_JoystickOpen(0);
-    if (!joystick) {
-      mPrint("Could not get joystick: " + string(SDL_GetError()));
-    }
   }
 
   create_window();

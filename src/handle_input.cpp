@@ -2,6 +2,7 @@
 #include "components.h"
 #include "entity_id.h"
 #include "mPrint.h"
+#include <SDL_events.h>
 #include <string>
 #include <unordered_map>
 
@@ -25,6 +26,7 @@ extern int window_height;
 extern int target_texture_width;
 extern int target_texture_height;
 extern int player_money;
+extern SDL_Joystick *joystick;
 extern SDL_Event e;
 extern SDL_Rect target_texture_dest;
 extern SDL_Window *window;
@@ -42,6 +44,7 @@ extern void init_game();
 extern void generator_set_all_active_flip();
 extern void toggle_fullscreen();
 extern void spawn_knife();
+extern void do_joystick();
 // extern void cleanup_data_structures();
 // extern void init_after_load_textures();
 // extern void bg_init();
@@ -52,10 +55,8 @@ extern void screenshot();
 
 void handle_joybuttondown() {
   // mPrint("joystick button down: " + to_string(e.jbutton.button));
-
   switch (e.jbutton.button) {
   case 0:
-    //  mPrint("0");
     is_pressed[SDLK_z] = true;
     break;
   default:
@@ -64,9 +65,7 @@ void handle_joybuttondown() {
 }
 
 void handle_joybuttonup() {
-
   // mPrint("joystick button up: " + to_string(e.jbutton.button));
-
   switch (e.jbutton.button) {
   case 0:
     is_pressed[SDLK_z] = false;
@@ -164,24 +163,27 @@ void handle_keydown() {
     toggle_fullscreen();
     break;
   case SDLK_ESCAPE:
-    mPrint("Escape pressed");
+    // mPrint("Escape pressed");
     is_paused = !is_paused;
     break;
   default:
     if (is_gameover) {
-      mPrint("gameover key press");
-
+      // mPrint("gameover key press");
       gameover_count++;
       init_game();
-      // cleanup_data_structures();
-      // bg_init();
-      // init_after_load_textures();
-      // spawn_skull(0, 0);
-      // spawn_generator(ENEMY_TYPE_BAT, true, 2, 240, 60 * 60);
-      // is_gameover = false;
     }
     break;
   }
+}
+
+void handle_joydeviceadded() {
+  mPrint("joystick added");
+  do_joystick();
+}
+
+void handle_joydeviceremoved() {
+  mPrint("joystick removed");
+  SDL_JoystickClose(joystick);
 }
 
 void handle_input() {
@@ -199,9 +201,13 @@ void handle_input() {
     } else if (e.type == SDL_JOYHATMOTION) {
 
       handle_joyhatmotion();
-    } // else {
-      // mPrint("event type: " + to_string(e.type));
-    //}
+    } else if (e.type == SDL_JOYDEVICEADDED) {
+      handle_joydeviceadded();
+    } else if (e.type == SDL_JOYDEVICEREMOVED) {
+      handle_joydeviceremoved();
+    } else {
+      mPrint("event type: " + to_string(e.type));
+    }
   }
 }
 

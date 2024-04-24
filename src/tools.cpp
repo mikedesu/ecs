@@ -2,6 +2,7 @@
 #include "components.h"
 #include "enemy_type.h"
 #include "entity_id.h"
+#include "mPrint.h"
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -10,6 +11,7 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
+extern SDL_Joystick *joystick;
 extern SDL_Renderer *renderer;
 extern entity_id next_entity_id;
 extern bool is_fullscreen;
@@ -97,4 +99,16 @@ void screenshot() {
                        screenshot->pixels, screenshot->pitch);
   SDL_SaveBMP(screenshot, filepath);
   SDL_FreeSurface(screenshot);
+}
+
+void do_joystick() {
+  if (SDL_NumJoysticks() < 1) {
+    mPrint("No joysticks plugged in");
+  } else {
+
+    joystick = SDL_JoystickOpen(0);
+    if (!joystick) {
+      mPrint("Could not get joystick: " + string(SDL_GetError()));
+    }
+  }
 }
