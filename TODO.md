@@ -322,6 +322,11 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 ## 24 April 2024
 
 - [ ] gamepad/controller support
+    - [x] direction hats
+    - [x] buttons
+    - [ ] joysticks
+        - [ ] discovered we cannot init joystick and read from keyboard
+            - [ ] there has to be a workaround
 
 ## 25 April 2024
 

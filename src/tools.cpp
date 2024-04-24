@@ -104,6 +104,11 @@ void screenshot() {
 void do_joystick() {
   if (SDL_NumJoysticks() < 1) {
     mPrint("No joysticks plugged in");
+
+    // apparently, if we init for joystick, we cant read keys like we used to
+    // there has to be a way for both keyboard events and gamepad/joystick
+    // events to be read
+
   } else {
 
     joystick = SDL_JoystickOpen(0);

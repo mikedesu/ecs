@@ -176,6 +176,8 @@ void handle_keydown() {
   }
 }
 
+void handle_joyaxismotion() { mPrint("handle_joyaxismotion"); }
+
 void handle_joydeviceadded() {
   mPrint("joystick added");
   do_joystick();
@@ -188,6 +190,41 @@ void handle_joydeviceremoved() {
 
 void handle_input() {
   while (SDL_PollEvent(&e)) {
+    switch (e.type) {
+    case SDL_QUIT:
+      quit = true;
+      break;
+    case SDL_KEYDOWN:
+      break;
+    case SDL_KEYUP:
+      handle_keyup();
+      break;
+    case SDL_JOYBUTTONDOWN:
+      handle_joybuttondown();
+      break;
+    case SDL_JOYBUTTONUP:
+      handle_joybuttonup();
+      break;
+    case SDL_JOYHATMOTION:
+      handle_joyhatmotion();
+      break;
+    case SDL_JOYDEVICEADDED:
+      handle_joydeviceadded();
+      break;
+    case SDL_JOYDEVICEREMOVED:
+      handle_joydeviceremoved();
+      break;
+    case SDL_JOYAXISMOTION:
+    case SDL_MOUSEMOTION:
+      //  handle_joyaxismotion();
+      break;
+
+    default:
+      mPrint("event type: " + to_string(e.type));
+      break;
+    }
+
+    /*
     if (e.type == SDL_QUIT) {
       quit = true;
     } else if (e.type == SDL_KEYDOWN) {
@@ -208,6 +245,7 @@ void handle_input() {
     } else {
       mPrint("event type: " + to_string(e.type));
     }
+    */
   }
 }
 
