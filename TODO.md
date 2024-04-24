@@ -304,7 +304,6 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 - [x] all of the various in-game variables need initialization-functions because they are currently hardcoded in at the start and need to be reset on gameover-continue
     - [ ] will also be useful for saving state later on for implementing save game
 
-## 23 April 2024
 
 ### 23:13 CDT
 
@@ -312,7 +311,17 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
     - [x] `void screenshot()`
     - [x] hook into `handle_keydown()`
 
+## 23 April 2024
+
+### 23:02 CDT
+
+- [ ] pass vx and vy into `spawn_generator()`
+    - [ ] attach a vx and vy to a `generator`
+    - [ ] when the `generator` needs to `spawn` entities or groups, we can use the `vx` and `vy` attributes we write
+
 ## 24 April 2024
+
+- [ ] gamepad/controller support
 
 ## 25 April 2024
 

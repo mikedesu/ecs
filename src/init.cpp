@@ -32,7 +32,7 @@ extern int mHeight;
 extern entity_id player_id;
 extern bool is_gameover;
 extern int current_soulshard_magnetism_threshold;
-extern int current_soulshard_magnetism_threshold;
+// extern int current_soulshard_magnetism_threshold;
 extern int num_knives;
 extern int max_num_knives;
 extern int knife_charge;
@@ -234,5 +234,5 @@ void init_game() {
   bg_init();
   init_after_load_textures();
   spawn_skull(0, 0);
-  spawn_generator(ENEMY_TYPE_BAT, true, 2, 240, 60 * 60);
+  spawn_generator(ENEMY_TYPE_BAT, true, 2, 240, 60 * 30);
 }

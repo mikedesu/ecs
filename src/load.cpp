@@ -78,7 +78,6 @@ void check_if_json_value_has_member_and_is_string(Value &v, string member);
 void handle_load_texture_by_type(Value &v);
 void check_if_json_value_is_object(Value &v);
 void load_textures();
-// void load_bg_sprites();
 bool check_if_json_has_member_and_is_double(Value &v, string member);
 
 void load_gameover_texture() {
@@ -116,15 +115,16 @@ void load_debug_text() {
            "%d\nknife_charge: %d\nnum_enemies_escaped: "
            "%d\nnum_enemies_killed: %ld\nplayer_health: "
            "%d/%d\nsoulshards_collected: %d\ntotal_soulshards_collected: "
-           "%d\nplayer position: %.02f,%.02f\ngameover count: %d\n",
+           "%d\nmagnetism threshold: %d\nplayer position: "
+           "%.02f,%.02f\ngameover count: %d\n",
            config["target_texture_width"], config["target_texture_height"],
            config["window_width"], config["window_height"], frame_count,
            entities.size(), fps(), zoom, num_collisions, knife_cooldown,
            current_knife_cooldown, num_knives, max_num_knives, num_knives_fired,
            knife_charge, num_enemies_escaped, get_num_enemies_killed(),
            player_health, player_max_health, player_soulshards,
-           total_soulshards_collected, transforms[player_id].x,
-           transforms[player_id].y, gameover_count);
+           total_soulshards_collected, current_soulshard_magnetism_threshold,
+           transforms[player_id].x, transforms[player_id].y, gameover_count);
   text_surface = TTF_RenderText_Blended_Wrapped(gFont, texture_text, textColor,
                                                 DEBUG_TEXT_WRAP_LEN);
   if (text_surface == nullptr) {
