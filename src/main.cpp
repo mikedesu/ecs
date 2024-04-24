@@ -74,9 +74,6 @@ int player_max_health = 3;
 int player_soulshards = 0;
 int total_soulshards_collected = 0;
 
-// int color_index = 0;
-// int num_color_indices = 3;
-
 entity_id next_entity_id = 0;
 entity_id player_id = -1;
 
@@ -148,7 +145,6 @@ entity_id get_next_entity_id();
 void bg_init();
 void cleanup();
 void cleanup_entities_marked_for_deletion();
-// void cleanup_data_structures();
 void create_window();
 void create_renderer();
 void handle_input();
@@ -174,7 +170,6 @@ void do_joystick();
 int main() {
   load_main_config();
 
-  // SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER);
   SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
 
   if (SDL_WasInit(SDL_INIT_VIDEO)) {
@@ -202,13 +197,8 @@ int main() {
   init_target_texture_rects();
 
   init_game();
-  // bg_init();
-  // init_after_load_textures();
-  // spawn_skull(0, 0);
-  // spawn_generator(ENEMY_TYPE_BAT, true, 2, 240, 60 * 60);
 
   mPrint("main loop...");
-  // mPrint("player_id: " + to_string(player_id));
   while (!quit) {
     handle_input();
     if (!is_paused && !is_gameover) {
@@ -217,8 +207,7 @@ int main() {
       render_frame();
       cleanup_entities_marked_for_deletion();
     } else if (is_gameover) {
-      // mPrint("gameover");
-      render_gameover();
+      render_gameover(); // prob should be handled in render_frame()
     }
   }
   cleanup();
