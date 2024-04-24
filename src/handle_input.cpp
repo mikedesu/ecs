@@ -195,6 +195,7 @@ void handle_input() {
       quit = true;
       break;
     case SDL_KEYDOWN:
+      handle_keydown();
       break;
     case SDL_KEYUP:
       handle_keyup();
@@ -215,8 +216,9 @@ void handle_input() {
       handle_joydeviceremoved();
       break;
     case SDL_JOYAXISMOTION:
+      // handle_joyaxismotion();
+      break;
     case SDL_MOUSEMOTION:
-      //  handle_joyaxismotion();
       break;
 
     default:
