@@ -51,9 +51,13 @@ extern void spawn_knife();
 extern void screenshot();
 
 void handle_joybuttondown() {
-  mPrint("joystick button down: " + to_string(e.jbutton.button));
+  // mPrint("joystick button down: " + to_string(e.jbutton.button));
 
   switch (e.jbutton.button) {
+  case 0:
+    //  mPrint("0");
+    is_pressed[SDLK_z] = true;
+    break;
   default:
     break;
   }
@@ -61,49 +65,52 @@ void handle_joybuttondown() {
 
 void handle_joybuttonup() {
 
-  mPrint("joystick button up: " + to_string(e.jbutton.button));
+  // mPrint("joystick button up: " + to_string(e.jbutton.button));
 
   switch (e.jbutton.button) {
+  case 0:
+    is_pressed[SDLK_z] = false;
+    break;
   default:
     break;
   }
 }
 
 void handle_joyhatmotion() {
-  mPrint("joystick hat motion: " + to_string(e.jhat.value));
+  // mPrint("joystick hat motion: " + to_string(e.jhat.value));
 
   switch (e.jhat.value) {
-  case 0:
+  case SDL_HAT_CENTERED:
     is_pressed[SDLK_RIGHT] = false;
     is_pressed[SDLK_UP] = false;
     is_pressed[SDLK_DOWN] = false;
     is_pressed[SDLK_LEFT] = false;
     break;
-  case 1:
+  case SDL_HAT_UP:
     is_pressed[SDLK_UP] = true;
     break;
-  case 2:
+  case SDL_HAT_RIGHT:
     is_pressed[SDLK_RIGHT] = true;
     break;
-  case 3:
+  case SDL_HAT_RIGHTUP:
     is_pressed[SDLK_UP] = true;
     is_pressed[SDLK_RIGHT] = true;
     break;
-  case 4:
+  case SDL_HAT_DOWN:
     is_pressed[SDLK_DOWN] = true;
     break;
-  case 6:
+  case SDL_HAT_RIGHTDOWN:
     is_pressed[SDLK_DOWN] = true;
     is_pressed[SDLK_RIGHT] = true;
     break;
-  case 8:
+  case SDL_HAT_LEFT:
     is_pressed[SDLK_LEFT] = true;
     break;
-  case 9:
+  case SDL_HAT_LEFTUP:
     is_pressed[SDLK_LEFT] = true;
     is_pressed[SDLK_UP] = true;
     break;
-  case 12:
+  case SDL_HAT_LEFTDOWN:
     is_pressed[SDLK_DOWN] = true;
     is_pressed[SDLK_LEFT] = true;
     break;
