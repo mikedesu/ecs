@@ -6,6 +6,8 @@
 #include "entity_type.h"
 #include "mPrint.h"
 #include "powerup_type.h"
+#include <SDL.h>
+#include <SDL_joystick.h>
 #include <map>
 #include <random>
 #include <string>
@@ -81,6 +83,7 @@ entity_id player_id = -1;
 TTF_Font *gFont = nullptr;
 TTF_Font *gameover_font = nullptr;
 
+SDL_Joystick *joystick = nullptr;
 SDL_Color textColor = {255, 255, 255, 255};
 SDL_Event e;
 SDL_Rect debug_texture_src;
@@ -167,8 +170,33 @@ void update();
 void init_game();
 
 int main() {
-  SDL_Init(SDL_INIT_VIDEO);
   load_main_config();
+
+  // SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER);
+  SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
+
+  if (SDL_WasInit(SDL_INIT_VIDEO)) {
+    mPrint("SDL Video initialized");
+  } else {
+    mPrint("failed to init SDL Video");
+  }
+
+  if (SDL_WasInit(SDL_INIT_JOYSTICK)) {
+    mPrint("SDL Joystick initialized");
+  } else {
+    mPrint("failed to init SDL Joystick");
+  }
+
+  if (SDL_NumJoysticks() < 1) {
+    mPrint("No joysticks plugged in");
+  } else {
+
+    joystick = SDL_JoystickOpen(0);
+    if (!joystick) {
+      mPrint("Could not get joystick: " + string(SDL_GetError()));
+    }
+  }
+
   create_window();
   create_renderer();
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);

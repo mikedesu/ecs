@@ -4,6 +4,7 @@
 #include "entity_id.h"
 #include "entity_type.h"
 #include "mPrint.h"
+#include <SDL_joystick.h>
 #include <algorithm>
 #include <functional>
 #include <map>
@@ -28,6 +29,7 @@ extern SDL_Texture *debug_bg_texture;
 extern SDL_Texture *target_texture;
 extern SDL_Window *window;
 extern SDL_Surface *text_surface;
+extern SDL_Joystick *joystick;
 extern TTF_Font *gFont;
 extern TTF_Font *gameover_font;
 
@@ -141,6 +143,9 @@ void cleanup() {
   TTF_CloseFont(gameover_font);
   TTF_Quit();
   IMG_Quit();
+
+  SDL_JoystickClose(joystick);
+
   SDL_Quit();
 }
 

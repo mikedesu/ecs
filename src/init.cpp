@@ -236,3 +236,5 @@ void init_game() {
   spawn_skull(0, 0);
   spawn_generator(ENEMY_TYPE_BAT, true, 2, 240, 60 * 30);
 }
+
+// void check_for_game_controller

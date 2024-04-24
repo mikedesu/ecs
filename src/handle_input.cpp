@@ -50,6 +50,68 @@ extern void spawn_knife();
 //                             int cooldown, int cooldown_reduction);
 extern void screenshot();
 
+void handle_joybuttondown() {
+  mPrint("joystick button down: " + to_string(e.jbutton.button));
+
+  switch (e.jbutton.button) {
+  default:
+    break;
+  }
+}
+
+void handle_joybuttonup() {
+
+  mPrint("joystick button up: " + to_string(e.jbutton.button));
+
+  switch (e.jbutton.button) {
+  default:
+    break;
+  }
+}
+
+void handle_joyhatmotion() {
+  mPrint("joystick hat motion: " + to_string(e.jhat.value));
+
+  switch (e.jhat.value) {
+  case 0:
+    is_pressed[SDLK_RIGHT] = false;
+    is_pressed[SDLK_UP] = false;
+    is_pressed[SDLK_DOWN] = false;
+    is_pressed[SDLK_LEFT] = false;
+    break;
+  case 1:
+    is_pressed[SDLK_UP] = true;
+    break;
+  case 2:
+    is_pressed[SDLK_RIGHT] = true;
+    break;
+  case 3:
+    is_pressed[SDLK_UP] = true;
+    is_pressed[SDLK_RIGHT] = true;
+    break;
+  case 4:
+    is_pressed[SDLK_DOWN] = true;
+    break;
+  case 6:
+    is_pressed[SDLK_DOWN] = true;
+    is_pressed[SDLK_RIGHT] = true;
+    break;
+  case 8:
+    is_pressed[SDLK_LEFT] = true;
+    break;
+  case 9:
+    is_pressed[SDLK_LEFT] = true;
+    is_pressed[SDLK_UP] = true;
+    break;
+  case 12:
+    is_pressed[SDLK_DOWN] = true;
+    is_pressed[SDLK_LEFT] = true;
+    break;
+  default:
+    break;
+  }
+}
+
 void handle_keyup() {
   switch (e.key.keysym.sym) {
   case SDLK_LEFT:
@@ -123,7 +185,16 @@ void handle_input() {
       handle_keydown();
     } else if (e.type == SDL_KEYUP) {
       handle_keyup();
-    }
+    } else if (e.type == SDL_JOYBUTTONDOWN) {
+      handle_joybuttondown();
+    } else if (e.type == SDL_JOYBUTTONUP) {
+      handle_joybuttonup();
+    } else if (e.type == SDL_JOYHATMOTION) {
+
+      handle_joyhatmotion();
+    } // else {
+      // mPrint("event type: " + to_string(e.type));
+    //}
   }
 }
 
