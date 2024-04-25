@@ -330,4 +330,8 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 
 ## 25 April 2024
 
+- [ ] there is a bug in FPS calculation since frame-draws stop when paused
+    - [ ] prob want to just turn off world-state updates
+    - [ ] arbitrary menu display / pause-menu indication
+
 ## 26 April 2024

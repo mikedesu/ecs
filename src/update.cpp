@@ -141,6 +141,9 @@ function<void(entity_id)> handle_update_skull_collision_powerup =
     [](entity_id id) {
       powerup_type type = powerup_types[id];
       switch (type) {
+      case POWERUP_TYPE_MAGNETISM_THRESHOLD:
+        current_soulshard_magnetism_threshold += 20;
+        break;
       case POWERUP_TYPE_KNIFE_COOLDOWN:
         current_knife_cooldown -= 5;
         if (current_knife_cooldown < 10) {

@@ -170,8 +170,8 @@ void do_joystick();
 int main() {
   load_main_config();
 
-  SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
-  // SDL_Init(SDL_INIT_VIDEO);
+  // SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
+  SDL_Init(SDL_INIT_VIDEO);
 
   if (SDL_WasInit(SDL_INIT_VIDEO)) {
     mPrint("SDL Video initialized");

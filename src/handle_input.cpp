@@ -226,29 +226,29 @@ void handle_input() {
     case SDL_KEYUP:
       handle_keyup();
       break;
-    case SDL_JOYBUTTONDOWN:
-      handle_joybuttondown();
-      break;
-    case SDL_JOYBUTTONUP:
-      handle_joybuttonup();
-      break;
-    case SDL_JOYHATMOTION:
-      handle_joyhatmotion();
-      break;
-    case SDL_JOYDEVICEADDED:
-      handle_joydeviceadded();
-      break;
-    case SDL_JOYDEVICEREMOVED:
-      handle_joydeviceremoved();
-      break;
-    case SDL_JOYAXISMOTION:
-      handle_joyaxismotion();
-      break;
+    // case SDL_JOYBUTTONDOWN:
+    //   handle_joybuttondown();
+    //   break;
+    // case SDL_JOYBUTTONUP:
+    //   handle_joybuttonup();
+    //   break;
+    // case SDL_JOYHATMOTION:
+    //   handle_joyhatmotion();
+    //   break;
+    // case SDL_JOYDEVICEADDED:
+    //   handle_joydeviceadded();
+    //   break;
+    // case SDL_JOYDEVICEREMOVED:
+    //   handle_joydeviceremoved();
+    //   break;
+    // case SDL_JOYAXISMOTION:
+    //   handle_joyaxismotion();
+    //   break;
     case SDL_MOUSEMOTION:
       break;
 
     default:
-      mPrint("event type: " + to_string(e.type));
+      // mPrint("event type: " + to_string(e.type));
       break;
     }
   }

@@ -264,6 +264,13 @@ void spawn_powerup() {
     is_rotating[id] = true;
     transforms[id].angle = 90.0;
     break;
+
+  case POWERUP_TYPE_MAGNETISM_THRESHOLD:
+    id = spawn_entity("powerup-magnetism-threshold", false, 1, x, y);
+    is_rotating[id] = true;
+
+    break;
+
   default:
     break;
   }
