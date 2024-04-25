@@ -34,13 +34,13 @@ int DEBUG_TEXT_WRAP_LEN = 2048;
 double zoom = 1.0; // has to appear
 
 // moving into gameconfig soon
-const int default_knife_speed = 4;
+int default_knife_speed = 4;
 int current_knife_speed = default_knife_speed;
 
 int current_soulshard_magnetism_threshold = 100;
 
 // moving into gameconfig soon
-const int default_knife_cooldown = 30;
+int default_knife_cooldown = 30;
 int knife_cooldown = 0;
 int current_knife_cooldown = default_knife_cooldown;
 

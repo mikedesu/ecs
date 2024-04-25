@@ -28,6 +28,8 @@ extern SDL_Rect target_texture_src;
 extern SDL_Rect target_texture_dest;
 extern int mWidth;
 extern int mHeight;
+extern int current_knife_speed;
+extern int default_knife_speed;
 
 extern entity_id player_id;
 extern bool is_gameover;
@@ -44,6 +46,11 @@ extern int total_soulshards_collected;
 extern int debug_font_size;
 extern int img_flags;
 extern int result;
+
+extern int knife_cooldown;
+extern int current_knife_cooldown;
+extern int default_knife_cooldown;
+
 extern TTF_Font *gFont;
 extern TTF_Font *gameover_font;
 extern SDL_Renderer *renderer;
@@ -206,6 +213,8 @@ void init_after_load_textures() {
 
 void init_game_vars() {
   player_id = -1;
+
+  // a lot of these can be loaded from game.json
   num_knives = 2;
   max_num_knives = 2;
   knife_charge = 2;
@@ -215,6 +224,9 @@ void init_game_vars() {
   player_max_health = 3;
   player_soulshards = 0;
   total_soulshards_collected = 0;
+  current_knife_speed = default_knife_speed;
+  knife_cooldown = 0;
+  current_knife_cooldown = default_knife_cooldown;
   is_gameover = false;
   current_soulshard_magnetism_threshold = config["default_magnetism_threshold"];
 }

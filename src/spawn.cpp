@@ -12,6 +12,8 @@
 #include <unordered_map>
 #include <vector>
 
+#define DEFAULT_POWERUP_VX -1.0
+
 using std::default_random_engine;
 using std::mt19937;
 using std::shuffle;
@@ -248,41 +250,50 @@ void spawn_powerup() {
     }
   }
 
-  const string key = "powerup";
+  string key = "powerup";
   SDL_Texture *t = textures[key];
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
   entity_id id = -1;
-  const double x = config["target_texture_width"] + w;
-  const double y = texture_height_distribution(rng_generator) - h * 2;
+  int num_frames = 1;
+  bool is_anim = false;
+  double x = config["target_texture_width"] + w;
+  double y = texture_height_distribution(rng_generator) - h * 2;
+  double angle = 0.0;
   switch (poweruptype) {
   case POWERUP_TYPE_KNIFE_LARGENESS:
-    id = spawn_entity("powerup-knife-largeness", false, 1, x, y);
-    // is_rotating[id] = true;
+    key = "powerup-knife-largeness";
     break;
   case POWERUP_TYPE_KNIFE_COOLDOWN:
-    id = spawn_entity("powerup-knife-cooldown", false, 1, x, y);
-    // is_rotating[id] = true;
+    key = "powerup-knife-cooldown";
     break;
   case POWERUP_TYPE_KNIFE_SPEED:
-    id = spawn_entity("powerup-knife-speed", false, 1, x, y);
-    // is_rotating[id] = true;
+    key = "powerup-knife-speed";
     break;
   case POWERUP_TYPE_HEART:
-    id = spawn_entity("powerup-heart", true, 6, x, y);
+    key = "powerup-heart";
+    num_frames = 6;
+    is_anim = true;
     break;
   case POWERUP_TYPE_KNIFE_QUANTITY:
-    id = spawn_entity("knife", false, 1, x, y);
-    // is_rotating[id] = true;
-    transforms[id].angle = 90.0;
+    key = "knife";
+    angle = 90.0;
     break;
   case POWERUP_TYPE_MAGNETISM_THRESHOLD:
-    id = spawn_entity("powerup-magnetism-threshold", false, 1, x, y);
-    // is_rotating[id] = true;
+    key = "powerup-magnetism-threshold";
+    num_frames = 8;
+    is_anim = true;
+
+    t = textures[key];
+    SDL_QueryTexture(t, NULL, NULL, &w, &h);
+
     break;
   default:
     break;
   }
-  transforms[id].vx = -1.0;
+
+  id = spawn_entity(key, is_anim, num_frames, x, y);
+  transforms[id].vx = DEFAULT_POWERUP_VX;
+  transforms[id].angle = angle;
   is_powerup[id] = true;
   powerup_types[id] = poweruptype;
   entity_types[id] = ENTITY_TYPE_ITEM;

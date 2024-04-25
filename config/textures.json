@@ -12,7 +12,7 @@
   {"type": "texture_colormod","key": "powerup-knife-largeness","path": "img/powerup-sheet4x.png","r": 0,"g": 255,"b":0},
   {"type": "texture_colormod","key": "powerup-knife-cooldown","path": "img/powerup-sheet4x.png","r": 0,"g": 0,"b": 255},
   {"type": "texture_colormod","key": "powerup-knife-speed","path": "img/powerup-sheet4x.png","r": 255,"g": 0,"b": 0},
-  {"type": "texture_colormod","key": "powerup-magnetism-threshold","path": "img/powerup-sheet4x.png","r": 255,"g": 0,"b": 255},
+  {"type": "texture_colormod","key": "powerup-magnetism-threshold","path": "img/soulshard-white-sheet4x.png","r": 255,"g": 0,"b": 255},
   {"type": "texture_colormod","key": "knife-blue","path": "img/knife-alt4x.png","r": 0,"g": 0,"b": 255},
   {"type": "pixel","key": "blood-pixel","r": 255,"g": 0,"b": 0,"w": 4,"h": 4}
 ]
