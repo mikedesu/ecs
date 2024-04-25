@@ -37,6 +37,8 @@ extern int knife_charge;
 extern int max_num_knives;
 extern int num_knives_fired;
 extern int player_money;
+extern int player_health;
+extern int player_max_health;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> eyeball_vx_distribution;
 extern uniform_real_distribution<double> texture_height_distribution;
@@ -236,7 +238,16 @@ void spawn_generator(enemy_type type, bool active, int group, int cooldown,
 }
 
 void spawn_powerup() {
-  const powerup_type poweruptype = (powerup_type)(rand() % POWERUP_TYPE_COUNT);
+  powerup_type poweruptype;
+  poweruptype = (powerup_type)(rand() % POWERUP_TYPE_COUNT);
+
+  // omit hearts from spawning if player health is max
+  if (player_health == player_max_health) {
+    while (poweruptype == POWERUP_TYPE_HEART) {
+      poweruptype = (powerup_type)(rand() % POWERUP_TYPE_COUNT);
+    }
+  }
+
   const string key = "powerup";
   SDL_Texture *t = textures[key];
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
@@ -246,31 +257,28 @@ void spawn_powerup() {
   switch (poweruptype) {
   case POWERUP_TYPE_KNIFE_LARGENESS:
     id = spawn_entity("powerup-knife-largeness", false, 1, x, y);
-    is_rotating[id] = true;
+    // is_rotating[id] = true;
     break;
   case POWERUP_TYPE_KNIFE_COOLDOWN:
     id = spawn_entity("powerup-knife-cooldown", false, 1, x, y);
-    is_rotating[id] = true;
+    // is_rotating[id] = true;
     break;
   case POWERUP_TYPE_KNIFE_SPEED:
     id = spawn_entity("powerup-knife-speed", false, 1, x, y);
-    is_rotating[id] = true;
+    // is_rotating[id] = true;
     break;
   case POWERUP_TYPE_HEART:
     id = spawn_entity("powerup-heart", true, 6, x, y);
     break;
   case POWERUP_TYPE_KNIFE_QUANTITY:
     id = spawn_entity("knife", false, 1, x, y);
-    is_rotating[id] = true;
+    // is_rotating[id] = true;
     transforms[id].angle = 90.0;
     break;
-
   case POWERUP_TYPE_MAGNETISM_THRESHOLD:
     id = spawn_entity("powerup-magnetism-threshold", false, 1, x, y);
-    is_rotating[id] = true;
-
+    // is_rotating[id] = true;
     break;
-
   default:
     break;
   }
