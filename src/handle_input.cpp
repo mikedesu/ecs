@@ -45,12 +45,6 @@ extern void generator_set_all_active_flip();
 extern void toggle_fullscreen();
 extern void spawn_knife();
 extern void do_joystick();
-// extern void cleanup_data_structures();
-// extern void init_after_load_textures();
-// extern void bg_init();
-// extern void spawn_skull(const int x, const int y);
-// extern void spawn_generator(enemy_type type, bool active, int group,
-//                             int cooldown, int cooldown_reduction);
 extern void screenshot();
 
 void handle_joybuttondown() {
@@ -176,7 +170,46 @@ void handle_keydown() {
   }
 }
 
-void handle_joyaxismotion() { mPrint("handle_joyaxismotion"); }
+void handle_joyaxismotion() {
+  mPrint("handle_joyaxismotion");
+
+  if (e.jaxis.which == 0) {
+    if (e.jaxis.axis == 0) {
+      mPrint("");
+
+      if (e.jaxis.value < -8000) {
+
+        // left
+        is_pressed[SDLK_LEFT] = true;
+      } else if (e.jaxis.value > 8000) {
+        // right
+        is_pressed[SDLK_RIGHT] = true;
+
+      } else {
+        // no left/right press
+        is_pressed[SDLK_LEFT] = false;
+        is_pressed[SDLK_RIGHT] = false;
+      }
+
+    } else if (e.jaxis.axis == 1) {
+      mPrint("");
+
+      if (e.jaxis.value < -8000) {
+
+        // up
+        is_pressed[SDLK_UP] = true;
+      } else if (e.jaxis.value > 8000) {
+        is_pressed[SDLK_DOWN] = true;
+
+        // down
+      } else {
+        // no up/down press
+        is_pressed[SDLK_UP] = false;
+        is_pressed[SDLK_DOWN] = false;
+      }
+    }
+  }
+}
 
 void handle_joydeviceadded() {
   mPrint("joystick added");
@@ -216,7 +249,7 @@ void handle_input() {
       handle_joydeviceremoved();
       break;
     case SDL_JOYAXISMOTION:
-      // handle_joyaxismotion();
+      handle_joyaxismotion();
       break;
     case SDL_MOUSEMOTION:
       break;
