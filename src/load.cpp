@@ -344,30 +344,6 @@ bool check_if_json_has_member_and_is_int(Value &v, string member) {
   return v.HasMember(member.c_str()) && v[member.c_str()].IsInt();
 }
 
-// void load_bg_sprites() {
-//   Document d = load_document("config/bg_sprites.json");
-//   if (d.IsArray()) {
-//     for (auto &v : d.GetArray()) {
-//       check_if_json_value_is_object(v);
-//       check_if_json_value_has_member_and_is_string(v, "key");
-//       check_if_json_has_member_and_is_int(v, "num_clips");
-//       check_if_json_has_member_and_is_double(v, "x");
-//       check_if_json_has_member_and_is_double(v, "y");
-//       check_if_json_has_member_and_is_double(v, "vx");
-//       check_if_json_has_member_and_is_double(v, "vy");
-//       check_if_json_has_member_and_is_double(v, "scale");
-//       string key = v["key"].GetString();
-//       string path = v["path"].GetString();
-//       int num_clips = v["num_clips"].GetInt();
-//       double x = v["x"].GetDouble();
-//       double y = v["y"].GetDouble();
-//       double vx = v["vx"].GetDouble();
-//       double vy = v["vy"].GetDouble();
-//       double scale = v["scale"].GetDouble();
-//     }
-//   }
-// }
-
 bool check_if_json_has_member_and_is_double(Value &v, string member) {
   return v.HasMember(member.c_str()) && v[member.c_str()].IsDouble();
 }

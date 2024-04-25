@@ -54,9 +54,13 @@ extern unordered_map<int, bool> is_pressed;
 
 extern vector<entity_id> entities;
 extern vector<entity_id> entities_marked_for_deletion_tmp;
-
 extern vector<double> bat_vx_vec;
 extern vector<int> bat_y_vec;
+
+void cleanup_textures();
+void cleanup_and_exit_with_failure();
+void cleanup_and_exit_with_failure_mprint(string message);
+void cleanup_entities_marked_for_deletion();
 
 function<void(pair<entity_id, bool>)> cleanup_entity_marked_for_deletion =
     [](auto kv) {
@@ -81,11 +85,6 @@ function<void(pair<entity_id, bool>)> cleanup_entity_marked_for_deletion =
         entities_marked_for_deletion_tmp.push_back(id);
       }
     };
-
-void cleanup_textures();
-void cleanup_and_exit_with_failure();
-void cleanup_and_exit_with_failure_mprint(string message);
-void cleanup_entities_marked_for_deletion();
 
 void cleanup_textures() {
   for_each(textures.begin(), textures.end(),
@@ -143,9 +142,7 @@ void cleanup() {
   TTF_CloseFont(gameover_font);
   TTF_Quit();
   IMG_Quit();
-
   SDL_JoystickClose(joystick);
-
   SDL_Quit();
 }
 

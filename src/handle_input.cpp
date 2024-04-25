@@ -175,32 +175,25 @@ void handle_joyaxismotion() {
 
   if (e.jaxis.which == 0) {
     if (e.jaxis.axis == 0) {
-      mPrint("");
-
+      // mPrint("");
       if (e.jaxis.value < -8000) {
-
         // left
         is_pressed[SDLK_LEFT] = true;
       } else if (e.jaxis.value > 8000) {
         // right
         is_pressed[SDLK_RIGHT] = true;
-
       } else {
         // no left/right press
         is_pressed[SDLK_LEFT] = false;
         is_pressed[SDLK_RIGHT] = false;
       }
-
     } else if (e.jaxis.axis == 1) {
-      mPrint("");
-
+      // mPrint("");
       if (e.jaxis.value < -8000) {
-
         // up
         is_pressed[SDLK_UP] = true;
       } else if (e.jaxis.value > 8000) {
         is_pressed[SDLK_DOWN] = true;
-
         // down
       } else {
         // no up/down press
@@ -258,29 +251,6 @@ void handle_input() {
       mPrint("event type: " + to_string(e.type));
       break;
     }
-
-    /*
-    if (e.type == SDL_QUIT) {
-      quit = true;
-    } else if (e.type == SDL_KEYDOWN) {
-      handle_keydown();
-    } else if (e.type == SDL_KEYUP) {
-      handle_keyup();
-    } else if (e.type == SDL_JOYBUTTONDOWN) {
-      handle_joybuttondown();
-    } else if (e.type == SDL_JOYBUTTONUP) {
-      handle_joybuttonup();
-    } else if (e.type == SDL_JOYHATMOTION) {
-
-      handle_joyhatmotion();
-    } else if (e.type == SDL_JOYDEVICEADDED) {
-      handle_joydeviceadded();
-    } else if (e.type == SDL_JOYDEVICEREMOVED) {
-      handle_joydeviceremoved();
-    } else {
-      mPrint("event type: " + to_string(e.type));
-    }
-    */
   }
 }
 

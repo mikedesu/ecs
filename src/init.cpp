@@ -32,7 +32,6 @@ extern int mHeight;
 extern entity_id player_id;
 extern bool is_gameover;
 extern int current_soulshard_magnetism_threshold;
-// extern int current_soulshard_magnetism_threshold;
 extern int num_knives;
 extern int max_num_knives;
 extern int knife_charge;
@@ -42,7 +41,6 @@ extern int player_health;
 extern int player_max_health;
 extern int player_soulshards;
 extern int total_soulshards_collected;
-
 extern int debug_font_size;
 extern int img_flags;
 extern int result;
@@ -72,11 +70,11 @@ void init_debug_texture_rects();
 void init_fonts();
 void init_img();
 void init_rng();
-int init_target_texture();
 void init_ttf();
 void handle_init_target_texture();
 void init_target_texture_rects();
 void init();
+int init_target_texture();
 
 void init_debug_texture_rects() {
   debug_texture_src.x = debug_texture_src.y = debug_texture_dest.x =
@@ -112,24 +110,18 @@ void init_img() {
 
 void init_rng() {
   srand(time(nullptr));
-
   g = mt19937(rd());
-
   eyeball_vx_distribution = uniform_real_distribution<double>(-4.0, -2.0);
   soulshard_spawn_rate_distribution =
       uniform_real_distribution<double>(0.0, 100.0);
-
   if (config["target_texture_height"] > 0) {
     texture_height_distribution =
         uniform_real_distribution<double>(0.0, config["target_texture_height"]);
   }
-
   blood_velocity_positive_distribution =
       uniform_real_distribution<double>(1.0, 2.0);
-
   blood_velocity_negative_distribution =
       uniform_real_distribution<double>(-2.0, -1.0);
-
   blood_velocity_distribution = uniform_real_distribution<double>(-2.0, 2.0);
 }
 
@@ -139,13 +131,11 @@ int init_target_texture() {
     mPrint("Target texture width or height not found in config!");
     return 0;
   }
-
   if (config["target_texture_width"] == 0 ||
       config["target_texture_height"] == 0) {
     mPrint("Target texture width or height is 0!");
     return 0;
   }
-
   target_texture = SDL_CreateTexture(
       renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
       config["target_texture_width"], config["target_texture_height"]);

@@ -3,6 +3,7 @@
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "mPrint.h"
+#include <SDL_render.h>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -16,13 +17,19 @@ extern SDL_Renderer *renderer;
 extern entity_id next_entity_id;
 extern bool is_fullscreen;
 extern int frame_count;
+extern int w;
+extern int h;
 extern SDL_Rect target_texture_dest;
 extern unordered_map<string, size_t> config;
 extern SDL_Window *window;
+extern unordered_map<string, SDL_Texture *> textures;
 extern unordered_map<enemy_type, int> enemies_killed;
 extern unordered_map<entity_id, generator_component> generators;
 extern unordered_map<entity_id, bool> is_generator;
 extern vector<entity_id> entities;
+
+bool get_texture_width_height_for_key(string key);
+bool get_texture_width_height(SDL_Texture *t);
 
 entity_id get_next_entity_id() { return next_entity_id++; }
 
@@ -116,4 +123,21 @@ void do_joystick() {
       mPrint("Could not get joystick: " + string(SDL_GetError()));
     }
   }
+}
+
+bool get_texture_width_height_for_key(string key) {
+  w = -1;
+  h = -1;
+  bool rv = false;
+  if (textures.find(key) != textures.end()) {
+    rv = get_texture_width_height(textures[key]);
+  }
+  return rv;
+}
+
+bool get_texture_width_height(SDL_Texture *t) {
+  w = -1;
+  h = -1;
+  SDL_QueryTexture(t, NULL, NULL, &w, &h);
+  return w != -1 && h != -1;
 }

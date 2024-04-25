@@ -55,8 +55,6 @@ extern unordered_map<entity_id, enemy_type> enemy_types;
 extern unordered_map<entity_id, entity_type> entity_types;
 extern unordered_map<entity_id, generator_component> generators;
 extern unordered_map<entity_id, sprite_component> sprites;
-extern map<entity_id, sprite_component> bg_sprites;
-// extern unordered_map<entity_id, sprite_component> bg_sprites;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, transform_component> bg_transforms;
 extern unordered_map<entity_id, bool> is_soulshard;
@@ -66,13 +64,14 @@ extern unordered_map<entity_id, bool> is_enemy;
 extern unordered_map<entity_id, bool> is_generator;
 extern unordered_map<entity_id, bool> is_powerup;
 extern unordered_map<entity_id, bool> is_marked_for_deletion;
-
 extern unordered_map<entity_id, bool> is_blood_pixel;
 extern unordered_map<entity_id, int> blood_pixel_lifetime;
-
+extern unordered_map<entity_id, double> rotation_speeds;
 extern unordered_map<enemy_type, int> enemies_killed;
 extern unordered_map<powerup_type, int> powerups_collected;
-extern unordered_map<entity_id, double> rotation_speeds;
+
+extern map<entity_id, sprite_component> bg_sprites;
+
 extern vector<entity_id> entities;
 
 extern void spawn_soulshard(const int x, const int y);
@@ -114,7 +113,6 @@ function<void(entity_id)> handle_magneticism = [](entity_id id) {
   const int x1 = o.dest.x + o.dest.w / 2;
   const int y1 = o.dest.y + o.dest.h / 2;
   const double dist = distance(x, y, x1, y1);
-  // const double threshold = config["default_magnetism_threshold"];
   const int v = 8;
   if (dist < current_soulshard_magnetism_threshold) {
     // magnetically move the soulshard towards the player
@@ -204,8 +202,6 @@ function<void(entity_id)> update_skull_collision = [](const entity_id id) {
       handle_update_skull_collision_soulshard();
       break;
     case ENTITY_TYPE_ENEMY:
-      // is_marked_for_deletion[id] = true;
-      // player_health--;
       handle_update_skull_collision_enemy(id);
       break;
     case ENTITY_TYPE_ITEM:
@@ -360,7 +356,7 @@ function<void(entity_id, entity_id)> check_for_knife_collision_with_enemy =
       if (SDL_HasIntersection(&knife.dest, &enemy.dest)) {
         const int x = enemy.dest.x + enemy.dest.w / 2;
         const int y = enemy.dest.y + enemy.dest.h / 2;
-        int num_pixels = config["blood_pixel_count"];
+        const int num_pixels = config["blood_pixel_count"];
         is_marked_for_deletion[enemy_id] = true;
         is_marked_for_deletion[id] = true;
         num_collisions++;
@@ -438,8 +434,11 @@ void update_generators() {
     }
     // if the generator has a "cooldown reduction" set to non-zero,
     // then every N frames, reduce the cooldown by half until we hit a minimum
-    if (cooldown_reduction && frame_count > 0 &&
-        frame_count % cooldown_reduction == 0 && cooldown > cooldown_min) {
+
+    bool check = cooldown_reduction && frame_count > 0;
+    check = check && cooldown > cooldown_min;
+    check = check && frame_count % cooldown_reduction == 0;
+    if (check) {
       generators[id].cooldown = cooldown / 2;
     }
   }

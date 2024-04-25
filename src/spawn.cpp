@@ -2,27 +2,23 @@
 #include "components.h"
 #include "entity_id.h"
 #include "entity_type.h"
-#include "mPrint.h"
+// #include "mPrint.h"
 #include "powerup_type.h"
 #include <SDL_render.h>
 #include <algorithm>
 #include <cassert>
 #include <random>
-// #include <set>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 using std::default_random_engine;
 using std::mt19937;
-// using std::random_device;
-// using std::set;
 using std::shuffle;
 using std::string;
 using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
-// using std::assert;
 
 extern mt19937 g;
 
