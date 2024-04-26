@@ -32,6 +32,8 @@ extern int mHeight;
 extern int current_knife_speed;
 extern int default_knife_speed;
 
+extern int default_player_speed;
+extern int current_player_speed;
 extern entity_id player_id;
 extern bool is_gameover;
 extern int current_soulshard_magnetism_threshold;
@@ -231,6 +233,9 @@ void init_game_vars() {
   current_knife_cooldown = default_knife_cooldown;
   is_gameover = false;
   current_soulshard_magnetism_threshold = config["default_magnetism_threshold"];
+
+  default_player_speed = 8;
+  current_player_speed = default_player_speed;
 
   powerups_collected.clear();
 }

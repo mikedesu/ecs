@@ -39,6 +39,10 @@ extern unordered_map<int, bool> is_pressed;
 extern unordered_map<entity_id, sprite_component> sprite_components;
 extern unordered_map<string, SDL_Texture *> textures;
 extern int gameover_count;
+extern int current_player_speed;
+extern int default_player_speed;
+// extern int current_knife_speed;
+// extern int default_knife_speed;
 
 extern void init_game();
 extern void generator_set_all_active_flip();
@@ -267,10 +271,10 @@ void handle_input_component() {
       transform.x += 4;
       is_flipped[id] = false;
     } else if (is_pressed[SDLK_LEFT]) {
-      transform.x -= 8;
+      transform.x -= current_player_speed;
       is_flipped[id] = true;
     } else if (is_pressed[SDLK_RIGHT]) {
-      transform.x += 8;
+      transform.x += current_player_speed;
       is_flipped[id] = false;
     }
 
@@ -279,9 +283,9 @@ void handle_input_component() {
     } else if (is_pressed[SDLK_DOWN] && is_pressed[SDLK_LSHIFT]) {
       transform.y += 4;
     } else if (is_pressed[SDLK_UP]) {
-      transform.y -= 8;
+      transform.y -= current_player_speed;
     } else if (is_pressed[SDLK_DOWN]) {
-      transform.y += 8;
+      transform.y += current_player_speed;
     }
 
     if (is_pressed[SDLK_z]) {

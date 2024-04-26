@@ -44,6 +44,9 @@ int default_knife_cooldown = 30;
 int knife_cooldown = 0;
 int current_knife_cooldown = default_knife_cooldown;
 
+int default_player_speed = 8;
+int current_player_speed = default_player_speed;
+
 char texture_text[1024] = "a bunch of random text";
 
 bool quit = false;

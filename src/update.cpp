@@ -33,6 +33,7 @@ extern bool is_gameover;
 extern unordered_map<string, size_t> config;
 extern int current_soulshard_magnetism_threshold;
 extern int current_knife_speed;
+extern int current_player_speed;
 extern int frame_count;
 extern int num_collisions;
 extern int num_knives;
@@ -141,6 +142,9 @@ function<void(entity_id)> handle_update_skull_collision_powerup =
     [](entity_id id) {
       powerup_type type = powerup_types[id];
       switch (type) {
+      case POWERUP_TYPE_SKULL_SPEED:
+        current_player_speed += 2;
+        break;
       case POWERUP_TYPE_MAGNETISM_THRESHOLD:
         current_soulshard_magnetism_threshold += 20;
         break;

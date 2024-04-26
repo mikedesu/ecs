@@ -33,6 +33,7 @@ extern int w;
 extern int h;
 extern int knife_cooldown;
 extern int current_knife_speed;
+extern int current_player_speed;
 extern int current_knife_cooldown;
 extern int num_knives;
 extern int knife_charge;
@@ -278,14 +279,16 @@ void spawn_powerup() {
     key = "knife";
     angle = 90.0;
     break;
+  case POWERUP_TYPE_SKULL_SPEED:
+    key = "powerup-skull-speed";
+    // current_player_speed += 2;
+    break;
   case POWERUP_TYPE_MAGNETISM_THRESHOLD:
     key = "powerup-magnetism-threshold";
     num_frames = 8;
     is_anim = true;
-
-    t = textures[key];
-    SDL_QueryTexture(t, NULL, NULL, &w, &h);
-
+    // t = textures[key];
+    // SDL_QueryTexture(t, NULL, NULL, &w, &h);
     break;
   default:
     break;
