@@ -43,6 +43,7 @@ extern int player_money;
 extern int player_health;
 extern int player_max_health;
 extern default_random_engine rng_generator;
+extern uniform_real_distribution<double> unit_distribution;
 extern uniform_real_distribution<double> eyeball_vx_distribution;
 extern uniform_real_distribution<double> texture_height_distribution;
 extern uniform_real_distribution<double> blood_velocity_positive_distribution;
@@ -149,7 +150,16 @@ void spawn_knife() {
     const entity_id id = spawn_entity(key, false, 1, x, y);
     const double angle = flipped ? 180.0 : 0.0;
     const double vx = flipped ? -current_knife_speed : current_knife_speed;
-    const double vy = 0;
+
+    // const double vy = 0;
+    // this adds a 'spray' effect to how knives fly out
+    // we can create a powerup to alter the vy
+    // const double vy = unit_distribution(rng_generator) * 2;
+    const double vy = powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] == 0
+                          ? 0
+                          : powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] *
+                                unit_distribution(rng_generator);
+
     transforms[id] = {x, y, vx, vy, angle, scale};
     is_knife[id] = true;
     entity_types[id] = ENTITY_TYPE_KNIFE;
@@ -277,6 +287,10 @@ void spawn_powerup() {
     break;
   case POWERUP_TYPE_KNIFE_QUANTITY:
     key = "knife";
+    angle = 90.0;
+    break;
+  case POWERUP_TYPE_KNIFE_SPRAY:
+    key = "powerup-knife-spray";
     angle = 90.0;
     break;
   case POWERUP_TYPE_SKULL_SPEED:

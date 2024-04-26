@@ -10,6 +10,7 @@
   {"type": "texture_colormod","key": "candle","path": "img/candle0-sheet4x.png","r": 255,"g": 255,"b": 255},
   {"type": "texture_colormod","key": "powerup","path": "img/powerup-sheet4x.png","r": 255,"g": 255,"b": 255},
   {"type": "texture_colormod","key": "powerup-knife-largeness","path": "img/powerup-sheet4x.png","r": 0,"g": 255,"b":0},
+  {"type": "texture_colormod","key": "powerup-knife-spray","path": "img/knife-alt4x.png","r": 128,"g": 128,"b":128},
   {"type": "texture_colormod","key": "powerup-knife-cooldown","path": "img/powerup-sheet4x.png","r": 0,"g": 0,"b": 255},
   {"type": "texture_colormod","key": "powerup-knife-speed","path": "img/powerup-sheet4x.png","r": 255,"g": 0,"b": 0},
   {"type": "texture_colormod","key": "powerup-skull-speed","path": "img/powerup-sheet4x.png","r": 255,"g": 255,"b": 255},

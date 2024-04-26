@@ -59,6 +59,7 @@ extern TTF_Font *gFont;
 extern TTF_Font *gameover_font;
 extern SDL_Renderer *renderer;
 extern SDL_Texture *target_texture;
+extern uniform_real_distribution<double> unit_distribution;
 extern uniform_real_distribution<double> eyeball_vx_distribution;
 extern uniform_real_distribution<double> soulshard_spawn_rate_distribution;
 extern uniform_real_distribution<double> texture_height_distribution;
@@ -134,6 +135,8 @@ void init_rng() {
   blood_velocity_negative_distribution =
       uniform_real_distribution<double>(-2.0, -1.0);
   blood_velocity_distribution = uniform_real_distribution<double>(-2.0, 2.0);
+
+  unit_distribution = uniform_real_distribution<double>(-1.0, 1.0);
 }
 
 int init_target_texture() {

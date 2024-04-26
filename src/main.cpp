@@ -136,6 +136,7 @@ map<entity_id, sprite_component> bg_sprites;
 
 // random number generator
 default_random_engine rng_generator;
+uniform_real_distribution<double> unit_distribution;
 uniform_real_distribution<double> eyeball_vx_distribution;
 uniform_real_distribution<double> soulshard_spawn_rate_distribution;
 uniform_real_distribution<double> texture_height_distribution;
