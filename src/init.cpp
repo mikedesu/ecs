@@ -2,6 +2,7 @@
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "mPrint.h"
+#include "powerup_type.h"
 #include <SDL_render.h>
 #include <random>
 #include <string>
@@ -46,6 +47,7 @@ extern int total_soulshards_collected;
 extern int debug_font_size;
 extern int img_flags;
 extern int result;
+extern unordered_map<powerup_type, int> powerups_collected;
 
 extern int knife_cooldown;
 extern int current_knife_cooldown;
@@ -229,6 +231,8 @@ void init_game_vars() {
   current_knife_cooldown = default_knife_cooldown;
   is_gameover = false;
   current_soulshard_magnetism_threshold = config["default_magnetism_threshold"];
+
+  powerups_collected.clear();
 }
 
 void init_game() {
