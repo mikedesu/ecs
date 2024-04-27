@@ -202,7 +202,6 @@ void spawn_knife() {
     const double x =
         !flipped ? player.dest.x + padding_right : player.dest.x - padding_left;
     const double y = player.dest.y + player.dest.h / 4.0;
-    const entity_id id = spawn_entity(key, false, 1, x, y);
     const double angle = flipped ? 180.0 : 0.0;
     double vx = current_knife_speed;
 
@@ -218,25 +217,44 @@ void spawn_knife() {
     // this adds a 'spray' effect to how knives fly out
     // we can create a powerup to alter the vy
     // const double vy = unit_distribution(rng_generator) * 2;
-    const double vy = powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] == 0
-                          ? 0
-                          : powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] *
-                                unit_distribution(rng_generator);
+    double vy = 0;
 
-    transforms[id] = {x, y, vx, vy, angle, scale};
-    is_knife[id] = true;
-    entity_types[id] = ENTITY_TYPE_KNIFE;
-    handle_knife_charge_rotation(id);
-    knife_cooldown = current_knife_cooldown;
-    num_knives_fired++;
-    num_knives--;
-    handle_knife_charge_decrement();
-    const int num_additional_knives =
-        powerups_collected[POWERUP_TYPE_KNIFE_EXTRA];
+    vy = powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] == 0
+             ? 0
+             : powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] *
+                   unit_distribution(rng_generator);
 
-    for (int i = 0; i < num_additional_knives; i++) {
-      spawn_knife_no_cooldown_no_count_check();
-    }
+    entity_id id = -1;
+    const int total_knives = 1 + powerups_collected[POWERUP_TYPE_KNIFE_EXTRA];
+    const bool do_spray = powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] > 0;
+
+    int i = 0;
+
+    // for(int i=0; i<total_knives; i++) {
+    do {
+      id = spawn_entity(key, false, 1, x, y);
+      vy = !do_spray ? 0
+                     : powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] *
+                           unit_distribution(rng_generator);
+      transforms[id] = {x, y, vx, vy, angle, scale};
+      is_knife[id] = true;
+      entity_types[id] = ENTITY_TYPE_KNIFE;
+      handle_knife_charge_rotation(id);
+      knife_cooldown = current_knife_cooldown;
+      num_knives_fired++;
+      if (i == 0) {
+        handle_knife_charge_decrement();
+        num_knives--;
+      }
+      i++;
+    } while (i < total_knives);
+    // handle_knife_charge_decrement();
+    // const int num_additional_knives =
+    //     powerups_collected[POWERUP_TYPE_KNIFE_EXTRA];
+
+    // for (int i = 0; i < num_additional_knives; i++) {
+    //   spawn_knife_no_cooldown_no_count_check();
+    // }
   }
 }
 
