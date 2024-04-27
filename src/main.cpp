@@ -51,7 +51,10 @@ char texture_text[1024] = "a bunch of random text";
 
 bool quit = false;
 bool do_render_debug_panel = false;
-bool is_fullscreen = false;
+
+// bool is_fullscreen = false;
+bool is_fullscreen = true;
+
 bool is_paused = false;
 bool is_gameover = false;
 
@@ -170,6 +173,7 @@ void update();
 void init_game();
 
 void do_joystick();
+void do_fullscreen();
 
 int main() {
   load_main_config();
@@ -194,6 +198,7 @@ int main() {
   create_renderer();
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
   init();
+
   handle_init_target_texture();
   load_textures();
   load_debug_text();
@@ -201,6 +206,7 @@ int main() {
   // get the width and height of the texture
   init_target_texture_rects();
 
+  do_fullscreen();
   init_game();
 
   mPrint("main loop...");

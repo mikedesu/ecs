@@ -335,3 +335,8 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
     - [ ] arbitrary menu display / pause-menu indication
 
 ## 26 April 2024
+
+- [x] spray powerup
+- [ ] a way to disable the spawning of individual powerups
+    - [ ] can have a vector of powerup types
+

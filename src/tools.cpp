@@ -45,8 +45,7 @@ size_t get_num_enemies_killed() {
   return total;
 }
 
-void toggle_fullscreen() {
-  is_fullscreen = !is_fullscreen;
+void do_fullscreen() {
   SDL_SetWindowFullscreen(window,
                           is_fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
   if (is_fullscreen) {
@@ -60,6 +59,11 @@ void toggle_fullscreen() {
     target_texture_dest.w = config["window_width"];
     target_texture_dest.h = config["window_height"];
   }
+}
+
+void toggle_fullscreen() {
+  is_fullscreen = !is_fullscreen;
+  do_fullscreen();
 }
 
 void generator_set_active(entity_id id, bool active) {
