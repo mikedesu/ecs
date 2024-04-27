@@ -5,6 +5,7 @@
 #include "rapidjson/document.h"
 #include "rapidjson/stringbuffer.h"
 #include <SDL2/SDL_render.h>
+#include <SDL_timer.h>
 #include <cstdio>
 #include <string>
 #include <unordered_map>
@@ -59,6 +60,7 @@ extern unordered_map<string, SDL_Texture *> textures;
 extern unordered_map<entity_id, transform_component> transforms;
 extern entity_id player_id;
 extern int gameover_count;
+extern unsigned long game_begin_time;
 
 // external functions
 extern double fps();
@@ -109,7 +111,15 @@ void load_gameover_texture() {
 }
 
 void load_stopwatch_text() {
-  snprintf(stopwatch_text, 128, "stopwatch text");
+
+  unsigned long milliseconds = SDL_GetTicks64() - game_begin_time;
+  unsigned long seconds = milliseconds / 1000;
+  unsigned long minutes = seconds / 60;
+  seconds = seconds % 60;
+
+  // snprintf(stopwatch_text, 128, "%lu", SDL_GetTicks64());
+  snprintf(stopwatch_text, 128, "%lu:%02lu", minutes, seconds);
+
   stopwatch_surface = TTF_RenderText_Blended_Wrapped(
       gFont, stopwatch_text, textColor, DEBUG_TEXT_WRAP_LEN);
   if (stopwatch_surface == nullptr) {

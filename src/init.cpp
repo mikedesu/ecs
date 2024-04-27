@@ -60,6 +60,8 @@ extern int knife_cooldown;
 extern int current_knife_cooldown;
 extern int default_knife_cooldown;
 
+extern unsigned long game_begin_time;
+
 extern TTF_Font *gFont;
 extern TTF_Font *gameover_font;
 extern SDL_Renderer *renderer;
@@ -239,6 +241,7 @@ void init_after_load_textures() {
 
 void init_game_vars() {
   player_id = -1;
+  game_begin_time = SDL_GetTicks();
 
   // a lot of these can be loaded from game.json
   num_knives = 2;

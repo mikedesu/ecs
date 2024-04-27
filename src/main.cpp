@@ -84,6 +84,8 @@ int total_soulshards_collected = 0;
 entity_id next_entity_id = 0;
 entity_id player_id = -1;
 
+unsigned long game_begin_time = 0;
+
 TTF_Font *gFont = nullptr;
 TTF_Font *gameover_font = nullptr;
 

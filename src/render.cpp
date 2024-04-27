@@ -100,10 +100,10 @@ void render_frame() {
   render_stopwatch();
   load_stopwatch_text();
   //  render debug text
-  // if (do_render_debug_panel) {
-  //  render_debug_panel();
-  //  load_debug_text();
-  //}
+  if (do_render_debug_panel) {
+    render_debug_panel();
+    load_debug_text();
+  }
 
   SDL_RenderPresent(renderer);
   frame_count++;

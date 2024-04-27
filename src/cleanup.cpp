@@ -25,10 +25,12 @@ using std::vector;
 
 extern SDL_Renderer *renderer;
 extern SDL_Texture *debug_texture;
+extern SDL_Texture *stopwatch_texture;
 extern SDL_Texture *debug_bg_texture;
 extern SDL_Texture *target_texture;
 extern SDL_Window *window;
 extern SDL_Surface *text_surface;
+extern SDL_Surface *stopwatch_surface;
 extern SDL_Joystick *joystick;
 extern TTF_Font *gFont;
 extern TTF_Font *gameover_font;
@@ -127,14 +129,18 @@ void cleanup() {
   SDL_DestroyTexture(debug_texture);
   // mPrint("cleaning up debug bg texture");
   SDL_DestroyTexture(debug_bg_texture);
-  // mPrint("cleaning up target texture");
+  SDL_DestroyTexture(stopwatch_texture);
   SDL_DestroyTexture(target_texture);
   // mPrint("cleaning up renderer");
   SDL_DestroyRenderer(renderer);
-  if (text_surface != nullptr) {
+  if (text_surface) {
     // mPrint("cleaning up text surface");
     SDL_FreeSurface(text_surface);
   }
+  if (stopwatch_surface) {
+    SDL_FreeSurface(stopwatch_surface);
+  }
+
   // mPrint("cleaning up window");
   SDL_DestroyWindow(window);
   // mPrint("cleaning up TTF");
