@@ -27,6 +27,11 @@ extern SDL_Rect debug_texture_src;
 extern SDL_Rect debug_texture_dest;
 extern SDL_Rect target_texture_src;
 extern SDL_Rect target_texture_dest;
+extern SDL_Rect player_hud_texture_src;
+extern SDL_Rect player_hud_texture_dest;
+extern SDL_Rect stopwatch_texture_src;
+extern SDL_Rect stopwatch_texture_dest;
+
 extern int mWidth;
 extern int mHeight;
 extern int current_knife_speed;
@@ -87,6 +92,20 @@ void handle_init_target_texture();
 void init_target_texture_rects();
 void init();
 int init_target_texture();
+
+void init_stopwatch_texture_rects() {
+  stopwatch_texture_src.x = stopwatch_texture_src.y = stopwatch_texture_dest.x =
+      stopwatch_texture_dest.y = 0;
+  stopwatch_texture_src.w = stopwatch_texture_dest.w = mWidth;
+  stopwatch_texture_src.h = stopwatch_texture_dest.h = mHeight;
+}
+
+void init_player_hud_texture_rects() {
+  player_hud_texture_src.x = player_hud_texture_src.y =
+      player_hud_texture_dest.x = player_hud_texture_dest.y = 0;
+  player_hud_texture_src.w = player_hud_texture_dest.w = mWidth / 4;
+  player_hud_texture_src.h = player_hud_texture_dest.h = mHeight;
+}
 
 void init_debug_texture_rects() {
   debug_texture_src.x = debug_texture_src.y = debug_texture_dest.x =

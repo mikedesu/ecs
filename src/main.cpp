@@ -47,7 +47,8 @@ int current_knife_cooldown = default_knife_cooldown;
 int default_player_speed = 8;
 int current_player_speed = default_player_speed;
 
-char texture_text[1024] = "a bunch of random text";
+char texture_text[1024] = "texture_text";
+char stopwatch_text[128] = "stopwatch_text";
 
 bool quit = false;
 bool do_render_debug_panel = false;
@@ -89,16 +90,27 @@ TTF_Font *gameover_font = nullptr;
 SDL_Joystick *joystick = nullptr;
 SDL_Color textColor = {255, 255, 255, 255};
 SDL_Event e;
-SDL_Rect debug_texture_src;
-SDL_Rect debug_texture_dest;
 SDL_Rect target_texture_src;
 SDL_Rect target_texture_dest;
 SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
 SDL_Surface *text_surface = nullptr;
+SDL_Surface *stopwatch_surface = nullptr;
 SDL_Surface *gameover_surface = nullptr;
 SDL_Texture *target_texture = nullptr;
+
 SDL_Texture *debug_texture = nullptr;
+SDL_Rect debug_texture_src;
+SDL_Rect debug_texture_dest;
+
+SDL_Texture *player_hud_texture = nullptr;
+SDL_Rect player_hud_texture_src;
+SDL_Rect player_hud_texture_dest;
+
+SDL_Texture *stopwatch_texture = nullptr;
+SDL_Rect stopwatch_texture_src;
+SDL_Rect stopwatch_texture_dest;
+
 SDL_Texture *gameover_texture = nullptr;
 SDL_Texture *debug_bg_texture = nullptr;
 
@@ -158,10 +170,13 @@ void handle_input();
 void handle_input_component();
 void handle_init_target_texture();
 void init_debug_texture_rects();
+void init_player_hud_texture_rects();
 void init_target_texture_rects();
+void init_stopwatch_texture_rects();
 void init();
 void init_after_load_textures();
 void load_debug_text();
+void load_stopwatch_text();
 void load_textures();
 void load_main_config();
 void render_frame();
@@ -203,6 +218,9 @@ int main() {
   load_textures();
   load_debug_text();
   init_debug_texture_rects();
+  load_stopwatch_text();
+  init_stopwatch_texture_rects();
+  init_player_hud_texture_rects();
   // get the width and height of the texture
   init_target_texture_rects();
 

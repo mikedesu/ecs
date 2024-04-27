@@ -24,7 +24,10 @@ extern unordered_map<entity_id, transform_component> bg_transforms;
 extern unordered_map<entity_id, bool> is_flipped;
 extern SDL_Texture *debug_texture;
 extern SDL_Texture *gameover_texture;
+extern SDL_Texture *stopwatch_texture;
 extern SDL_Rect debug_texture_src;
+extern SDL_Rect stopwatch_texture_src;
+extern SDL_Rect stopwatch_texture_dest;
 extern SDL_Rect debug_texture_dest;
 extern SDL_Rect target_texture_src;
 extern SDL_Rect target_texture_dest;
@@ -33,6 +36,7 @@ extern int frame_count;
 extern SDL_Texture *target_texture;
 
 extern void load_debug_text();
+extern void load_stopwatch_text();
 
 function<void(sprite_pair)> draw_sprite = [](const sprite_pair p) {
   const entity_id id = p.first;
@@ -47,6 +51,14 @@ void render_debug_panel() {
   SDL_RenderFillRect(renderer, &debug_texture_dest);
   SDL_RenderCopy(renderer, debug_texture, &debug_texture_src,
                  &debug_texture_dest);
+}
+
+void render_stopwatch() {
+  // SDL_Color color = {0, 0, 0, 255};
+  // SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+  // SDL_RenderFillRect(renderer, &debug_texture_dest);
+  SDL_RenderCopy(renderer, stopwatch_texture, &stopwatch_texture_src,
+                 &stopwatch_texture_dest);
 }
 
 void render_sprites() { for_each(sprites.begin(), sprites.end(), draw_sprite); }
@@ -85,11 +97,14 @@ void render_frame() {
   SDL_SetRenderTarget(renderer, NULL);
   SDL_RenderCopy(renderer, target_texture, &target_texture_src,
                  &target_texture_dest);
-  // render debug text
-  if (do_render_debug_panel) {
-    render_debug_panel();
-    load_debug_text();
-  }
+  render_stopwatch();
+  load_stopwatch_text();
+  //  render debug text
+  // if (do_render_debug_panel) {
+  //  render_debug_panel();
+  //  load_debug_text();
+  //}
+
   SDL_RenderPresent(renderer);
   frame_count++;
 }

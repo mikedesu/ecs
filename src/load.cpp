@@ -40,10 +40,13 @@ extern int total_soulshards_collected;
 extern int w, h;
 extern double zoom;
 extern char texture_text[1024];
+extern char stopwatch_text[128];
 extern SDL_Texture *debug_texture;
 extern SDL_Texture *gameover_texture;
+extern SDL_Texture *stopwatch_texture;
 extern SDL_Surface *text_surface;
 extern SDL_Surface *gameover_surface;
+extern SDL_Surface *stopwatch_surface;
 extern SDL_Color textColor;
 extern TTF_Font *gFont;
 extern TTF_Font *gameover_font;
@@ -102,6 +105,36 @@ void load_gameover_texture() {
              string(SDL_GetError()));
     }
     SDL_FreeSurface(gameover_surface);
+  }
+}
+
+void load_stopwatch_text() {
+  snprintf(stopwatch_text, 128, "stopwatch text");
+  stopwatch_surface = TTF_RenderText_Blended_Wrapped(
+      gFont, stopwatch_text, textColor, DEBUG_TEXT_WRAP_LEN);
+  if (stopwatch_surface == nullptr) {
+    mPrint("stopwatch_surface == nullptr");
+    mPrint("Unable to render stopwatch_surface! SDL_ttf Error: " +
+           string(TTF_GetError()));
+  } else {
+    // Create texture from surface pixels
+    if (stopwatch_texture != nullptr) {
+      SDL_DestroyTexture(stopwatch_texture);
+      stopwatch_texture = nullptr;
+    }
+    stopwatch_texture =
+        SDL_CreateTextureFromSurface(renderer, stopwatch_surface);
+    if (stopwatch_texture == nullptr) {
+      mPrint("mTexture == NULL");
+      mPrint("Unable to create texture from rendered text! SDL Error: " +
+             string(SDL_GetError()));
+    }
+    // Get image dimensions
+    mWidth = stopwatch_surface->w;
+    mHeight = stopwatch_surface->h;
+    // Get rid of old surface
+    SDL_FreeSurface(stopwatch_surface);
+    stopwatch_surface = nullptr;
   }
 }
 
