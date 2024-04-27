@@ -340,3 +340,8 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 - [ ] a way to disable the spawning of individual powerups
     - [ ] can have a vector of powerup types
 
+## 27 April 2024
+
+- [x] can start game in fullscreen 
+    - [ ] need to add to config/game.json
+

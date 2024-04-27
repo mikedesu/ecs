@@ -149,7 +149,15 @@ void spawn_knife() {
     const double y = player.dest.y + player.dest.h / 4.0;
     const entity_id id = spawn_entity(key, false, 1, x, y);
     const double angle = flipped ? 180.0 : 0.0;
-    const double vx = flipped ? -current_knife_speed : current_knife_speed;
+    double vx = current_knife_speed;
+
+    if (flipped && knife_charge) {
+      vx = -current_knife_speed * knife_charge - knife_charge;
+    } else if (knife_charge) {
+      vx = current_knife_speed * knife_charge + knife_charge;
+    } else if (flipped) {
+      vx = -current_knife_speed;
+    }
 
     // const double vy = 0;
     // this adds a 'spray' effect to how knives fly out
