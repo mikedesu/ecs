@@ -345,7 +345,11 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 - [x] can start game in fullscreen 
     - [ ] need to add to config/game.json
 - [ ] powerup to make the player smaller
-- [ ] powerup to fire an additional knife
-    - [ ] when combined with the 'spray' powerup this will become powerful
+- [x] powerup to fire an additional knife
+    - [x] when combined with the 'spray' powerup this will become powerful
+    - [ ] spawning a lot of extra knives is appearing to have a big slowdown effect on the game
+        - [ ] possibly due to the rectangle modulation
+            - [ ] one way we might fix this is to pre-calculate the destination rectangle
+
 
 
