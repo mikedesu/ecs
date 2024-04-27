@@ -48,6 +48,7 @@ extern void init_game();
 extern void generator_set_all_active_flip();
 extern void toggle_fullscreen();
 extern void spawn_knife();
+// extern void spawn_knives();
 extern void do_joystick();
 extern void screenshot();
 
@@ -290,6 +291,7 @@ void handle_input_component() {
 
     if (is_pressed[SDLK_z]) {
       spawn_knife();
+      // spawn_knives();
       sprite.current_clip = 1;
       sprite.src.x = sprite.current_clip * sprite.src.w;
     } else {

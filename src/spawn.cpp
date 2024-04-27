@@ -75,6 +75,8 @@ extern vector<entity_id> entities;
 
 extern entity_id get_next_entity_id();
 
+void spawn_knife();
+void spawn_knife_no_cooldown_no_count_check();
 void spawn_bat(const double x, const double y, const double vx, const double vy,
                const double scale);
 
@@ -129,6 +131,59 @@ void handle_knife_charge_rotation(const entity_id id) {
   }
 }
 
+// void spawn_knives() {
+//  always spawn at least one knife
+// spawn_knife();
+
+// const int num_additional_knives =
+//     powerups_collected[POWERUP_TYPE_KNIFE_EXTRA];
+// for (int i = 0; i < num_additional_knives; i++) {
+//   spawn_knife_no_cooldown_no_count_check();
+// }
+//}
+
+void spawn_knife_no_cooldown_no_count_check() {
+  string key = "knife";
+  if (knife_charge >= 2) {
+    key = "knife-blue";
+  }
+  const int largeness = powerups_collected[POWERUP_TYPE_KNIFE_LARGENESS];
+  const double scale = 1 + (0.1 * largeness);
+  // const double scale = 1;
+  const sprite_component player = sprites[player_id];
+  const int padding_right = player.dest.w;
+  SDL_Texture *t = textures[key];
+  SDL_QueryTexture(t, NULL, NULL, &w, &h);
+  const int padding_left = w * scale;
+  const bool flipped = is_flipped[player_id];
+  const double x =
+      !flipped ? player.dest.x + padding_right : player.dest.x - padding_left;
+  const double y = player.dest.y + player.dest.h / 4.0;
+  const entity_id id = spawn_entity(key, false, 1, x, y);
+  const double angle = flipped ? 180.0 : 0.0;
+  double vx = current_knife_speed;
+
+  if (flipped && knife_charge) {
+    vx = -current_knife_speed * knife_charge - knife_charge;
+  } else if (knife_charge) {
+    vx = current_knife_speed * knife_charge + knife_charge;
+  } else if (flipped) {
+    vx = -current_knife_speed;
+  }
+  // const double vy = 0;
+  // this adds a 'spray' effect to how knives fly out
+  // we can create a powerup to alter the vy
+  // const double vy = unit_distribution(rng_generator) * 2;
+  const double vy = powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] == 0
+                        ? 0
+                        : powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] *
+                              unit_distribution(rng_generator);
+  transforms[id] = {x, y, vx, vy, angle, scale};
+  is_knife[id] = true;
+  entity_types[id] = ENTITY_TYPE_KNIFE;
+  handle_knife_charge_rotation(id);
+}
+
 void spawn_knife() {
   if (!knife_cooldown && num_knives) {
     string key = "knife";
@@ -176,6 +231,12 @@ void spawn_knife() {
     num_knives_fired++;
     num_knives--;
     handle_knife_charge_decrement();
+    const int num_additional_knives =
+        powerups_collected[POWERUP_TYPE_KNIFE_EXTRA];
+
+    for (int i = 0; i < num_additional_knives; i++) {
+      spawn_knife_no_cooldown_no_count_check();
+    }
   }
 }
 
@@ -301,10 +362,15 @@ void spawn_powerup() {
     key = "powerup-knife-spray";
     angle = 90.0;
     break;
+  case POWERUP_TYPE_KNIFE_EXTRA:
+    key = "powerup-knife-extra";
+    angle = 270.0;
+    break;
   case POWERUP_TYPE_SKULL_SPEED:
     key = "powerup-skull-speed";
     // current_player_speed += 2;
     break;
+
   case POWERUP_TYPE_MAGNETISM_THRESHOLD:
     key = "powerup-magnetism-threshold";
     num_frames = 8;
