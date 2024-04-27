@@ -344,4 +344,8 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 
 - [x] can start game in fullscreen 
     - [ ] need to add to config/game.json
+- [ ] powerup to make the player smaller
+- [ ] powerup to fire an additional knife
+    - [ ] when combined with the 'spray' powerup this will become powerful
+
 
