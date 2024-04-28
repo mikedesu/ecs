@@ -58,7 +58,6 @@ extern unordered_map<entity_id, enemy_type> enemy_types;
 extern unordered_map<entity_id, entity_type> entity_types;
 extern unordered_map<entity_id, generator_component> generators;
 extern map<entity_id, sprite_component> sprites;
-// extern unordered_map<entity_id, sprite_component> sprites;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, transform_component> bg_transforms;
 extern unordered_map<entity_id, bool> is_soulshard;
@@ -180,18 +179,18 @@ function<void(entity_id)> handle_update_skull_collision_powerup =
       powerups_collected[type]++;
     };
 
-function<void(entity_id)> handle_update_skull_collision_enemy =
-    [](const entity_id id) {
-      // is_marked_for_deletion[id] = true;
-      player_health--;
-      if (player_health <= 0) {
-        mPrint("Gameover!");
-
-        is_gameover = true;
-        // cleanup();
-        // quit = true;
-      }
-    };
+// function<void(entity_id)> handle_update_skull_collision_enemy =
+//     [](const entity_id id) {
+//       // is_marked_for_deletion[id] = true;
+//       player_health--;
+//       if (player_health <= 0) {
+//         mPrint("Gameover!");
+//
+//         is_gameover = true;
+//         // cleanup();
+//         // quit = true;
+//       }
+//     };
 
 function<void(entity_id)> update_skull_collision = [](const entity_id id) {
   if (id == player_id) {
@@ -217,8 +216,6 @@ function<void(entity_id)> update_skull_collision = [](const entity_id id) {
       if (player_health <= 0) {
         mPrint("Gameover!");
         is_gameover = true;
-        // cleanup();
-        // quit = true;
       }
       break;
     case ENTITY_TYPE_ITEM:
@@ -244,37 +241,38 @@ function<void(transform_pair)> handle_bg_transform =
     [](const transform_pair t) {
       entity_id id = t.first;
       transform_component transform = t.second;
-      sprite_component sprite = bg_sprites[id];
-      transform.x += transform.vx;
-      transform.y += transform.vy;
+      transform_component &bg_transform = bg_transforms[id];
+      sprite_component &sprite = bg_sprites[id];
+      bg_transform.x += transform.vx;
+      bg_transform.y += transform.vy;
       // handle looping background
-      if (transform.x < -sprite.src.w * transform.scale) {
-        transform.x = config["window_width"];
+      if (transform.x < -bg_sprites[id].src.w * transform.scale) {
+        bg_transform.x = config["window_width"];
       }
       sprite.dest.x = transform.x;
       sprite.dest.y = transform.y;
       sprite.dest.w = sprite.src.w * transform.scale;
       sprite.dest.h = sprite.src.h * transform.scale;
-      bg_sprites[id] = sprite;
-      bg_transforms[id] = transform;
     };
 
 // bounds checking, player cannot move beyond texture
-function<void(const entity_id, transform_component &)> handle_skull_transform =
-    [](const entity_id id, transform_component &transform) {
-      sprite_component sprite = sprites[id];
-      if (transform.x < 0) {
-        transform.x = 0;
-      } else if (transform.x > config["target_texture_width"] - sprite.dest.w) {
-        transform.x = config["target_texture_width"] - sprite.dest.w;
-      }
-      if (transform.y < 0) {
-        transform.y = 0;
-      } else if (transform.y >
-                 config["target_texture_height"] - sprite.dest.h) {
-        transform.y = config["target_texture_height"] - sprite.dest.h;
-      }
-    };
+// function<void(const entity_id, transform_component &)> handle_skull_transform
+// =
+//    [](const entity_id id, transform_component &transform) {
+//      sprite_component sprite = sprites[id];
+//      if (transform.x < 0) {
+//        transform.x = 0;
+//      } else if (transform.x > config["target_texture_width"] - sprite.dest.w)
+//      {
+//        transform.x = config["target_texture_width"] - sprite.dest.w;
+//      }
+//      if (transform.y < 0) {
+//        transform.y = 0;
+//      } else if (transform.y >
+//                 config["target_texture_height"] - sprite.dest.h) {
+//        transform.y = config["target_texture_height"] - sprite.dest.h;
+//      }
+//    };
 
 function<void(const entity_id)> handle_enemy_transform =
     [](const entity_id id) {
@@ -336,7 +334,18 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   transform.x += transform.vx;
   transform.y += transform.vy;
   if (id == player_id) {
-    handle_skull_transform(id, transform);
+    if (transform.x < 0) {
+      transform.x = 0;
+    } else if (transform.x >
+               config["target_texture_width"] - sprites[id].dest.w) {
+      transform.x = config["target_texture_width"] - sprites[id].dest.w;
+    }
+    if (transform.y < 0) {
+      transform.y = 0;
+    } else if (transform.y >
+               config["target_texture_height"] - sprites[id].dest.h) {
+      transform.y = config["target_texture_height"] - sprites[id].dest.h;
+    }
   }
 
   // transforms[id] = transform;
@@ -348,34 +357,50 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   sprites[id].dest.w = sprites[id].src.w * transform.scale;
   sprites[id].dest.h = sprites[id].src.h * transform.scale;
   switch (entity_types[id]) {
-  case ENTITY_TYPE_ENEMY:
-    handle_enemy_transform(id);
-    break;
-  case ENTITY_TYPE_KNIFE:
-  case ENTITY_TYPE_SOULSHARD:
-    handle_knife_soulshard_transform(id);
-    break;
-  case ENTITY_TYPE_ITEM:
-    handle_powerup_transform(id);
-    break;
-  case ENTITY_TYPE_PARTICLE:
-    // handle_blood_pixel_transform(id);
-    {
-      // const int left = 0;
-      // const int right = window_width;
-      // const int top = 0;
-      // const int bottom = window_height;
-      // const int x = transform.x;
-      // const int y = transform.y;
-      blood_pixel_lifetime[id]--;
-      const bool mark =
-          blood_pixel_lifetime[id] <= 0; // x < left || x > right ||
-                                         // y < top || y > bottom;
-      // const bool mark = x < left || x > right || y < top || y > bottom;
-      //  blood_pixel_lifetime[id] <= 0;
-      is_marked_for_deletion[id] = mark;
+  case ENTITY_TYPE_ENEMY: {
+    const int w = sprites[id].src.w;
+    const int left = 2 * -w;
+    // const int window_width = config["window_width"];
+    const int right = window_width + 2 * w;
+    const int x = transforms[id].x;
+    const bool mark = x < left || x > right;
+    is_marked_for_deletion[id] = mark;
+    if (mark) {
+      num_enemies_escaped++;
     }
-    break;
+  } break;
+  case ENTITY_TYPE_KNIFE: {
+    bool is_marked =
+        transforms[id].x < 2 * -sprites[id].src.w ||
+        // transforms[id].x > config["window_width"] + 2 * sprites[id].src.w;
+        transforms[id].x > window_width + 2 * sprites[id].src.w;
+    is_marked_for_deletion[id] = is_marked;
+    if (is_marked) {
+      num_knives++;
+      if (num_knives > max_num_knives) {
+        num_knives = max_num_knives;
+      }
+    }
+  } break;
+  case ENTITY_TYPE_SOULSHARD: {
+    bool is_marked =
+        transforms[id].x < 2 * -sprites[id].src.w ||
+        // transforms[id].x > config["window_width"] + 2 * sprites[id].src.w;
+        transforms[id].x > window_width + 2 * sprites[id].src.w;
+    is_marked_for_deletion[id] = is_marked;
+  } break;
+  case ENTITY_TYPE_ITEM: {
+    is_marked_for_deletion[id] =
+        transforms[id].x < 2 * -sprites[id].src.w ||
+        transforms[id].x > window_width + 2 * sprites[id].src.w ||
+        transforms[id].y < 2 * -sprites[id].src.h ||
+        transforms[id].y > window_width + 2 * sprites[id].src.h;
+  } break;
+  case ENTITY_TYPE_PARTICLE: {
+    blood_pixel_lifetime[id]--;
+    is_marked_for_deletion[id] =
+        blood_pixel_lifetime[id] <= 0; // x < left || x > right ||
+  } break;
   default:
     break;
   }
@@ -555,8 +580,19 @@ void update_rotations() {
   for_each(is_rotating.begin(), is_rotating.end(), handle_rotation);
 }
 
+// static int times = 0;
+// static int start_ticks = 0;
+
 void update_transform_components() {
+  // start_ticks = SDL_GetTicks();
   for_each(transforms.begin(), transforms.end(), handle_transform);
+
+  // times += (SDL_GetTicks() - start_ticks);
+
+  // if (frame_count % 60 == 0) {
+  //   mPrint("update_transform_components: " + to_string(times / 60));
+  //   times = 0;
+  // }
 }
 
 void update_knife_cooldown() {

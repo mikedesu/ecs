@@ -418,9 +418,13 @@ void spawn_powerup() {
   entity_types[id] = ENTITY_TYPE_ITEM;
 }
 
+// static int times = 0;
+// static int start_ticks = 0;
+// static int count = 0;
+
 void spawn_blood_pixels(const int x, const int y, const int n) {
-  // mPrint("spawn_blood_pixels: " + to_string(x) + ", " + to_string(y) + ", " +
-  //        to_string(n));
+  mPrint("spawn_blood_pixels: " + to_string(x) + ", " + to_string(y) + ", " +
+         to_string(n));
   //
 
   // if we have too many blood pixels, dont bother spawning anymore
@@ -428,6 +432,8 @@ void spawn_blood_pixels(const int x, const int y, const int n) {
   // if (is_blood_pixel.size() > hardlimit) {
   //  return;
   //}
+
+  // start_ticks = SDL_GetTicks();
 
   const string key = "blood-pixel";
   SDL_Texture *t = textures[key];
@@ -447,7 +453,7 @@ void spawn_blood_pixels(const int x, const int y, const int n) {
                       blood_velocity_distribution(rng_generator),
                       blood_velocity_distribution(rng_generator), 0, 1};
     is_blood_pixel[id] = true;
-    blood_pixel_lifetime[id] = 120;
+    blood_pixel_lifetime[id] = rand() % 120;
     entity_types[id] = ENTITY_TYPE_PARTICLE;
     entities.push_back(id);
 
@@ -455,4 +461,8 @@ void spawn_blood_pixels(const int x, const int y, const int n) {
     //   break;
     // }
   }
+
+  // times += SDL_GetTicks() - start_ticks;
+  // mPrint("average time to spawn blood pixels: " + to_string(times));
+  // times = 0;
 }

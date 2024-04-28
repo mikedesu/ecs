@@ -377,3 +377,9 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
         - [ ] 5k
         - [ ] 10k
         - [ ] 20k
+- [ ] consider pre-generating blood pixels
+    - [ ] time to spawn 4k pixels is very high
+    - [ ] time to handle transforms for 4k entities is very high
+
+
+

@@ -4,6 +4,7 @@
 #include "entity_id.h"
 #include "entity_type.h"
 #include "mPrint.h"
+#include "powerup_type.h"
 #include <SDL_joystick.h>
 #include <algorithm>
 #include <functional>
@@ -54,6 +55,8 @@ extern unordered_map<entity_id, bool> is_blood_pixel;
 extern unordered_map<enemy_type, int> enemies_killed;
 extern unordered_map<entity_id, entity_type> entity_types;
 extern unordered_map<int, bool> is_pressed;
+extern unordered_map<entity_id, powerup_type> powerup_types;
+extern unordered_map<entity_id, bool> is_powerup;
 
 extern vector<entity_id> entities;
 extern vector<entity_id> entities_marked_for_deletion_tmp;
@@ -81,6 +84,8 @@ function<void(pair<entity_id, bool>)> cleanup_entity_marked_for_deletion =
         is_generator.erase(id);
         entity_types.erase(id);
         bg_sprites.erase(id);
+        powerup_types.erase(id);
+        is_powerup.erase(id);
         // is_marked_for_deletion.erase(id);
         is_blood_pixel.erase(id);
         entities.erase(remove(entities.begin(), entities.end(), id),
@@ -117,6 +122,8 @@ void cleanup_data_structures() {
   bg_sprites.clear();
   bat_y_vec.clear();
   bat_vx_vec.clear();
+  powerup_types.clear();
+  is_powerup.clear();
 }
 
 void cleanup() {
