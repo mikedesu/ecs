@@ -363,7 +363,17 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
     - [ ] would modify the transform to drag the entity down
 - [ ] pumpkin enemy / boss
     - [ ] motivation: secret of mana boss 2
-- [ ] consider changing the x,y in `transform_component` to `int` from `double` 
-
-
-
+- [-] consider changing the x,y in `transform_component` to `int` from `double` 
+- [-] consider removing ALL `double` computations
+    - not happening!
+- [ ] unlimit blood particle generation
+- [ ] **BIG DEAL** move `transform_component` properties into `sprite_component`
+    - [ ] all code locations that would use `transform.x` would now use `sprite.dest.x`
+    - [ ] hoping this process gives us a performance boost
+    - [ ] we want to see smooth 60fps at 2k entities
+        - [ ] 2k
+        - [ ] 3k
+        - [ ] 4k
+        - [ ] 5k
+        - [ ] 10k
+        - [ ] 20k

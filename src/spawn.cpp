@@ -319,7 +319,7 @@ void spawn_bat(const double x, const double y, const double vx, const double vy,
   is_enemy[id] = true;
   entity_types[id] = ENTITY_TYPE_ENEMY;
   enemy_types[id] = ENEMY_TYPE_BAT;
-  mPrint("spawned bat with id: " + to_string(id));
+  //  mPrint("spawned bat with id: " + to_string(id));
 }
 
 void spawn_generator(enemy_type type, bool active, int group, int cooldown,
@@ -424,10 +424,10 @@ void spawn_blood_pixels(const int x, const int y, const int n) {
   //
 
   // if we have too many blood pixels, dont bother spawning anymore
-  const int hardlimit = 1000;
-  if (is_blood_pixel.size() > hardlimit) {
-    return;
-  }
+  // const int hardlimit = 1000;
+  // if (is_blood_pixel.size() > hardlimit) {
+  //  return;
+  //}
 
   const string key = "blood-pixel";
   SDL_Texture *t = textures[key];
@@ -451,8 +451,8 @@ void spawn_blood_pixels(const int x, const int y, const int n) {
     entity_types[id] = ENTITY_TYPE_PARTICLE;
     entities.push_back(id);
 
-    if (is_blood_pixel.size() > hardlimit) {
-      break;
-    }
+    // if (is_blood_pixel.size() > hardlimit) {
+    //   break;
+    // }
   }
 }

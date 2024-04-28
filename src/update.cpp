@@ -338,7 +338,11 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   if (id == player_id) {
     handle_skull_transform(id, transform);
   }
-  transforms[id] = transform;
+
+  // transforms[id] = transform;
+  transforms[id].x = transform.x;
+  transforms[id].y = transform.y;
+
   sprites[id].dest.x = transform.x;
   sprites[id].dest.y = transform.y;
   sprites[id].dest.w = sprites[id].src.w * transform.scale;
@@ -357,15 +361,16 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   case ENTITY_TYPE_PARTICLE:
     // handle_blood_pixel_transform(id);
     {
-      const int left = 0;
-      const int right = window_width;
-      const int top = 0;
-      const int bottom = window_height;
-      const int x = transform.x;
-      const int y = transform.y;
+      // const int left = 0;
+      // const int right = window_width;
+      // const int top = 0;
+      // const int bottom = window_height;
+      // const int x = transform.x;
+      // const int y = transform.y;
       blood_pixel_lifetime[id]--;
-      const bool mark = x < left || x > right || y < top || y > bottom ||
-                        blood_pixel_lifetime[id] <= 0;
+      const bool mark =
+          blood_pixel_lifetime[id] <= 0; // x < left || x > right ||
+                                         // y < top || y > bottom;
       // const bool mark = x < left || x > right || y < top || y > bottom;
       //  blood_pixel_lifetime[id] <= 0;
       is_marked_for_deletion[id] = mark;

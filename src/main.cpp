@@ -56,8 +56,8 @@ char stopwatch_text[128] = "stopwatch_text";
 bool quit = false;
 bool do_render_debug_panel = false;
 
-bool is_fullscreen = false;
-// bool is_fullscreen = true;
+// bool is_fullscreen = false;
+bool is_fullscreen = true;
 
 bool is_paused = false;
 bool is_gameover = false;
