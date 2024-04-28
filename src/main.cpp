@@ -33,6 +33,9 @@ int DEBUG_TEXT_WRAP_LEN = 2048;
 // moving into gameconfig soon
 double zoom = 1.0; // has to appear
 
+int window_width = -1;
+int window_height = -1;
+
 // moving into gameconfig soon
 int default_knife_speed = 4;
 int current_knife_speed = default_knife_speed;
@@ -53,8 +56,8 @@ char stopwatch_text[128] = "stopwatch_text";
 bool quit = false;
 bool do_render_debug_panel = false;
 
-// bool is_fullscreen = false;
-bool is_fullscreen = true;
+bool is_fullscreen = false;
+// bool is_fullscreen = true;
 
 bool is_paused = false;
 bool is_gameover = false;
@@ -123,7 +126,8 @@ vector<int> bat_y_vec;
 
 unordered_map<entity_id, powerup_type> powerup_types;
 unordered_map<entity_id, enemy_type> enemy_types;
-unordered_map<entity_id, sprite_component> sprites;
+map<entity_id, sprite_component> sprites;
+// unordered_map<entity_id, sprite_component> sprites;
 unordered_map<entity_id, transform_component> transforms;
 unordered_map<entity_id, transform_component> bg_transforms;
 unordered_map<entity_id, bg_entity_type> bg_entity_types;
@@ -138,7 +142,9 @@ unordered_map<entity_id, bool> is_collidable;
 unordered_map<entity_id, bool> is_blood_pixel;
 unordered_map<entity_id, bool> is_enemy;
 unordered_map<entity_id, bool> is_soulshard;
+
 unordered_map<entity_id, bool> is_knife;
+
 unordered_map<entity_id, bool> is_powerup;
 unordered_map<entity_id, bool> is_flipped;
 unordered_map<entity_id, bool> is_generator;
@@ -165,6 +171,7 @@ int init_target_texture();
 entity_id get_next_entity_id();
 void bg_init();
 void cleanup();
+void cleanup_and_exit_with_failure();
 void cleanup_entities_marked_for_deletion();
 void create_window();
 void create_renderer();
@@ -229,7 +236,9 @@ int main() {
   do_fullscreen();
   init_game();
 
+  // mPrint("sizeof is_knife " + to_string(is_knife.size()));
   mPrint("main loop...");
+
   while (!quit) {
     handle_input();
     if (!is_paused && !is_gameover) {
@@ -237,6 +246,16 @@ int main() {
       update();
       render_frame();
       cleanup_entities_marked_for_deletion();
+
+      // if (frame_count % 240 == 0 && is_knife.size() > 0) {
+      // mPrint("sizeof is_knife " + to_string(is_knife.size()));
+      //  cleanup_and_exit_with_failure();
+      //  for (auto const &pair : is_knife) {
+      //    mPrint("is_knife " + to_string(pair.first) + " " +
+      //           to_string(pair.second));
+      //  }
+      //}
+
     } else if (is_gameover) {
       render_gameover(); // prob should be handled in render_frame()
     }

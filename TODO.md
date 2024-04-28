@@ -350,6 +350,20 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
     - [ ] spawning a lot of extra knives is appearing to have a big slowdown effect on the game
         - [ ] possibly due to the rectangle modulation
             - [ ] one way we might fix this is to pre-calculate the destination rectangle
+- [ ] put a cap on how many player-speed powerups you can get
+    - [ ] currently, moving too fast is possible after getting so-many speedups
+- [x] converted sprites to a `map` but it isn't seeming to improve performance at all
+    - [ ] attempting to cut blood pixel count in half seemed to work, but there is still a significant performance slowdown around ~2000 entities on screen
+    - [ ] it is possible that attempting to manage blood pixel lifetimes is causing the slowdown...
+        - [ ] because we are spawning blood pixels in groups, we could manage lifetimes with a group instead of per-pixel
+
+## 28 April 2024
+
+- [ ] gravity component (for blood pixels among other things)
+    - [ ] would modify the transform to drag the entity down
+- [ ] pumpkin enemy / boss
+    - [ ] motivation: secret of mana boss 2
+- [ ] consider changing the x,y in `transform_component` to `int` from `double` 
 
 
 

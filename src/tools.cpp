@@ -9,6 +9,7 @@
 #include <vector>
 
 using std::string;
+using std::to_string;
 using std::unordered_map;
 using std::vector;
 
@@ -31,7 +32,10 @@ extern vector<entity_id> entities;
 bool get_texture_width_height_for_key(string key);
 bool get_texture_width_height(SDL_Texture *t);
 
-entity_id get_next_entity_id() { return next_entity_id++; }
+entity_id get_next_entity_id() {
+  // mPrint("next_entity_id: " + to_string(next_entity_id));
+  return next_entity_id++;
+}
 
 double distance(const int x1, const int y1, const int x2, const int y2) {
   return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));

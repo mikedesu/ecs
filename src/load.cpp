@@ -62,6 +62,8 @@ extern entity_id player_id;
 extern int gameover_count;
 extern unsigned long game_begin_time;
 
+extern int window_width;
+extern int window_height;
 // external functions
 extern double fps();
 extern size_t get_num_enemies_killed();
@@ -408,8 +410,12 @@ void load_main_config() {
   json_value_has_member_is_int_set_config(d, "blood_pixel_count");
   json_value_has_member_is_int_set_config(d, "default_magnetism_threshold");
   // copy over default window width and height as default window width values
+
   config["window_width"] = config["default_window_width"];
   config["window_height"] = config["default_window_height"];
+  window_width = config["window_width"];
+  window_height = config["window_height"];
+
   config["target_texture_width"] = config["default_window_width"];
   config["target_texture_height"] = config["default_window_height"];
 

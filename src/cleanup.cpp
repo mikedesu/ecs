@@ -36,7 +36,8 @@ extern TTF_Font *gFont;
 extern TTF_Font *gameover_font;
 
 extern unordered_map<string, SDL_Texture *> textures;
-extern unordered_map<entity_id, sprite_component> sprites;
+extern map<entity_id, sprite_component> sprites;
+// extern unordered_map<entity_id, sprite_component> sprites;
 extern map<entity_id, sprite_component> bg_sprites;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, generator_component> generators;

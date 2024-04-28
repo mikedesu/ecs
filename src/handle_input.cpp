@@ -3,9 +3,11 @@
 #include "entity_id.h"
 #include "mPrint.h"
 #include <SDL_events.h>
+#include <map>
 #include <string>
 #include <unordered_map>
 
+using std::map;
 using std::string;
 using std::unordered_map;
 
@@ -32,7 +34,8 @@ extern SDL_Rect target_texture_dest;
 extern SDL_Window *window;
 extern unordered_map<entity_id, bool> inputs;
 extern unordered_map<entity_id, transform_component> transforms;
-extern unordered_map<entity_id, sprite_component> sprites;
+extern map<entity_id, sprite_component> sprites;
+// extern unordered_map<entity_id, sprite_component> sprites;
 extern unordered_map<int, bool> is_pressed;
 extern unordered_map<int, bool> is_flipped;
 extern unordered_map<int, bool> is_pressed;

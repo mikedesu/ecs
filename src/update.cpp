@@ -35,6 +35,8 @@ extern int current_soulshard_magnetism_threshold;
 extern int current_knife_speed;
 extern int current_player_speed;
 extern int frame_count;
+extern int window_width;
+extern int window_height;
 extern int num_collisions;
 extern int num_knives;
 extern int max_num_knives;
@@ -55,7 +57,8 @@ extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, enemy_type> enemy_types;
 extern unordered_map<entity_id, entity_type> entity_types;
 extern unordered_map<entity_id, generator_component> generators;
-extern unordered_map<entity_id, sprite_component> sprites;
+extern map<entity_id, sprite_component> sprites;
+// extern unordered_map<entity_id, sprite_component> sprites;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, transform_component> bg_transforms;
 extern unordered_map<entity_id, bool> is_soulshard;
@@ -179,7 +182,7 @@ function<void(entity_id)> handle_update_skull_collision_powerup =
 
 function<void(entity_id)> handle_update_skull_collision_enemy =
     [](const entity_id id) {
-      is_marked_for_deletion[id] = true;
+      // is_marked_for_deletion[id] = true;
       player_health--;
       if (player_health <= 0) {
         mPrint("Gameover!");
@@ -209,7 +212,14 @@ function<void(entity_id)> update_skull_collision = [](const entity_id id) {
       handle_update_skull_collision_soulshard();
       break;
     case ENTITY_TYPE_ENEMY:
-      handle_update_skull_collision_enemy(id);
+      is_marked_for_deletion[id] = true;
+      player_health--;
+      if (player_health <= 0) {
+        mPrint("Gameover!");
+        is_gameover = true;
+        // cleanup();
+        // quit = true;
+      }
       break;
     case ENTITY_TYPE_ITEM:
       is_marked_for_deletion[id] = true;
@@ -286,7 +296,8 @@ function<void(const entity_id)> handle_knife_soulshard_transform =
           transforms[id].x < 2 * -sprites[id].src.w ||
           transforms[id].x > config["window_width"] + 2 * sprites[id].src.w;
       is_marked_for_deletion[id] = is_marked;
-      if (is_knife[id] && is_marked) {
+      // if (is_knife[id] && is_marked) {
+      if (entity_types[id] == ENTITY_TYPE_KNIFE && is_marked) {
         num_knives++;
         if (num_knives > max_num_knives) {
           num_knives = max_num_knives;
@@ -303,20 +314,21 @@ function<void(const entity_id)> handle_powerup_transform =
           transforms[id].y > config["window_width"] + 2 * sprites[id].src.h;
     };
 
-function<void(const entity_id)> handle_blood_pixel_transform =
-    [](const entity_id id) {
-      const int left = 2 * -sprites[id].src.w;
-      const int width = config["window_width"];
-      const int right = width + 2 * sprites[id].src.w;
-      const int top = 2 * -sprites[id].src.h;
-      const int bottom = width + 2 * sprites[id].src.h;
-      const int x = transforms[id].x;
-      const int y = transforms[id].y;
-      blood_pixel_lifetime[id]--;
-      const bool mark = x < left || x > right || y < top || y > bottom ||
-                        blood_pixel_lifetime[id] <= 0;
-      is_marked_for_deletion[id] = mark;
-    };
+// function<void(const entity_id)> handle_blood_pixel_transform =
+//     [](const entity_id id) {
+//       const int left = 0;
+//       const int right = config["window_width"];
+//       const int top = 0;
+//       const int bottom = config["window_height"];
+//       const int x = transforms[id].x;
+//       const int y = transforms[id].y;
+//  blood_pixel_lifetime[id]--;
+//  const bool mark = x < left || x > right || y < top || y > bottom ||
+//                    blood_pixel_lifetime[id] <= 0;
+//      const bool mark = x < left || x > right || y < top || y > bottom;
+// blood_pixel_lifetime[id] <= 0;
+//      is_marked_for_deletion[id] = mark;
+//    };
 
 function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   entity_id id = t.first;
@@ -331,26 +343,72 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   sprites[id].dest.y = transform.y;
   sprites[id].dest.w = sprites[id].src.w * transform.scale;
   sprites[id].dest.h = sprites[id].src.h * transform.scale;
-  if (id != player_id && is_enemy[id]) {
+  switch (entity_types[id]) {
+  case ENTITY_TYPE_ENEMY:
     handle_enemy_transform(id);
-  } else if (id != player_id && (is_knife[id] || is_soulshard[id])) {
+    break;
+  case ENTITY_TYPE_KNIFE:
+  case ENTITY_TYPE_SOULSHARD:
     handle_knife_soulshard_transform(id);
-  } else if (id != player_id && is_powerup[id]) {
+    break;
+  case ENTITY_TYPE_ITEM:
     handle_powerup_transform(id);
-  } else if (id != player_id && is_blood_pixel[id]) {
-    handle_blood_pixel_transform(id);
+    break;
+  case ENTITY_TYPE_PARTICLE:
+    // handle_blood_pixel_transform(id);
+    {
+      const int left = 0;
+      const int right = window_width;
+      const int top = 0;
+      const int bottom = window_height;
+      const int x = transform.x;
+      const int y = transform.y;
+      blood_pixel_lifetime[id]--;
+      const bool mark = x < left || x > right || y < top || y > bottom ||
+                        blood_pixel_lifetime[id] <= 0;
+      // const bool mark = x < left || x > right || y < top || y > bottom;
+      //  blood_pixel_lifetime[id] <= 0;
+      is_marked_for_deletion[id] = mark;
+    }
+    break;
+  default:
+    break;
   }
+  //}
+
+  // if (id != player_id && entity_types[id] == ENTITY_TYPE_ENEMY) {
+  //   handle_enemy_transform(id);
+  // } else if (id != player_id && (entity_types[id] == ENTITY_TYPE_KNIFE ||
+  //                                entity_types[id] == ENTITY_TYPE_SOULSHARD))
+  //                                {
+  //   handle_knife_soulshard_transform(id);
+  // } else if (id != player_id && entity_types[id] == ENTITY_TYPE_ITEM) {
+  //   handle_powerup_transform(id);
+  // } else if (id != player_id && entity_types[id] == ENTITY_TYPE_PARTICLE) {
+  //   handle_blood_pixel_transform(id);
+  // }
 };
 
 function<void(rotation_pair)> handle_rotation = [](const rotation_pair p) {
   entity_id id = p.first;
   if (p.second) {
     transform_component transform = transforms[p.first];
-    if (is_knife[p.first]) {
+    // if (is_knife[p.first]) {
+
+    switch (entity_types[p.first]) {
+    case ENTITY_TYPE_KNIFE:
       transform.angle += rotation_speeds[p.first];
-    } else {
+      break;
+    default:
       transform.angle += 1.0;
+      break;
     }
+
+    // if (entity_types[p.first] == ENTITY_TYPE_KNIFE) {
+    //   transform.angle += rotation_speeds[p.first];
+    // } else {
+    //   transform.angle += 1.0;
+    // }
     transforms[id] = transform;
   }
 };
@@ -379,19 +437,38 @@ function<void(entity_id, entity_id)> check_for_knife_collision_with_enemy =
       }
     };
 
-function<void(entity_id)> check_for_knife_collision = [](const entity_id id) {
-  if (!is_knife[id]) {
-    return;
-  }
-  for (auto p : is_enemy) {
-    entity_id enemy_id = p.first;
-    if (id == enemy_id || is_blood_pixel[enemy_id] || is_soulshard[enemy_id] ||
-        is_powerup[enemy_id] || is_knife[enemy_id]) {
-      continue;
-    }
-    check_for_knife_collision_with_enemy(id, enemy_id);
-  }
-};
+// function<void(entity_id)> check_for_knife_collision = [](const entity_id id)
+// {
+function<void(pair<entity_id, bool>)> check_for_knife_collision =
+    [](const pair<entity_id, bool> knife) {
+      entity_id id = knife.first;
+      for (auto p : is_enemy) {
+        entity_id enemy_id = p.first;
+        // entity_type t = entity_types[enemy_id];
+        //  if (id == enemy_id) {
+        //    continue;
+        //  } else if (t == ENTITY_TYPE_PARTICLE) {
+        //    mPrint("is_blood_pixel[enemy_id]");
+        //    continue;
+        //  } else if (t == ENTITY_TYPE_SOULSHARD) {
+        //    mPrint("is_soulshard[enemy_id]");
+        //    continue;
+        //  } else if (t == ENTITY_TYPE_ITEM) {
+        //    mPrint("is_powerup[enemy_id]");
+        //    continue;
+        //  } else if (t == ENTITY_TYPE_KNIFE) {
+        //    mPrint("is_knife[enemy_id]");
+        //    continue;
+        //  }
+        //
+        //  if (id == enemy_id || is_blood_pixel[enemy_id] ||
+        //     is_soulshard[enemy_id] || is_powerup[enemy_id] ||
+        //     is_knife[enemy_id]) {
+        //   continue;
+        // }
+        check_for_knife_collision_with_enemy(id, enemy_id);
+      }
+    };
 
 function<void(sprite_pair)> update_animation = [](const sprite_pair p) {
   entity_id id = p.first;
@@ -460,7 +537,8 @@ void update_animations() {
 }
 
 void update_knife_collisions() {
-  for_each(entities.begin(), entities.end(), check_for_knife_collision);
+  // for_each(entities.begin(), entities.end(), check_for_knife_collision);
+  for_each(is_knife.begin(), is_knife.end(), check_for_knife_collision);
 }
 
 void update_collisions() {

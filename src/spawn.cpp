@@ -2,11 +2,13 @@
 #include "components.h"
 #include "entity_id.h"
 #include "entity_type.h"
+#include "mPrint.h"
 // #include "mPrint.h"
 #include "powerup_type.h"
 #include <SDL_render.h>
 #include <algorithm>
 #include <cassert>
+#include <map>
 #include <random>
 #include <string>
 #include <unordered_map>
@@ -15,9 +17,11 @@
 #define DEFAULT_POWERUP_VX -1.0
 
 using std::default_random_engine;
+using std::map;
 using std::mt19937;
 using std::shuffle;
 using std::string;
+using std::to_string;
 using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
@@ -58,7 +62,8 @@ extern unordered_map<entity_id, int> blood_pixel_lifetime;
 
 extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, enemy_type> enemy_types;
-extern unordered_map<entity_id, sprite_component> sprites;
+extern map<entity_id, sprite_component> sprites;
+// extern unordered_map<entity_id, sprite_component> sprites;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, generator_component> generators;
 extern unordered_map<entity_id, bool> is_soulshard;
@@ -76,7 +81,7 @@ extern vector<entity_id> entities;
 extern entity_id get_next_entity_id();
 
 void spawn_knife();
-void spawn_knife_no_cooldown_no_count_check();
+// void spawn_knife_no_cooldown_no_count_check();
 void spawn_bat(const double x, const double y, const double vx, const double vy,
                const double scale);
 
@@ -91,10 +96,12 @@ entity_id spawn_entity(const string key, const bool is_animating,
   sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {x, y, w, h}};
   transforms[id] = {dx, dy, 0, 0, 0, 1};
   entities.push_back(id);
+  // mPrint("spawned entity with id: " + to_string(id));
   return id;
 }
 
 void spawn_skull(const int x, const int y) {
+  mPrint("spawn skull");
   if (player_id == -1) {
     const string key = "skull";
     const bool is_anim = false;
@@ -104,6 +111,7 @@ void spawn_skull(const int x, const int y) {
     player_id = id;
     entity_types[id] = ENTITY_TYPE_PLAYER;
   }
+  mPrint("end spawn skull");
 }
 
 void spawn_soulshard(const int x, const int y) {
@@ -142,47 +150,48 @@ void handle_knife_charge_rotation(const entity_id id) {
 // }
 //}
 
-void spawn_knife_no_cooldown_no_count_check() {
-  string key = "knife";
-  if (knife_charge >= 2) {
-    key = "knife-blue";
-  }
-  const int largeness = powerups_collected[POWERUP_TYPE_KNIFE_LARGENESS];
-  const double scale = 1 + (0.1 * largeness);
-  // const double scale = 1;
-  const sprite_component player = sprites[player_id];
-  const int padding_right = player.dest.w;
-  SDL_Texture *t = textures[key];
-  SDL_QueryTexture(t, NULL, NULL, &w, &h);
-  const int padding_left = w * scale;
-  const bool flipped = is_flipped[player_id];
-  const double x =
-      !flipped ? player.dest.x + padding_right : player.dest.x - padding_left;
-  const double y = player.dest.y + player.dest.h / 4.0;
-  const entity_id id = spawn_entity(key, false, 1, x, y);
-  const double angle = flipped ? 180.0 : 0.0;
-  double vx = current_knife_speed;
-
-  if (flipped && knife_charge) {
-    vx = -current_knife_speed * knife_charge - knife_charge;
-  } else if (knife_charge) {
-    vx = current_knife_speed * knife_charge + knife_charge;
-  } else if (flipped) {
-    vx = -current_knife_speed;
-  }
-  // const double vy = 0;
-  // this adds a 'spray' effect to how knives fly out
-  // we can create a powerup to alter the vy
-  // const double vy = unit_distribution(rng_generator) * 2;
-  const double vy = powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] == 0
-                        ? 0
-                        : powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] *
-                              unit_distribution(rng_generator);
-  transforms[id] = {x, y, vx, vy, angle, scale};
-  is_knife[id] = true;
-  entity_types[id] = ENTITY_TYPE_KNIFE;
-  handle_knife_charge_rotation(id);
-}
+// void spawn_knife_no_cooldown_no_count_check() {
+//   string key = "knife";
+//   if (knife_charge >= 2) {
+//     key = "knife-blue";
+//   }
+//   const int largeness = powerups_collected[POWERUP_TYPE_KNIFE_LARGENESS];
+//   const double scale = 1 + (0.1 * largeness);
+//   // const double scale = 1;
+//   const sprite_component player = sprites[player_id];
+//   const int padding_right = player.dest.w;
+//   SDL_Texture *t = textures[key];
+//   SDL_QueryTexture(t, NULL, NULL, &w, &h);
+//   const int padding_left = w * scale;
+//   const bool flipped = is_flipped[player_id];
+//   const double x =
+//       !flipped ? player.dest.x + padding_right : player.dest.x -
+//       padding_left;
+//   const double y = player.dest.y + player.dest.h / 4.0;
+//   const entity_id id = spawn_entity(key, false, 1, x, y);
+//   const double angle = flipped ? 180.0 : 0.0;
+//   double vx = current_knife_speed;
+//
+//   if (flipped && knife_charge) {
+//     vx = -current_knife_speed * knife_charge - knife_charge;
+//   } else if (knife_charge) {
+//     vx = current_knife_speed * knife_charge + knife_charge;
+//   } else if (flipped) {
+//     vx = -current_knife_speed;
+//   }
+//   // const double vy = 0;
+//   // this adds a 'spray' effect to how knives fly out
+//   // we can create a powerup to alter the vy
+//   // const double vy = unit_distribution(rng_generator) * 2;
+//   const double vy = powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] == 0
+//                         ? 0
+//                         : powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] *
+//                               unit_distribution(rng_generator);
+//   transforms[id] = {x, y, vx, vy, angle, scale};
+//   is_knife[id] = true;
+//   entity_types[id] = ENTITY_TYPE_KNIFE;
+//   handle_knife_charge_rotation(id);
+// }
 
 void spawn_knife() {
   if (!knife_cooldown && num_knives) {
@@ -310,6 +319,7 @@ void spawn_bat(const double x, const double y, const double vx, const double vy,
   is_enemy[id] = true;
   entity_types[id] = ENTITY_TYPE_ENEMY;
   enemy_types[id] = ENEMY_TYPE_BAT;
+  mPrint("spawned bat with id: " + to_string(id));
 }
 
 void spawn_generator(enemy_type type, bool active, int group, int cooldown,
@@ -411,6 +421,14 @@ void spawn_powerup() {
 void spawn_blood_pixels(const int x, const int y, const int n) {
   // mPrint("spawn_blood_pixels: " + to_string(x) + ", " + to_string(y) + ", " +
   //        to_string(n));
+  //
+
+  // if we have too many blood pixels, dont bother spawning anymore
+  const int hardlimit = 1000;
+  if (is_blood_pixel.size() > hardlimit) {
+    return;
+  }
+
   const string key = "blood-pixel";
   SDL_Texture *t = textures[key];
   // custom width/height defined in config/textures.json
@@ -419,6 +437,8 @@ void spawn_blood_pixels(const int x, const int y, const int n) {
   const int num_clips = 1;
   const double dx = x;
   const double dy = y;
+
+  // if we have too many blood pixels, dont bother spawning anymore
   for (int i = 0; i < n; i++) {
     entity_id id = get_next_entity_id();
     sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {x, y, w, h}};
@@ -430,5 +450,9 @@ void spawn_blood_pixels(const int x, const int y, const int n) {
     blood_pixel_lifetime[id] = 120;
     entity_types[id] = ENTITY_TYPE_PARTICLE;
     entities.push_back(id);
+
+    if (is_blood_pixel.size() > hardlimit) {
+      break;
+    }
   }
 }

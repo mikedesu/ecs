@@ -7,6 +7,7 @@
 #include <random>
 #include <string>
 #include <unordered_map>
+// #include <map>
 #include <vector>
 
 using std::mt19937;
@@ -14,6 +15,7 @@ using std::random_device;
 using std::string;
 using std::uniform_real_distribution;
 using std::unordered_map;
+// using std::map;
 using std::vector;
 
 extern random_device rd;
@@ -267,10 +269,12 @@ void init_game_vars() {
 
 void init_game() {
   cleanup_data_structures();
+
   bg_init();
   init_after_load_textures();
   spawn_skull(0, 0);
-  spawn_generator(ENEMY_TYPE_BAT, true, 2, 240, 60 * 30);
+  // spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 30, 60 * 30);
+  spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 4, 60 * 30);
 }
 
 // void check_for_game_controller
