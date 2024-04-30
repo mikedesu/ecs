@@ -28,6 +28,7 @@ using std::vector;
 
 extern mt19937 g;
 
+extern int powerups_onscreen;
 extern vector<int> bat_y_vec;
 extern unordered_map<string, size_t> config;
 extern entity_id player_id;
@@ -410,6 +411,7 @@ void spawn_powerup() {
   is_powerup[id] = true;
   powerup_types[id] = poweruptype;
   entity_types[id] = ENTITY_TYPE_ITEM;
+  powerups_onscreen++;
 }
 
 // static int times = 0;

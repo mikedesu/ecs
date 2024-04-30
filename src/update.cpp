@@ -29,6 +29,7 @@ using std::vector;
 
 extern int cooldown_min;
 
+extern int powerups_onscreen;
 extern bool is_gameover;
 extern unordered_map<string, size_t> config;
 extern int current_soulshard_magnetism_threshold;
@@ -177,6 +178,7 @@ function<void(entity_id)> handle_update_skull_collision_powerup =
       }
 
       powerups_collected[type]++;
+      powerups_onscreen--;
     };
 
 // function<void(entity_id)> handle_update_skull_collision_enemy =
@@ -303,14 +305,18 @@ function<void(const entity_id)> handle_knife_soulshard_transform =
       }
     };
 
-function<void(const entity_id)> handle_powerup_transform =
-    [](const entity_id id) {
-      is_marked_for_deletion[id] =
-          transforms[id].x < 2 * -sprites[id].src.w ||
-          transforms[id].x > config["window_width"] + 2 * sprites[id].src.w ||
-          transforms[id].y < 2 * -sprites[id].src.h ||
-          transforms[id].y > config["window_width"] + 2 * sprites[id].src.h;
-    };
+// function<void(const entity_id)> handle_powerup_transform =
+//     [](const entity_id id) {
+//       const bool mark =
+//           transforms[id].x < 2 * -sprites[id].src.w ||
+//           transforms[id].x > config["window_width"] + 2 * sprites[id].src.w
+//           || transforms[id].y < 2 * -sprites[id].src.h || transforms[id].y >
+//           config["window_width"] + 2 * sprites[id].src.h;
+//       is_marked_for_deletion[id] = mark;
+//       if (mark) {
+//         powerups_onscreen--;
+//       }
+//     };
 
 // function<void(const entity_id)> handle_blood_pixel_transform =
 //     [](const entity_id id) {
@@ -390,11 +396,14 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
     is_marked_for_deletion[id] = is_marked;
   } break;
   case ENTITY_TYPE_ITEM: {
-    is_marked_for_deletion[id] =
-        transforms[id].x < 2 * -sprites[id].src.w ||
-        transforms[id].x > window_width + 2 * sprites[id].src.w ||
-        transforms[id].y < 2 * -sprites[id].src.h ||
-        transforms[id].y > window_width + 2 * sprites[id].src.h;
+    const bool mark = transforms[id].x < 2 * -sprites[id].src.w ||
+                      transforms[id].x > window_width + 2 * sprites[id].src.w ||
+                      transforms[id].y < 2 * -sprites[id].src.h ||
+                      transforms[id].y > window_width + 2 * sprites[id].src.h;
+    is_marked_for_deletion[id] = mark;
+    if (mark) {
+      powerups_onscreen--;
+    }
   } break;
   case ENTITY_TYPE_PARTICLE: {
     blood_pixel_lifetime[id]--;

@@ -23,6 +23,7 @@ using std::unordered_map;
 using std::vector;
 
 // external variables
+extern int powerups_onscreen;
 extern unordered_map<string, size_t> config;
 extern int current_soulshard_magnetism_threshold;
 extern int frame_count;
@@ -161,7 +162,7 @@ void load_debug_text() {
            "%d\nnum_enemies_killed: %ld\nplayer_health: "
            "%d/%d\nsoulshards_collected: %d\ntotal_soulshards_collected: "
            "%d\nmagnetism threshold: %d\nplayer position: "
-           "%.02f,%.02f\ngameover count: %d\n",
+           "%.02f,%.02f\ngameover count: %d\npowerups onscreen: %d\n",
            config["target_texture_width"], config["target_texture_height"],
            config["window_width"], config["window_height"], frame_count,
            entities.size(), fps(), zoom, num_collisions, knife_cooldown,
@@ -169,7 +170,8 @@ void load_debug_text() {
            knife_charge, num_enemies_escaped, get_num_enemies_killed(),
            player_health, player_max_health, player_soulshards,
            total_soulshards_collected, current_soulshard_magnetism_threshold,
-           transforms[player_id].x, transforms[player_id].y, gameover_count);
+           transforms[player_id].x, transforms[player_id].y, gameover_count,
+           powerups_onscreen);
   text_surface = TTF_RenderText_Blended_Wrapped(gFont, texture_text, textColor,
                                                 DEBUG_TEXT_WRAP_LEN);
   if (text_surface == nullptr) {

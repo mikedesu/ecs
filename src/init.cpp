@@ -34,6 +34,7 @@ extern SDL_Rect player_hud_texture_dest;
 extern SDL_Rect stopwatch_texture_src;
 extern SDL_Rect stopwatch_texture_dest;
 
+extern int powerups_onscreen;
 extern int cooldown_min;
 extern int mWidth;
 extern int mHeight;
@@ -270,6 +271,8 @@ void init_game_vars() {
   cooldown_min = 30; // do-able no lag
 
   powerups_collected.clear();
+
+  powerups_onscreen = 0;
 }
 
 void init_game() {

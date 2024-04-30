@@ -86,6 +86,8 @@ int player_max_health = 3;
 int player_soulshards = 0;
 int total_soulshards_collected = 0;
 
+int powerups_onscreen = 0;
+
 entity_id next_entity_id = 0;
 entity_id player_id = -1;
 

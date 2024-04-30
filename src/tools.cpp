@@ -27,10 +27,21 @@ extern unordered_map<string, SDL_Texture *> textures;
 extern unordered_map<enemy_type, int> enemies_killed;
 extern unordered_map<entity_id, generator_component> generators;
 extern unordered_map<entity_id, bool> is_generator;
+extern unordered_map<entity_id, bool> is_powerup;
 extern vector<entity_id> entities;
 
 bool get_texture_width_height_for_key(string key);
 bool get_texture_width_height(SDL_Texture *t);
+
+// size_t count_powerups_onscreen() {
+//   size_t count = 0;
+//   for (auto kv : is_powerup) {
+//     if (kv.second) {
+//       count++;
+//     }
+//   }
+//   return count;
+// }
 
 entity_id get_next_entity_id() {
   // mPrint("next_entity_id: " + to_string(next_entity_id));

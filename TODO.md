@@ -381,5 +381,19 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
     - [ ] time to spawn 4k pixels is very high
     - [ ] time to handle transforms for 4k entities is very high
 
+## 30 April 2024
+
+- [ ] we want to be able to tune powerups such that
+    - [ ] how many powerups are on-screen at any given point
+        - [ ] during powerup-spawn, we need to check how many are currently not-picked up
+    - [ ] we can specify which powerups the player starts with at the beginning
+    - [ ] hard limits on how many of each powerup will matter 
+        - [ ] this will allow us to better specify which powerups should spawn 
+    - [ ] a map to specify which powerups are currently spawning or not
+        - [ ] we will be able to turn powerup-spawns for specific powerups on/off 
+        - [ ] this will still allow the random powerup selection to occur, but omit certain powerups
+
+
+
 
 
