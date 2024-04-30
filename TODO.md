@@ -393,7 +393,11 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
         - [ ] we will be able to turn powerup-spawns for specific powerups on/off 
         - [ ] this will still allow the random powerup selection to occur, but omit certain powerups
 
+- [ ] spawn enemies going left to right
+    - [ ] need to specify vx/vy in the generator
+    - [ ] need to specify the spawn location
 
+- [ ] spawn delay timer
+    - [ ] need to specify a field for what frame an enemy begins spawning
 
-
-
+- [ ] possibly make generators generic for any entity type  

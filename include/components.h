@@ -9,6 +9,7 @@ typedef struct {
   int group;
   int cooldown;
   int cooldown_reduction;
+  int frame_begin;
 } generator_component;
 
 typedef struct {

@@ -21,7 +21,7 @@ using std::map;
 using std::mt19937;
 using std::shuffle;
 using std::string;
-// using std::to_string;
+using std::to_string;
 using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
@@ -255,7 +255,11 @@ void spawn_bat(const double x, const double y, const double vx, const double vy,
 }
 
 void spawn_generator(enemy_type type, bool active, int group, int cooldown,
-                     int cooldown_reduction) {
+                     int cooldown_reduction, int frame_begin) {
+
+  mPrint("spawn generator");
+  mPrint("frame_begin: " + to_string(frame_begin));
+
   if (type > ENEMY_TYPE_COUNT) {
     return;
   }
@@ -265,6 +269,10 @@ void spawn_generator(enemy_type type, bool active, int group, int cooldown,
   if (group < 1) {
     return;
   }
+  if (frame_begin < 0) {
+    return;
+  }
+
   for (auto kv : generators) {
     const generator_component generator = kv.second;
     if (generator.type == type) {
@@ -272,7 +280,8 @@ void spawn_generator(enemy_type type, bool active, int group, int cooldown,
     }
   }
   const entity_id id = get_next_entity_id();
-  generators[id] = {type, active, group, cooldown, cooldown_reduction};
+  generators[id] = {type,       active, group, cooldown, cooldown_reduction,
+                    frame_begin};
   is_generator[id] = true;
   entity_types[id] = ENTITY_TYPE_GENERATOR;
   entities.push_back(id);

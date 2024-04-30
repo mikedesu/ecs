@@ -543,27 +543,32 @@ void update_generators() {
     const int cooldown = generators[id].cooldown;
     const int cooldown_reduction = generators[id].cooldown_reduction;
     const int group = generators[id].group;
-    if (active && frame_count % cooldown == 0) {
-      switch (generators[id].type) {
-      // case ENEMY_TYPE_EYEBALL:
-      // break;
-      case ENEMY_TYPE_BAT: {
-        int x = config["target_texture_width"];
-        int y = config["target_texture_height"] / 2;
-        spawn_bat_group(x, y, 1.0, group);
-      } break;
-      default:
-        break;
-      }
-    }
-    // if the generator has a "cooldown reduction" set to non-zero,
-    // then every N frames, reduce the cooldown by half until we hit a minimum
+    const int frame_begin = generators[id].frame_begin;
 
-    bool check = cooldown_reduction && frame_count > 0;
-    check = check && cooldown > cooldown_min;
-    check = check && frame_count % cooldown_reduction == 0;
-    if (check) {
-      generators[id].cooldown = cooldown / 2;
+    // if (frame_begin >= frame_count) {
+    if (frame_count >= frame_begin) {
+      if (active && frame_count % cooldown == 0) {
+        switch (generators[id].type) {
+        // case ENEMY_TYPE_EYEBALL:
+        // break;
+        case ENEMY_TYPE_BAT: {
+          int x = config["target_texture_width"];
+          int y = config["target_texture_height"] / 2;
+          spawn_bat_group(x, y, 1.0, group);
+        } break;
+        default:
+          break;
+        }
+      }
+      // if the generator has a "cooldown reduction" set to non-zero,
+      // then every N frames, reduce the cooldown by half until we hit a minimum
+
+      bool check = cooldown_reduction && frame_count > 0;
+      check = check && cooldown > cooldown_min;
+      check = check && frame_count % cooldown_reduction == 0;
+      if (check) {
+        generators[id].cooldown = cooldown / 2;
+      }
     }
   }
 }

@@ -87,7 +87,8 @@ extern void cleanup_data_structures();
 extern void bg_init();
 extern void spawn_skull(const int x, const int y);
 extern void spawn_generator(enemy_type type, bool active, int group,
-                            int cooldown, int cooldown_reduction);
+                            int cooldown, int cooldown_reduction,
+                            int frame_begin);
 
 void init_game_vars();
 void init_bat_vectors();
@@ -284,6 +285,6 @@ void init_game() {
   init_after_load_textures();
   spawn_skull(0, 0);
   // spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 30, 60 * 30);
-  spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 4, 60 * 30);
+  spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 4, 60 * 30, 3600);
   // spawn_generator(ENEMY_TYPE_BAT, true, 2, 1, 60 * 30);
 }
