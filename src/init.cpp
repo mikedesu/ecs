@@ -285,6 +285,6 @@ void init_game() {
   init_after_load_textures();
   spawn_skull(0, 0);
   // spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 30, 60 * 30);
-  spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 4, 60 * 30, 3600);
+  spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 4, 60 * 30, 0);
   // spawn_generator(ENEMY_TYPE_BAT, true, 2, 1, 60 * 30);
 }

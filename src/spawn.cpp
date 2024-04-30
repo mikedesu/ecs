@@ -216,32 +216,33 @@ void spawn_knife() {
 }
 
 void spawn_bat_group(const double x, const double y, const double scale,
-                     const int number) {
+                     const double vx, const double vy, const int number) {
   assert(number > 0);
   assert(number < 10);
   string key = "bat";
   SDL_Texture *t = textures[key];
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
-  const int right = config["target_texture_width"] + w;
-  const int bottom = config["target_texture_height"] - h * scale;
-  assert(x > 0 && x < right);
-  assert(y > 0 && y < bottom);
+  // const int right = config["target_texture_width"] + w;
+  // const int bottom = config["target_texture_height"] - h * scale;
+  // assert(x > 0 && x < right);
+  // assert(y > 0 && y < bottom);
   double tmp_y = y;
-  double vy = 0;
+  // double vy = 0;
   shuffle(bat_vx_vec.begin(), bat_vx_vec.end(), g);
   shuffle(bat_y_vec.begin(), bat_y_vec.end(), g);
   for (int i = 0; i < number; i++) {
-    double vx = bat_vx_vec[i];
+    double myvx = bat_vx_vec[i] * vx;
     tmp_y = bat_y_vec[i];
-    spawn_bat(x, tmp_y, vx, vy, scale);
+    spawn_bat(x, tmp_y, myvx, vy, scale);
   }
 }
 
 void spawn_bat(const double x, const double y, const double vx, const double vy,
                const double scale) {
-  assert(x > 0);
-  assert(y >= 0);
-  assert(y < config["target_texture_height"]);
+  // assert(x > 0);
+  // assert(y >= 0);
+  // assert(y < config["target_texture_height"]);
+  mPrint("spawning bat with vx: " + to_string(vx));
   const string key = "bat";
   SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
   const entity_id id = spawn_entity(key, true, 2, x, y);

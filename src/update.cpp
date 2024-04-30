@@ -83,8 +83,11 @@ extern void spawn_soulshard(const int x, const int y);
 extern void spawn_powerup();
 extern void spawn_bat(const double x, const double y, const double vx,
                       const double vy, const double scale);
+// void spawn_bat_group(const double x, const double y, const double scale,
+//                      const int number);
 void spawn_bat_group(const double x, const double y, const double scale,
-                     const int number);
+                     const double vx, const double vy, const int number);
+
 extern void spawn_blood_pixels(const int x, const int y, const int n);
 extern double distance(const int x1, const int y1, const int x2, const int y2);
 extern void cleanup();
@@ -259,13 +262,15 @@ function<void(transform_pair)> handle_bg_transform =
     };
 
 // bounds checking, player cannot move beyond texture
-// function<void(const entity_id, transform_component &)> handle_skull_transform
+// function<void(const entity_id, transform_component &)>
+// handle_skull_transform
 // =
 //    [](const entity_id id, transform_component &transform) {
 //      sprite_component sprite = sprites[id];
 //      if (transform.x < 0) {
 //        transform.x = 0;
-//      } else if (transform.x > config["target_texture_width"] - sprite.dest.w)
+//      } else if (transform.x > config["target_texture_width"] -
+//      sprite.dest.w)
 //      {
 //        transform.x = config["target_texture_width"] - sprite.dest.w;
 //      }
@@ -311,8 +316,8 @@ function<void(const entity_id)> handle_knife_soulshard_transform =
 //       const bool mark =
 //           transforms[id].x < 2 * -sprites[id].src.w ||
 //           transforms[id].x > config["window_width"] + 2 * sprites[id].src.w
-//           || transforms[id].y < 2 * -sprites[id].src.h || transforms[id].y >
-//           config["window_width"] + 2 * sprites[id].src.h;
+//           || transforms[id].y < 2 * -sprites[id].src.h || transforms[id].y
+//           > config["window_width"] + 2 * sprites[id].src.h;
 //       is_marked_for_deletion[id] = mark;
 //       if (mark) {
 //         powerups_onscreen--;
@@ -419,7 +424,8 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   // if (id != player_id && entity_types[id] == ENTITY_TYPE_ENEMY) {
   //   handle_enemy_transform(id);
   // } else if (id != player_id && (entity_types[id] == ENTITY_TYPE_KNIFE ||
-  //                                entity_types[id] == ENTITY_TYPE_SOULSHARD))
+  //                                entity_types[id] ==
+  //                                ENTITY_TYPE_SOULSHARD))
   //                                {
   //   handle_knife_soulshard_transform(id);
   // } else if (id != player_id && entity_types[id] == ENTITY_TYPE_ITEM) {
@@ -477,7 +483,8 @@ function<void(entity_id, entity_id)> check_for_knife_collision_with_enemy =
       }
     };
 
-// function<void(entity_id)> check_for_knife_collision = [](const entity_id id)
+// function<void(entity_id)> check_for_knife_collision = [](const entity_id
+// id)
 // {
 function<void(pair<entity_id, bool>)> check_for_knife_collision =
     [](const pair<entity_id, bool> knife) {
@@ -552,16 +559,29 @@ void update_generators() {
         // case ENEMY_TYPE_EYEBALL:
         // break;
         case ENEMY_TYPE_BAT: {
-          int x = config["target_texture_width"];
-          int y = config["target_texture_height"] / 2;
-          spawn_bat_group(x, y, 1.0, group);
+
+          // spawn from the right moving left
+          // int x = config["target_texture_width"];
+          // int y = config["target_texture_height"] / 2;
+          // const double vx_dir = 1.0;
+
+          // spawn from the left moving right
+          const int x = 0;
+          const int y = config["target_texture_height"] / 2;
+          const double vx_dir = -1.0;
+          const double scale = 1.0;
+          const double vy_dir = 0.0;
+
+          // spawn_bat_group(x, y, 1.0, 1.0, 0.0, group);
+          spawn_bat_group(x, y, scale, vx_dir, vy_dir, group);
         } break;
         default:
           break;
         }
       }
       // if the generator has a "cooldown reduction" set to non-zero,
-      // then every N frames, reduce the cooldown by half until we hit a minimum
+      // then every N frames, reduce the cooldown by half until we hit a
+      // minimum
 
       bool check = cooldown_reduction && frame_count > 0;
       check = check && cooldown > cooldown_min;
