@@ -265,7 +265,9 @@ void init_game_vars() {
   default_player_speed = 8;
   current_player_speed = default_player_speed;
 
-  cooldown_min = 10;
+  // cooldown_min = 1; // LOL
+  // cooldown_min = 10; // hard
+  cooldown_min = 30; // do-able no lag
 
   powerups_collected.clear();
 }
@@ -277,8 +279,8 @@ void init_game() {
   init_after_load_textures();
   spawn_skull(0, 0);
   // spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 30, 60 * 30);
-  // spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 4, 60 * 30);
   spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 4, 60 * 30);
+  // spawn_generator(ENEMY_TYPE_BAT, true, 2, 1, 60 * 30);
 }
 
 // void check_for_game_controller
