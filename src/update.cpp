@@ -551,6 +551,12 @@ void update_generators() {
     const int cooldown_reduction = generators[id].cooldown_reduction;
     const int group = generators[id].group;
     const int frame_begin = generators[id].frame_begin;
+    const screen_position_t screen_position = generators[id].screen_position;
+    int x = 0;
+    int y = config["target_texture_height"] / 2;
+    double vx_dir = -1.0;
+    double scale = 1.0;
+    double vy_dir = 0.0;
 
     // if (frame_begin >= frame_count) {
     if (frame_count >= frame_begin) {
@@ -560,20 +566,32 @@ void update_generators() {
         // break;
         case ENEMY_TYPE_BAT: {
 
-          // spawn from the right moving left
-          // int x = config["target_texture_width"];
-          // int y = config["target_texture_height"] / 2;
-          // const double vx_dir = 1.0;
+          switch (screen_position) {
 
-          // spawn from the left moving right
-          const int x = 0;
-          const int y = config["target_texture_height"] / 2;
-          const double vx_dir = -1.0;
-          const double scale = 1.0;
-          const double vy_dir = 0.0;
+          case SCREEN_POSITION_LEFT: {
+            x = 0;
+            y = config["target_texture_height"] / 2;
+            vx_dir = -1.0;
+            scale = 1.0;
+            vy_dir = 0.0;
+            spawn_bat_group(x, y, scale, vx_dir, vy_dir, group);
 
-          // spawn_bat_group(x, y, 1.0, 1.0, 0.0, group);
-          spawn_bat_group(x, y, scale, vx_dir, vy_dir, group);
+          } break;
+
+          case SCREEN_POSITION_RIGHT: {
+            x = config["target_texture_width"];
+            y = config["target_texture_height"] / 2;
+            vx_dir = 1.0;
+            scale = 1.0;
+            vy_dir = 0.0;
+            spawn_bat_group(x, y, scale, vx_dir, vy_dir, group);
+
+          } break;
+
+          default:
+            break;
+          }
+
         } break;
         default:
           break;

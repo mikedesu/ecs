@@ -256,7 +256,8 @@ void spawn_bat(const double x, const double y, const double vx, const double vy,
 }
 
 void spawn_generator(enemy_type type, bool active, int group, int cooldown,
-                     int cooldown_reduction, int frame_begin) {
+                     int cooldown_reduction, int frame_begin,
+                     screen_position_t screen_position) {
 
   mPrint("spawn generator");
   mPrint("frame_begin: " + to_string(frame_begin));
@@ -274,15 +275,17 @@ void spawn_generator(enemy_type type, bool active, int group, int cooldown,
     return;
   }
 
-  for (auto kv : generators) {
-    const generator_component generator = kv.second;
-    if (generator.type == type) {
-      return;
-    }
-  }
+  // doesnt allow multiple generators of the same type
+  // for (auto kv : generators) {
+  //  const generator_component generator = kv.second;
+  //  if (generator.type == type) {
+  //    return;
+  //  }
+  //}
   const entity_id id = get_next_entity_id();
-  generators[id] = {type,       active, group, cooldown, cooldown_reduction,
-                    frame_begin};
+  generators[id] = {
+      type,        active,         group, cooldown, cooldown_reduction,
+      frame_begin, screen_position};
   is_generator[id] = true;
   entity_types[id] = ENTITY_TYPE_GENERATOR;
   entities.push_back(id);

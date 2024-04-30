@@ -3,6 +3,19 @@
 #include "SDL_handler.h"
 #include "enemy_type.h"
 
+typedef enum {
+  SCREEN_POSITION_CENTER,
+  SCREEN_POSITION_TOP,
+  SCREEN_POSITION_BOTTOM,
+  SCREEN_POSITION_LEFT,
+  SCREEN_POSITION_RIGHT,
+  SCREEN_POSITION_TOP_LEFT,
+  SCREEN_POSITION_TOP_RIGHT,
+  SCREEN_POSITION_BOTTOM_LEFT,
+  SCREEN_POSITION_BOTTOM_RIGHT,
+  SCREEN_POSITION_COUNT
+} screen_position_t;
+
 typedef struct {
   enemy_type type;
   bool active;
@@ -10,6 +23,7 @@ typedef struct {
   int cooldown;
   int cooldown_reduction;
   int frame_begin;
+  screen_position_t screen_position;
 } generator_component;
 
 typedef struct {
