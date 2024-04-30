@@ -7,7 +7,6 @@
 #include <random>
 #include <string>
 #include <unordered_map>
-// #include <map>
 #include <vector>
 
 using std::mt19937;
@@ -15,16 +14,18 @@ using std::random_device;
 using std::string;
 using std::uniform_real_distribution;
 using std::unordered_map;
-// using std::map;
 using std::vector;
 
 extern random_device rd;
 extern mt19937 g;
 
 extern unordered_map<string, SDL_Texture *> textures;
+extern unordered_map<string, size_t> config;
+extern unordered_map<powerup_type, int> powerups_collected;
+
 extern vector<double> bat_vx_vec;
 extern vector<int> bat_y_vec;
-extern unordered_map<string, size_t> config;
+
 extern SDL_Rect debug_texture_src;
 extern SDL_Rect debug_texture_dest;
 extern SDL_Rect target_texture_src;
@@ -34,17 +35,18 @@ extern SDL_Rect player_hud_texture_dest;
 extern SDL_Rect stopwatch_texture_src;
 extern SDL_Rect stopwatch_texture_dest;
 
+extern bool is_gameover;
+
+extern entity_id player_id;
+
 extern int powerups_onscreen;
 extern int cooldown_min;
 extern int mWidth;
 extern int mHeight;
 extern int current_knife_speed;
 extern int default_knife_speed;
-
 extern int default_player_speed;
 extern int current_player_speed;
-extern entity_id player_id;
-extern bool is_gameover;
 extern int current_soulshard_magnetism_threshold;
 extern int num_knives;
 extern int max_num_knives;
@@ -58,7 +60,6 @@ extern int total_soulshards_collected;
 extern int debug_font_size;
 extern int img_flags;
 extern int result;
-extern unordered_map<powerup_type, int> powerups_collected;
 
 extern int knife_cooldown;
 extern int current_knife_cooldown;
@@ -68,8 +69,10 @@ extern unsigned long game_begin_time;
 
 extern TTF_Font *gFont;
 extern TTF_Font *gameover_font;
+
 extern SDL_Renderer *renderer;
 extern SDL_Texture *target_texture;
+
 extern uniform_real_distribution<double> unit_distribution;
 extern uniform_real_distribution<double> eyeball_vx_distribution;
 extern uniform_real_distribution<double> soulshard_spawn_rate_distribution;
@@ -156,9 +159,9 @@ void init_rng() {
         uniform_real_distribution<double>(0.0, config["target_texture_height"]);
   }
   blood_velocity_positive_distribution =
-      uniform_real_distribution<double>(1.0, 2.0);
+      uniform_real_distribution<double>(0.0, 2.0);
   blood_velocity_negative_distribution =
-      uniform_real_distribution<double>(-2.0, -1.0);
+      uniform_real_distribution<double>(-2.0, 0.0);
   blood_velocity_distribution = uniform_real_distribution<double>(-2.0, 2.0);
 
   unit_distribution = uniform_real_distribution<double>(-1.0, 1.0);
@@ -277,7 +280,6 @@ void init_game_vars() {
 
 void init_game() {
   cleanup_data_structures();
-
   bg_init();
   init_after_load_textures();
   spawn_skull(0, 0);
@@ -285,5 +287,3 @@ void init_game() {
   spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 4, 60 * 30);
   // spawn_generator(ENEMY_TYPE_BAT, true, 2, 1, 60 * 30);
 }
-
-// void check_for_game_controller

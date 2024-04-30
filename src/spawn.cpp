@@ -28,12 +28,11 @@ using std::vector;
 
 extern mt19937 g;
 
-extern int powerups_onscreen;
 extern vector<int> bat_y_vec;
-extern unordered_map<string, size_t> config;
+
 extern entity_id player_id;
-extern unordered_map<entity_id, bool> inputs;
-extern unordered_map<string, SDL_Texture *> textures;
+
+extern int powerups_onscreen;
 extern int w;
 extern int h;
 extern int knife_cooldown;
@@ -47,7 +46,9 @@ extern int num_knives_fired;
 extern int player_money;
 extern int player_health;
 extern int player_max_health;
+
 extern default_random_engine rng_generator;
+
 extern uniform_real_distribution<double> unit_distribution;
 extern uniform_real_distribution<double> eyeball_vx_distribution;
 extern uniform_real_distribution<double> texture_height_distribution;
@@ -55,16 +56,18 @@ extern uniform_real_distribution<double> blood_velocity_positive_distribution;
 extern uniform_real_distribution<double> blood_velocity_negative_distribution;
 extern uniform_real_distribution<double> blood_velocity_distribution;
 
-extern unordered_map<entity_id, entity_type> entity_types;
-
 extern vector<double> bat_vx_vec;
+
+extern map<entity_id, sprite_component> sprites;
+
+extern unordered_map<string, size_t> config;
+extern unordered_map<entity_id, bool> inputs;
+extern unordered_map<string, SDL_Texture *> textures;
+extern unordered_map<entity_id, entity_type> entity_types;
 extern unordered_map<entity_id, bool> is_blood_pixel;
 extern unordered_map<entity_id, int> blood_pixel_lifetime;
-
 extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, enemy_type> enemy_types;
-extern map<entity_id, sprite_component> sprites;
-// extern unordered_map<entity_id, sprite_component> sprites;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, generator_component> generators;
 extern unordered_map<entity_id, bool> is_soulshard;
@@ -82,7 +85,6 @@ extern vector<entity_id> entities;
 extern entity_id get_next_entity_id();
 
 void spawn_knife();
-// void spawn_knife_no_cooldown_no_count_check();
 void spawn_bat(const double x, const double y, const double vx, const double vy,
                const double scale);
 
@@ -140,60 +142,6 @@ void handle_knife_charge_rotation(const entity_id id) {
   }
 }
 
-// void spawn_knives() {
-//  always spawn at least one knife
-// spawn_knife();
-
-// const int num_additional_knives =
-//     powerups_collected[POWERUP_TYPE_KNIFE_EXTRA];
-// for (int i = 0; i < num_additional_knives; i++) {
-//   spawn_knife_no_cooldown_no_count_check();
-// }
-//}
-
-// void spawn_knife_no_cooldown_no_count_check() {
-//   string key = "knife";
-//   if (knife_charge >= 2) {
-//     key = "knife-blue";
-//   }
-//   const int largeness = powerups_collected[POWERUP_TYPE_KNIFE_LARGENESS];
-//   const double scale = 1 + (0.1 * largeness);
-//   // const double scale = 1;
-//   const sprite_component player = sprites[player_id];
-//   const int padding_right = player.dest.w;
-//   SDL_Texture *t = textures[key];
-//   SDL_QueryTexture(t, NULL, NULL, &w, &h);
-//   const int padding_left = w * scale;
-//   const bool flipped = is_flipped[player_id];
-//   const double x =
-//       !flipped ? player.dest.x + padding_right : player.dest.x -
-//       padding_left;
-//   const double y = player.dest.y + player.dest.h / 4.0;
-//   const entity_id id = spawn_entity(key, false, 1, x, y);
-//   const double angle = flipped ? 180.0 : 0.0;
-//   double vx = current_knife_speed;
-//
-//   if (flipped && knife_charge) {
-//     vx = -current_knife_speed * knife_charge - knife_charge;
-//   } else if (knife_charge) {
-//     vx = current_knife_speed * knife_charge + knife_charge;
-//   } else if (flipped) {
-//     vx = -current_knife_speed;
-//   }
-//   // const double vy = 0;
-//   // this adds a 'spray' effect to how knives fly out
-//   // we can create a powerup to alter the vy
-//   // const double vy = unit_distribution(rng_generator) * 2;
-//   const double vy = powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] == 0
-//                         ? 0
-//                         : powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] *
-//                               unit_distribution(rng_generator);
-//   transforms[id] = {x, y, vx, vy, angle, scale};
-//   is_knife[id] = true;
-//   entity_types[id] = ENTITY_TYPE_KNIFE;
-//   handle_knife_charge_rotation(id);
-// }
-
 void spawn_knife() {
   if (!knife_cooldown && num_knives) {
     string key = "knife";
@@ -202,7 +150,6 @@ void spawn_knife() {
     }
     const int largeness = powerups_collected[POWERUP_TYPE_KNIFE_LARGENESS];
     const double scale = 1 + (0.1 * largeness);
-    // const double scale = 1;
     const sprite_component player = sprites[player_id];
     const int padding_right = player.dest.w;
     SDL_Texture *t = textures[key];
@@ -214,7 +161,6 @@ void spawn_knife() {
     const double y = player.dest.y + player.dest.h / 4.0;
     const double angle = flipped ? 180.0 : 0.0;
     double vx = current_knife_speed;
-
     if (flipped && knife_charge) {
       vx = -current_knife_speed * knife_charge - knife_charge;
     } else if (knife_charge) {
@@ -222,7 +168,6 @@ void spawn_knife() {
     } else if (flipped) {
       vx = -current_knife_speed;
     }
-
     double vy = 0;
     const int sprayups_collected = powerups_collected[POWERUP_TYPE_KNIFE_SPRAY];
     // limit the number of sprayups to 5
@@ -232,23 +177,17 @@ void spawn_knife() {
     } else if (sprayups_collected > 5) {
       vy = 5 * unit_distribution(rng_generator);
     }
-
     entity_id id = -1;
     // limit the number of knifeextras to 4
     const int extraknives = powerups_collected[POWERUP_TYPE_KNIFE_EXTRA];
-
     int total_knives = 1;
-
     if (extraknives < 4) {
       total_knives = 1 + extraknives;
     } else {
       total_knives = 4;
     }
-
     const bool do_spray = powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] > 0;
-
     int i = 0;
-
     // for(int i=0; i<total_knives; i++) {
     do {
       id = spawn_entity(key, false, 1, x, y);
@@ -258,12 +197,10 @@ void spawn_knife() {
       transforms[id] = {x, y, vx, vy, angle, scale};
       is_knife[id] = true;
       entity_types[id] = ENTITY_TYPE_KNIFE;
-
       if (knife_charge > 0) {
         is_rotating[id] = true;
         rotation_speeds[id] = 5.0 * knife_charge;
       }
-
       knife_cooldown = current_knife_cooldown;
       num_knives_fired++;
       if (i == 0) {
@@ -328,7 +265,6 @@ void spawn_generator(enemy_type type, bool active, int group, int cooldown,
   if (group < 1) {
     return;
   }
-
   for (auto kv : generators) {
     const generator_component generator = kv.second;
     if (generator.type == type) {
@@ -345,14 +281,12 @@ void spawn_generator(enemy_type type, bool active, int group, int cooldown,
 void spawn_powerup() {
   powerup_type poweruptype;
   poweruptype = (powerup_type)(rand() % POWERUP_TYPE_COUNT);
-
   // omit hearts from spawning if player health is max
   if (player_health == player_max_health) {
     while (poweruptype == POWERUP_TYPE_HEART) {
       poweruptype = (powerup_type)(rand() % POWERUP_TYPE_COUNT);
     }
   }
-
   string key = "powerup";
   SDL_Texture *t = textures[key];
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
@@ -404,7 +338,6 @@ void spawn_powerup() {
   default:
     break;
   }
-
   id = spawn_entity(key, is_anim, num_frames, x, y);
   transforms[id].vx = DEFAULT_POWERUP_VX;
   transforms[id].angle = angle;
@@ -414,23 +347,7 @@ void spawn_powerup() {
   powerups_onscreen++;
 }
 
-// static int times = 0;
-// static int start_ticks = 0;
-// static int count = 0;
-
 void spawn_blood_pixels(const int x, const int y, const int n) {
-  // mPrint("spawn_blood_pixels: " + to_string(x) + ", " + to_string(y) + ", " +
-  //        to_string(n));
-  //
-
-  // if we have too many blood pixels, dont bother spawning anymore
-  // const int hardlimit = 1000;
-  // if (is_blood_pixel.size() > hardlimit) {
-  //  return;
-  //}
-
-  // start_ticks = SDL_GetTicks();
-
   const string key = "blood-pixel";
   SDL_Texture *t = textures[key];
   // custom width/height defined in config/textures.json
@@ -439,26 +356,18 @@ void spawn_blood_pixels(const int x, const int y, const int n) {
   const int num_clips = 1;
   const double dx = x;
   const double dy = y;
-
   // if we have too many blood pixels, dont bother spawning anymore
   for (int i = 0; i < n; i++) {
     entity_id id = get_next_entity_id();
     sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {x, y, w, h}};
     transforms[id] = {dx, dy,
                       // blood_velocity_negative_distribution(rng_generator),
-                      blood_velocity_distribution(rng_generator),
+                      // blood_velocity_distribution(rng_generator),
+                      blood_velocity_positive_distribution(rng_generator),
                       blood_velocity_distribution(rng_generator), 0, 1};
     is_blood_pixel[id] = true;
     blood_pixel_lifetime[id] = rand() % 120;
     entity_types[id] = ENTITY_TYPE_PARTICLE;
     entities.push_back(id);
-
-    // if (is_blood_pixel.size() > hardlimit) {
-    //   break;
-    // }
   }
-
-  // times += SDL_GetTicks() - start_ticks;
-  // mPrint("average time to spawn blood pixels: " + to_string(times));
-  // times = 0;
 }
