@@ -27,7 +27,7 @@ using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
 
-const int cooldown_min = 10;
+extern int cooldown_min;
 
 extern bool is_gameover;
 extern unordered_map<string, size_t> config;

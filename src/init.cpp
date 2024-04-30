@@ -34,6 +34,7 @@ extern SDL_Rect player_hud_texture_dest;
 extern SDL_Rect stopwatch_texture_src;
 extern SDL_Rect stopwatch_texture_dest;
 
+extern int cooldown_min;
 extern int mWidth;
 extern int mHeight;
 extern int current_knife_speed;
@@ -264,6 +265,8 @@ void init_game_vars() {
   default_player_speed = 8;
   current_player_speed = default_player_speed;
 
+  cooldown_min = 10;
+
   powerups_collected.clear();
 }
 
@@ -274,6 +277,7 @@ void init_game() {
   init_after_load_textures();
   spawn_skull(0, 0);
   // spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 30, 60 * 30);
+  // spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 4, 60 * 30);
   spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 4, 60 * 30);
 }
 

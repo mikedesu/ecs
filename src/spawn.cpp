@@ -21,7 +21,7 @@ using std::map;
 using std::mt19937;
 using std::shuffle;
 using std::string;
-using std::to_string;
+// using std::to_string;
 using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
@@ -222,19 +222,28 @@ void spawn_knife() {
       vx = -current_knife_speed;
     }
 
-    // const double vy = 0;
-    // this adds a 'spray' effect to how knives fly out
-    // we can create a powerup to alter the vy
-    // const double vy = unit_distribution(rng_generator) * 2;
     double vy = 0;
-
-    vy = powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] == 0
-             ? 0
-             : powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] *
-                   unit_distribution(rng_generator);
+    const int sprayups_collected = powerups_collected[POWERUP_TYPE_KNIFE_SPRAY];
+    // limit the number of sprayups to 5
+    // sprayup affects the knife amplitude
+    if (sprayups_collected >= 1 && sprayups_collected <= 5) {
+      vy = sprayups_collected * unit_distribution(rng_generator);
+    } else if (sprayups_collected > 5) {
+      vy = 5 * unit_distribution(rng_generator);
+    }
 
     entity_id id = -1;
-    const int total_knives = 1 + powerups_collected[POWERUP_TYPE_KNIFE_EXTRA];
+    // limit the number of knifeextras to 4
+    const int extraknives = powerups_collected[POWERUP_TYPE_KNIFE_EXTRA];
+
+    int total_knives = 1;
+
+    if (extraknives < 4) {
+      total_knives = 1 + extraknives;
+    } else {
+      total_knives = 4;
+    }
+
     const bool do_spray = powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] > 0;
 
     int i = 0;
@@ -248,40 +257,25 @@ void spawn_knife() {
       transforms[id] = {x, y, vx, vy, angle, scale};
       is_knife[id] = true;
       entity_types[id] = ENTITY_TYPE_KNIFE;
-      handle_knife_charge_rotation(id);
+
+      if (knife_charge > 0) {
+        is_rotating[id] = true;
+        rotation_speeds[id] = 5.0 * knife_charge;
+      }
+
       knife_cooldown = current_knife_cooldown;
       num_knives_fired++;
       if (i == 0) {
-        handle_knife_charge_decrement();
+        knife_charge--;
+        if (knife_charge < 0) {
+          knife_charge = 0;
+        }
         num_knives--;
       }
       i++;
     } while (i < total_knives);
-    // handle_knife_charge_decrement();
-    // const int num_additional_knives =
-    //     powerups_collected[POWERUP_TYPE_KNIFE_EXTRA];
-
-    // for (int i = 0; i < num_additional_knives; i++) {
-    //   spawn_knife_no_cooldown_no_count_check();
-    // }
   }
 }
-
-// void spawn_eyeball() {
-//   const int x = config["target_texture_width"] - w;
-//   const int y = rand() % (config["target_texture_height"] - h);
-//   const entity_id id = spawn_entity("eyeball", true, 18, x, y);
-//   const double vy = 0.0;
-//   const double vx = eyeball_vx_distribution(rng_generator);
-//   const double angle = 0.0;
-//   const double scale = 1.0;
-//   const double dx = x;
-//   const double dy = y;
-//   transforms[id] = {dx, dy, vx, vy, angle, scale};
-//   entity_types[id] = ENTITY_TYPE_ENEMY;
-//   is_collidable[id] = true;
-//   is_enemy[id] = true;
-// }
 
 void spawn_bat_group(const double x, const double y, const double scale,
                      const int number) {
@@ -423,8 +417,8 @@ void spawn_powerup() {
 // static int count = 0;
 
 void spawn_blood_pixels(const int x, const int y, const int n) {
-  mPrint("spawn_blood_pixels: " + to_string(x) + ", " + to_string(y) + ", " +
-         to_string(n));
+  // mPrint("spawn_blood_pixels: " + to_string(x) + ", " + to_string(y) + ", " +
+  //        to_string(n));
   //
 
   // if we have too many blood pixels, dont bother spawning anymore

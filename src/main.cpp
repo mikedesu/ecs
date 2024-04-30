@@ -30,6 +30,8 @@ unordered_map<string, size_t> config;
 
 int DEBUG_TEXT_WRAP_LEN = 2048;
 
+int cooldown_min = -1;
+
 // moving into gameconfig soon
 double zoom = 1.0; // has to appear
 
