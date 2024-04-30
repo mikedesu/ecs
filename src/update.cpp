@@ -101,7 +101,8 @@ function<void()> handle_update_skull_collision_knife = []() {
 function<void()> handle_update_skull_collision_soulshard = []() {
   player_soulshards++;
   total_soulshards_collected++;
-  if (player_soulshards >= POWERUP_COST) {
+  // if (player_soulshards >= POWERUP_COST) {
+  if (player_soulshards >= POWERUP_COST && powerups_onscreen < 11) {
     spawn_powerup();
     player_soulshards -= POWERUP_COST;
   }
