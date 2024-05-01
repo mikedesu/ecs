@@ -29,6 +29,7 @@ using std::vector;
 
 extern int cooldown_min;
 
+extern int w, h;
 extern int powerups_onscreen;
 extern bool is_gameover;
 extern unordered_map<string, size_t> config;
@@ -54,6 +55,7 @@ extern entity_id player_id;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> soulshard_spawn_rate_distribution;
 
+extern unordered_map<string, SDL_Texture *> textures;
 extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, enemy_type> enemy_types;
 extern unordered_map<entity_id, entity_type> entity_types;
@@ -569,7 +571,11 @@ void update_generators() {
           switch (screen_position) {
 
           case SCREEN_POSITION_LEFT: {
-            x = 0;
+
+            SDL_Texture *bat_texture = textures["bat"];
+            SDL_QueryTexture(bat_texture, NULL, NULL, &w, &h);
+
+            x = -w;
             y = config["target_texture_height"] / 2;
             vx_dir = -1.0;
             scale = 1.0;
