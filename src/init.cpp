@@ -288,10 +288,14 @@ void init_game() {
   // spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 30, 60 * 30);
   // spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 4, 60 * 30, 0,
   //                SCREEN_POSITION_RIGHT);
+
   // spawn_generator(ENEMY_TYPE_BAT, true, 4, 60 * 8, 60 * 30, 600,
-  spawn_generator(ENEMY_TYPE_EYEBALL, true, 4, 60 * 8, 60 * 30, 0,
-                  SCREEN_POSITION_RIGHT);
+
+  // spawn_generator(ENEMY_TYPE_EYEBALL, true, 4, 60 * 8, 60 * 30, 0,
+  //                 SCREEN_POSITION_RIGHT);
+
   // spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 4, 60 * 30, 0,
   //                 SCREEN_POSITION_RIGHT);
+
   //  spawn_generator(ENEMY_TYPE_BAT, true, 2, 1, 60 * 30);
 }

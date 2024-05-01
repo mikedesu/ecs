@@ -401,3 +401,9 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
     - [ ] need to specify a field for what frame an enemy begins spawning
 
 - [ ] possibly make generators generic for any entity type  
+
+## 1 May 2024
+
+- [x] beginning of eyeball enemy testing
+- [ ] somehow i broke the candle animation, need to fix that
+    - [ ] it is rendering all 3 frames as if it is failing to parse numclips
