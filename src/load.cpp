@@ -290,6 +290,7 @@ bool json_value_has_member_is_string(Value &v, string member) {
 void handle_load_texture_with_color_mod(Value &v) {
   string keys[] = {"key", "path", "r", "g", "b"};
   string integer_keys[] = {"r", "g", "b"};
+  // string integer_keys[] = {"r", "g", "b", "numclips"};
   string str_keys[] = {"key", "path"};
   for (string key : keys) {
     if (!v.HasMember(key.c_str())) {
@@ -320,9 +321,9 @@ void handle_load_texture_with_color_mod(Value &v) {
   int r = v["r"].GetInt();
   int g = v["g"].GetInt();
   int b = v["b"].GetInt();
-
   int numclips = 1;
-  if (json_value_has_member_is_string(v, "numclips")) {
+  // int numclips = v["numclips"].GetInt();
+  if (check_if_json_has_member_and_is_int(v, "numclips")) {
     numclips = v["numclips"].GetInt();
   }
 
