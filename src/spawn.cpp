@@ -90,14 +90,14 @@ void spawn_bat(const double x, const double y, const double vx, const double vy,
                const double scale);
 
 entity_id spawn_entity(const string key, const bool is_animating,
-                       const int num_clips, const int x, const int y) {
+                       const int numclips, const int x, const int y) {
   SDL_Texture *t = textures[key];
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
-  w = w / num_clips;
+  w = w / numclips;
   const entity_id id = get_next_entity_id();
   const double dx = x;
   const double dy = y;
-  sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {x, y, w, h}};
+  sprites[id] = {is_animating, 0, numclips, t, {0, 0, w, h}, {x, y, w, h}};
   transforms[id] = {dx, dy, 0, 0, 0, 1};
   entities.push_back(id);
   // mPrint("spawned entity with id: " + to_string(id));

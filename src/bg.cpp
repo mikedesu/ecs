@@ -49,6 +49,7 @@ extern unordered_map<entity_id, transform_component> bg_transforms;
 // extern unordered_map<entity_id, bool> is_generator;
 // extern unordered_map<powerup_type, int> powerups_collected;
 extern vector<entity_id> entities;
+extern unordered_map<string, int> num_clips;
 
 extern entity_id get_next_entity_id();
 extern bool get_texture_width_height_for_key(string key);
@@ -61,7 +62,7 @@ void bg_init_moon();
 void bg_spawn_grave(const int x, const int y, const double vx, const double vy,
                     const double scale) {
   const string key = "grave";
-  const int num_clips = 1;
+  const int numclips = num_clips[key];
   const bool is_animating = false;
   const int src_x = 0;
   const int src_y = 0;
@@ -70,9 +71,9 @@ void bg_spawn_grave(const int x, const int y, const double vx, const double vy,
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
   const double dx = x;
   const double dy = y;
-  w = w / num_clips;
+  w = w / numclips;
   const entity_id id = get_next_entity_id();
-  bg_sprites[id] = {is_animating,         0,           num_clips, t,
+  bg_sprites[id] = {is_animating,         0,           numclips, t,
                     {src_x, src_y, w, h}, {x, y, w, h}};
   bg_transforms[id] = {dx, dy, vx, vy, angle, scale};
   entities.push_back(id);
@@ -80,19 +81,19 @@ void bg_spawn_grave(const int x, const int y, const double vx, const double vy,
 
 void bg_spawn_candle(const int x, const int y, const double vx, const double vy,
                      const double scale) {
-  const int num_clips = 3;
+  const string key = "candle";
+  const int numclips = num_clips[key];
   const bool is_animating = true;
   const int src_x = 0;
   const int src_y = 0;
   const double angle = 0.0;
-  const string key = "candle";
   SDL_Texture *t = textures[key];
   get_texture_width_height(t);
   const double dx = x;
   const double dy = y;
-  w = w / num_clips;
+  w = w / numclips;
   const entity_id id = get_next_entity_id();
-  bg_sprites[id] = {is_animating,         0,           num_clips, t,
+  bg_sprites[id] = {is_animating,         0,           numclips, t,
                     {src_x, src_y, w, h}, {x, y, w, h}};
   bg_transforms[id] = {dx, dy, vx, vy, angle, scale};
   entities.push_back(id);
@@ -102,7 +103,8 @@ void bg_spawn_moon(const int x, const int y, const double vx, const double vy,
                    const double scale) {
 
   const string key = "moon";
-  const int num_clips = 1;
+  // const int num_clips = 1;
+  const int numclips = num_clips[key];
   const bool is_animating = false;
   const int src_x = 0;
   const int src_y = 0;
@@ -112,28 +114,29 @@ void bg_spawn_moon(const int x, const int y, const double vx, const double vy,
   const double dest_y = y;
   const entity_id id = get_next_entity_id();
   get_texture_width_height(t);
-  w = w / num_clips;
-  bg_sprites[id] = {is_animating,         0,           num_clips, t,
+  w = w / numclips;
+  bg_sprites[id] = {is_animating,         0,           numclips, t,
                     {src_x, src_y, w, h}, {x, y, w, h}};
   bg_transforms[id] = {dest_x, dest_y, vx, vy, angle, scale};
   entities.push_back(id);
 }
 
 void bg_init_graves() {
-  get_texture_width_height_for_key("grave");
+  string key = "grave";
+  get_texture_width_height_for_key(key);
   const double vx = -0.5;
   const double vy = 0;
   const double scale = 4.0;
   const int target_texture_width = config["target_texture_width"];
   const int target_texture_height = config["target_texture_height"];
-  int x = target_texture_width / 4;
+  int x = target_texture_width / 4.0;
   int y = target_texture_height - h * scale;
   bg_spawn_grave(x, y, vx, vy, scale);
-  x = target_texture_width / 4 + (2 * w * scale);
+  x = target_texture_width / 4.0 + (2 * w * scale);
   bg_spawn_grave(x, y, vx, vy, scale);
-  x = target_texture_width / 4 + (4 * w * scale);
+  x = target_texture_width / 4.0 + (4 * w * scale);
   bg_spawn_grave(x, y, vx, vy, scale);
-  x = target_texture_width / 4 + (6 * w * scale);
+  x = target_texture_width / 4.0 + (6 * w * scale);
   bg_spawn_grave(x, y, vx, vy, scale);
 }
 
@@ -143,7 +146,7 @@ void bg_init_candles() {
   double vy = 0;
   const string key = "candle";
   get_texture_width_height_for_key(key);
-  double x = config["target_texture_width"] / 4;
+  double x = config["target_texture_width"] / 4.0;
   const double y = config["target_texture_height"] - h * scale;
   for (int i = 0; i < 13; i++) {
     bg_spawn_candle(x, y, vx, vy, scale);
