@@ -55,6 +55,7 @@ extern entity_id player_id;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> soulshard_spawn_rate_distribution;
 
+extern unordered_map<string, int> num_clips;
 extern unordered_map<string, SDL_Texture *> textures;
 extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, enemy_type> enemy_types;
@@ -87,6 +88,8 @@ extern void spawn_bat(const double x, const double y, const double vx,
                       const double vy, const double scale);
 void spawn_bats(const double x, const double y, const double scale,
                 const double vx, const double vy, const int number);
+void spawn_eyeball(const double x, const double y, const double vx,
+                   const double vy, const double scale);
 
 extern void spawn_blood_pixels(const int x, const int y, const int n);
 extern double distance(const int x1, const int y1, const int x2, const int y2);
@@ -562,39 +565,43 @@ void update_generators() {
     if (frame_count >= frame_begin) {
       if (active && frame_count % cooldown == 0) {
         switch (generators[id].type) {
-        // case ENEMY_TYPE_EYEBALL:
-        // break;
+        case ENEMY_TYPE_EYEBALL: {
+
+          // start by always spawning on right
+          SDL_Texture *bat_texture = textures["eyeball"];
+          SDL_QueryTexture(bat_texture, NULL, NULL, &w, &h);
+          // x = -w;
+          // x = -w / num_clips["eyeball"];
+          x = config["target_texture_width"];
+          y = config["target_texture_height"] / 2;
+          vx_dir = -1.0;
+          spawn_eyeball(x, y, vx_dir, vy_dir, scale);
+
+        } break;
         case ENEMY_TYPE_BAT: {
-
           switch (screen_position) {
-
           case SCREEN_POSITION_LEFT: {
-
             SDL_Texture *bat_texture = textures["bat"];
             SDL_QueryTexture(bat_texture, NULL, NULL, &w, &h);
-
-            x = -w;
+            x = -w / num_clips["bat"];
             y = config["target_texture_height"] / 2;
             vx_dir = -1.0;
-            scale = 1.0;
-            vy_dir = 0.0;
-            spawn_bats(x, y, scale, vx_dir, vy_dir, group);
-
+            // scale = 1.0;
+            // vy_dir = 0.0;
+            // spawn_bats(x, y, scale, vx_dir, vy_dir, group);
           } break;
-
           case SCREEN_POSITION_RIGHT: {
             x = config["target_texture_width"];
             y = config["target_texture_height"] / 2;
             vx_dir = 1.0;
-            scale = 1.0;
-            vy_dir = 0.0;
-            spawn_bats(x, y, scale, vx_dir, vy_dir, group);
-
+            // scale = 1.0;
+            // vy_dir = 0.0;
+            // spawn_bats(x, y, scale, vx_dir, vy_dir, group);
           } break;
-
           default:
             break;
           }
+          spawn_bats(x, y, scale, vx_dir, vy_dir, group);
 
         } break;
         default:

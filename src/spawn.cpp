@@ -50,7 +50,7 @@ extern int player_max_health;
 extern default_random_engine rng_generator;
 
 extern uniform_real_distribution<double> unit_distribution;
-extern uniform_real_distribution<double> eyeball_vx_distribution;
+// extern uniform_real_distribution<double> eyeball_vx_distribution;
 extern uniform_real_distribution<double> texture_height_distribution;
 extern uniform_real_distribution<double> blood_velocity_positive_distribution;
 extern uniform_real_distribution<double> blood_velocity_negative_distribution;
@@ -259,6 +259,25 @@ void spawn_bat(const double x, const double y, const double vx, const double vy,
   is_enemy[id] = true;
   entity_types[id] = ENTITY_TYPE_ENEMY;
   enemy_types[id] = ENEMY_TYPE_BAT;
+  //  mPrint("spawned bat with id: " + to_string(id));
+}
+
+void spawn_eyeball(const double x, const double y, const double vx,
+                   const double vy, const double scale) {
+  // assert(x > 0);
+  // assert(y >= 0);
+  // assert(y < config["target_texture_height"]);
+  mPrint("spawning eyeball with vx: " + to_string(vx));
+  const string key = "eyeball";
+  SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
+  const int numclips = num_clips[key];
+  const entity_id id = spawn_entity(key, true, numclips, x, y);
+  const double angle = 0.0;
+  transforms[id] = {x, y, vx, vy, angle, scale};
+  is_collidable[id] = true;
+  is_enemy[id] = true;
+  entity_types[id] = ENTITY_TYPE_ENEMY;
+  enemy_types[id] = ENEMY_TYPE_EYEBALL;
   //  mPrint("spawned bat with id: " + to_string(id));
 }
 
