@@ -85,10 +85,8 @@ extern void spawn_soulshard(const int x, const int y);
 extern void spawn_powerup();
 extern void spawn_bat(const double x, const double y, const double vx,
                       const double vy, const double scale);
-// void spawn_bat_group(const double x, const double y, const double scale,
-//                      const int number);
-void spawn_bat_group(const double x, const double y, const double scale,
-                     const double vx, const double vy, const int number);
+void spawn_bats(const double x, const double y, const double scale,
+                const double vx, const double vy, const int number);
 
 extern void spawn_blood_pixels(const int x, const int y, const int n);
 extern double distance(const int x1, const int y1, const int x2, const int y2);
@@ -580,7 +578,7 @@ void update_generators() {
             vx_dir = -1.0;
             scale = 1.0;
             vy_dir = 0.0;
-            spawn_bat_group(x, y, scale, vx_dir, vy_dir, group);
+            spawn_bats(x, y, scale, vx_dir, vy_dir, group);
 
           } break;
 
@@ -590,7 +588,7 @@ void update_generators() {
             vx_dir = 1.0;
             scale = 1.0;
             vy_dir = 0.0;
-            spawn_bat_group(x, y, scale, vx_dir, vy_dir, group);
+            spawn_bats(x, y, scale, vx_dir, vy_dir, group);
 
           } break;
 

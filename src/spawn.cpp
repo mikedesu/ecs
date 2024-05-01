@@ -60,6 +60,7 @@ extern vector<double> bat_vx_vec;
 
 extern map<entity_id, sprite_component> sprites;
 
+extern unordered_map<string, int> num_clips;
 extern unordered_map<string, size_t> config;
 extern unordered_map<entity_id, bool> inputs;
 extern unordered_map<string, SDL_Texture *> textures;
@@ -108,7 +109,9 @@ void spawn_skull(const int x, const int y) {
   if (player_id == -1) {
     const string key = "skull";
     const bool is_anim = false;
-    const int num_frames = 2;
+    // const int num_frames = 2;
+    const int num_frames = num_clips[key];
+    mPrint("num_frames: " + to_string(num_frames));
     const entity_id id = spawn_entity(key, is_anim, num_frames, x, y);
     inputs[id] = true;
     player_id = id;
@@ -120,7 +123,8 @@ void spawn_skull(const int x, const int y) {
 void spawn_soulshard(const int x, const int y) {
   const string key = "soulshard";
   const bool is_anim = true;
-  const int num_frames = 8;
+  // const int num_frames = 8;
+  const int num_frames = num_clips[key];
   const entity_id id = spawn_entity("soulshard", is_anim, num_frames, x, y);
   const double vx = -1.0;
   transforms[id].vx = vx;
@@ -188,9 +192,10 @@ void spawn_knife() {
     }
     const bool do_spray = powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] > 0;
     int i = 0;
+    const int numclips = num_clips[key];
     // for(int i=0; i<total_knives; i++) {
     do {
-      id = spawn_entity(key, false, 1, x, y);
+      id = spawn_entity(key, false, numclips, x, y);
       vy = !do_spray ? 0
                      : powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] *
                            unit_distribution(rng_generator);
@@ -215,13 +220,14 @@ void spawn_knife() {
   }
 }
 
-void spawn_bat_group(const double x, const double y, const double scale,
-                     const double vx, const double vy, const int number) {
+void spawn_bats(const double x, const double y, const double scale,
+                const double vx, const double vy, const int number) {
   assert(number > 0);
   assert(number < 10);
   string key = "bat";
   SDL_Texture *t = textures[key];
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
+  w = w / num_clips[key];
   // const int right = config["target_texture_width"] + w;
   // const int bottom = config["target_texture_height"] - h * scale;
   // assert(x > 0 && x < right);
@@ -245,7 +251,8 @@ void spawn_bat(const double x, const double y, const double vx, const double vy,
   mPrint("spawning bat with vx: " + to_string(vx));
   const string key = "bat";
   SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
-  const entity_id id = spawn_entity(key, true, 2, x, y);
+  const int numclips = num_clips[key];
+  const entity_id id = spawn_entity(key, true, numclips, x, y);
   const double angle = 0.0;
   transforms[id] = {x, y, vx, vy, angle, scale};
   is_collidable[id] = true;
@@ -366,13 +373,13 @@ void spawn_blood_pixels(const int x, const int y, const int n) {
   // custom width/height defined in config/textures.json
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
   const bool is_animating = false;
-  const int num_clips = 1;
+  const int numclips = num_clips[key];
   const double dx = x;
   const double dy = y;
   // if we have too many blood pixels, dont bother spawning anymore
   for (int i = 0; i < n; i++) {
     entity_id id = get_next_entity_id();
-    sprites[id] = {is_animating, 0, num_clips, t, {0, 0, w, h}, {x, y, w, h}};
+    sprites[id] = {is_animating, 0, numclips, t, {0, 0, w, h}, {x, y, w, h}};
     transforms[id] = {dx, dy,
                       // blood_velocity_negative_distribution(rng_generator),
                       // blood_velocity_distribution(rng_generator),

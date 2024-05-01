@@ -139,6 +139,7 @@ unordered_map<entity_id, int> blood_pixel_lifetime;
 unordered_map<enemy_type, int> enemies_killed;
 unordered_map<powerup_type, int> powerups_collected;
 unordered_map<string, SDL_Texture *> textures;
+unordered_map<string, int> num_clips;
 map<entity_id, sprite_component> bg_sprites;
 
 // random number generator

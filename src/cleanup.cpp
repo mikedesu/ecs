@@ -57,6 +57,7 @@ extern unordered_map<entity_id, entity_type> entity_types;
 extern unordered_map<int, bool> is_pressed;
 extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, bool> is_powerup;
+extern unordered_map<string, int> num_clips;
 
 extern vector<entity_id> entities;
 extern vector<entity_id> entities_marked_for_deletion_tmp;
@@ -98,6 +99,8 @@ void cleanup_textures() {
   for_each(textures.begin(), textures.end(),
            [](auto kv) { SDL_DestroyTexture(kv.second); });
   textures.clear();
+
+  num_clips.clear();
 }
 
 void cleanup_data_structures() {

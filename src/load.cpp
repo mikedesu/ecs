@@ -62,6 +62,7 @@ extern unordered_map<entity_id, transform_component> transforms;
 extern entity_id player_id;
 extern int gameover_count;
 extern unsigned long game_begin_time;
+extern unordered_map<string, int> num_clips;
 
 extern int window_width;
 extern int window_height;
@@ -73,9 +74,9 @@ extern void cleanup_and_exit_with_failure_mprint(string msg);
 
 // declarations
 void load_debug_text();
-void load_texture(string key, string path);
-void load_texture_with_color_mod(string key, string path, Uint8 r, Uint8 g,
-                                 Uint8 b);
+void load_texture(string key, string path, const int numclips);
+void load_texture_with_color_mod(string key, string path, const int numclips,
+                                 Uint8 r, Uint8 g, Uint8 b);
 void load_pixel(string key, Uint8 r, Uint8 g, Uint8 b, int w, int h);
 void handle_load_pixel(Value &v);
 bool json_value_has_member_is_string(Value &v, string member);
@@ -87,6 +88,14 @@ void handle_load_texture_by_type(Value &v);
 void check_if_json_value_is_object(Value &v);
 void load_textures();
 bool check_if_json_has_member_and_is_double(Value &v, string member);
+
+bool check_if_json_has_member_and_is_int(Value &v, string member) {
+  return v.HasMember(member.c_str()) && v[member.c_str()].IsInt();
+}
+
+bool check_if_json_has_member_and_is_double(Value &v, string member) {
+  return v.HasMember(member.c_str()) && v[member.c_str()].IsDouble();
+}
 
 void load_gameover_texture() {
   mPrint("load gameover texture");
@@ -199,7 +208,8 @@ void load_debug_text() {
   }
 }
 
-void load_texture(string key, string path) {
+void load_texture(string key, string path, const int numclips) {
+  assert(numclips > 0);
   SDL_Texture *t = IMG_LoadTexture(renderer, path.c_str());
   if (t == nullptr) {
     mPrint("Failed to load texture image with key and path: " + key + "," +
@@ -207,10 +217,11 @@ void load_texture(string key, string path) {
     cleanup_and_exit_with_failure();
   }
   textures[key] = t;
+  num_clips[key] = numclips;
 }
 
-void load_texture_with_color_mod(string key, string path, Uint8 r, Uint8 g,
-                                 Uint8 b) {
+void load_texture_with_color_mod(string key, string path, const int numclips,
+                                 Uint8 r, Uint8 g, Uint8 b) {
   SDL_Texture *t = IMG_LoadTexture(renderer, path.c_str());
   if (t == nullptr) {
     mPrint("Failed to load texture image with key and path: " + key + "," +
@@ -219,6 +230,10 @@ void load_texture_with_color_mod(string key, string path, Uint8 r, Uint8 g,
   }
   SDL_SetTextureColorMod(t, r, g, b);
   textures[key] = t;
+  num_clips[key] = numclips;
+
+  mPrint("load texture with color mod: " + key + "," + path + "," +
+         to_string(r) + "," + to_string(g) + "," + to_string(b));
 }
 
 void load_pixel(string key, Uint8 r, Uint8 g, Uint8 b, int w, int h) {
@@ -305,18 +320,36 @@ void handle_load_texture_with_color_mod(Value &v) {
   int r = v["r"].GetInt();
   int g = v["g"].GetInt();
   int b = v["b"].GetInt();
-  load_texture_with_color_mod(key, path, r, g, b);
+
+  int numclips = 1;
+  if (json_value_has_member_is_string(v, "numclips")) {
+    numclips = v["numclips"].GetInt();
+  }
+
+  load_texture_with_color_mod(key, path, numclips, r, g, b);
 }
 
 void handle_load_texture(Value &v) {
+
+  int clips = 1;
   if (!json_value_has_member_is_string(v, "path")) {
     string msg = "config/textures.json array element has no path";
     mPrint(msg);
     cleanup_and_exit_with_failure();
   }
+  if (!json_value_has_member_is_string(v, "key")) {
+    string msg = "config/textures.json array element has no key";
+    mPrint(msg);
+    cleanup_and_exit_with_failure();
+  }
+  if (check_if_json_has_member_and_is_int(v, "numclips")) {
+    clips = v["numclips"].GetInt();
+  }
+
   string path = v["path"].GetString();
   string key = v["key"].GetString();
-  load_texture(key, path);
+
+  load_texture(key, path, clips);
 }
 
 const Document load_document(string path) {
@@ -385,14 +418,6 @@ void load_textures() {
   }
 
   load_gameover_texture();
-}
-
-bool check_if_json_has_member_and_is_int(Value &v, string member) {
-  return v.HasMember(member.c_str()) && v[member.c_str()].IsInt();
-}
-
-bool check_if_json_has_member_and_is_double(Value &v, string member) {
-  return v.HasMember(member.c_str()) && v[member.c_str()].IsDouble();
 }
 
 void json_value_has_member_is_int_set_config(Document &d, string member) {
