@@ -22,6 +22,8 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
+extern SDL_Color stopwatch_text_color;
+
 // external variables
 extern int powerups_onscreen;
 extern unordered_map<string, size_t> config;
@@ -50,9 +52,12 @@ extern SDL_Surface *text_surface;
 extern SDL_Surface *gameover_surface;
 extern SDL_Surface *stopwatch_surface;
 extern SDL_Color textColor;
-extern TTF_Font *gFont;
-extern TTF_Font *gameover_font;
+extern SDL_Rect stopwatch_texture_src;
+extern SDL_Rect stopwatch_texture_dest;
 extern SDL_Renderer *renderer;
+extern TTF_Font *gFont;
+extern TTF_Font *stopwatch_font;
+extern TTF_Font *gameover_font;
 extern int mWidth;
 extern int mHeight;
 extern int DEBUG_TEXT_WRAP_LEN;
@@ -124,7 +129,9 @@ void load_gameover_texture() {
 
 void load_stopwatch_text() {
 
-  unsigned long milliseconds = SDL_GetTicks64() - game_begin_time;
+  // unsigned long milliseconds = SDL_GetTicks64() - game_begin_time;
+  unsigned long milliseconds =
+      SDL_GetTicks64() - game_begin_time + (99 * 60 * 1000);
   unsigned long seconds = milliseconds / 1000;
   unsigned long minutes = seconds / 60;
   seconds = seconds % 60;
@@ -132,8 +139,11 @@ void load_stopwatch_text() {
   // snprintf(stopwatch_text, 128, "%lu", SDL_GetTicks64());
   snprintf(stopwatch_text, 128, "%lu:%02lu", minutes, seconds);
 
-  stopwatch_surface = TTF_RenderText_Blended_Wrapped(
-      gFont, stopwatch_text, textColor, DEBUG_TEXT_WRAP_LEN);
+  stopwatch_surface =
+      TTF_RenderText_Blended_Wrapped(stopwatch_font, stopwatch_text,
+                                     stopwatch_text_color, DEBUG_TEXT_WRAP_LEN);
+  // stopwatch_font, stopwatch_text, textColor, DEBUG_TEXT_WRAP_LEN);
+  // gFont, stopwatch_text, textColor, DEBUG_TEXT_WRAP_LEN);
   if (stopwatch_surface == nullptr) {
     mPrint("stopwatch_surface == nullptr");
     mPrint("Unable to render stopwatch_surface! SDL_ttf Error: " +
@@ -154,6 +164,15 @@ void load_stopwatch_text() {
     // Get image dimensions
     mWidth = stopwatch_surface->w;
     mHeight = stopwatch_surface->h;
+
+    // init_stopwatch_texture_rects();
+    stopwatch_texture_src.x = 0;
+    stopwatch_texture_src.y = 0;
+    stopwatch_texture_dest.x = 0;
+    stopwatch_texture_dest.y = 0;
+    stopwatch_texture_src.w = stopwatch_texture_dest.w = stopwatch_surface->w;
+    stopwatch_texture_src.h = stopwatch_texture_dest.h = stopwatch_surface->h;
+
     // Get rid of old surface
     SDL_FreeSurface(stopwatch_surface);
     stopwatch_surface = nullptr;

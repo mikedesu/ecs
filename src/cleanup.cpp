@@ -34,6 +34,7 @@ extern SDL_Surface *text_surface;
 extern SDL_Surface *stopwatch_surface;
 extern SDL_Joystick *joystick;
 extern TTF_Font *gFont;
+extern TTF_Font *stopwatch_font;
 extern TTF_Font *gameover_font;
 
 extern unordered_map<string, SDL_Texture *> textures;
@@ -156,6 +157,7 @@ void cleanup() {
   SDL_DestroyWindow(window);
   // mPrint("cleaning up TTF");
   TTF_CloseFont(gFont);
+  TTF_CloseFont(stopwatch_font);
   TTF_CloseFont(gameover_font);
   TTF_Quit();
   IMG_Quit();

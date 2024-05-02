@@ -69,6 +69,7 @@ extern int default_knife_cooldown;
 extern unsigned long game_begin_time;
 
 extern TTF_Font *gFont;
+extern TTF_Font *stopwatch_font;
 extern TTF_Font *gameover_font;
 
 extern SDL_Renderer *renderer;
@@ -136,6 +137,13 @@ void init_fonts() {
   const int gameover_fontsize = 128;
   gameover_font = TTF_OpenFont(path.c_str(), gameover_fontsize);
   if (gameover_font == nullptr) {
+    mPrint("Failed to load font: " + path);
+    cleanup_and_exit_with_failure();
+  }
+
+  const int stopwatch_fontsize = 32;
+  stopwatch_font = TTF_OpenFont(path.c_str(), stopwatch_fontsize);
+  if (stopwatch_font == nullptr) {
     mPrint("Failed to load font: " + path);
     cleanup_and_exit_with_failure();
   }

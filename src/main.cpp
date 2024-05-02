@@ -81,6 +81,7 @@ int powerups_onscreen = 0;
 unsigned long game_begin_time = 0;
 
 TTF_Font *gFont = nullptr;
+TTF_Font *stopwatch_font = nullptr;
 TTF_Font *gameover_font = nullptr;
 
 entity_id next_entity_id = 0;
@@ -88,6 +89,8 @@ entity_id player_id = -1;
 
 SDL_Joystick *joystick = nullptr;
 SDL_Color textColor = {255, 255, 255, 255};
+SDL_Color debug_text_color = {255, 255, 255, 255};
+SDL_Color stopwatch_text_color = {255, 0, 0, 255};
 SDL_Event e;
 SDL_Rect target_texture_src;
 SDL_Rect target_texture_dest;
@@ -213,8 +216,11 @@ int main() {
   load_debug_text();
   init_debug_texture_rects();
   load_stopwatch_text();
-  init_stopwatch_texture_rects();
+
+  // init_stopwatch_texture_rects();
+
   init_player_hud_texture_rects();
+
   // get the width and height of the texture
   init_target_texture_rects();
 
