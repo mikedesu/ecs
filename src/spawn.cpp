@@ -60,6 +60,7 @@ extern vector<double> bat_vx_vec;
 
 extern map<entity_id, sprite_component> sprites;
 
+extern unordered_map<entity_id, int> hitpoints;
 extern unordered_map<string, int> num_clips;
 extern unordered_map<string, size_t> config;
 extern unordered_map<entity_id, bool> inputs;
@@ -259,6 +260,7 @@ void spawn_bat(const double x, const double y, const double vx, const double vy,
   is_enemy[id] = true;
   entity_types[id] = ENTITY_TYPE_ENEMY;
   enemy_types[id] = ENEMY_TYPE_BAT;
+  hitpoints[id] = 1;
   //  mPrint("spawned bat with id: " + to_string(id));
 }
 
@@ -278,7 +280,8 @@ void spawn_eyeball(const double x, const double y, const double vx,
   is_enemy[id] = true;
   entity_types[id] = ENTITY_TYPE_ENEMY;
   enemy_types[id] = ENEMY_TYPE_EYEBALL;
-  //  mPrint("spawned bat with id: " + to_string(id));
+  hitpoints[id] = 4;
+  mPrint("spawned eyeball with hp: " + to_string(hitpoints[id]));
 }
 
 void spawn_generator(enemy_type type, bool active, int group, int cooldown,

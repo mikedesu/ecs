@@ -37,10 +37,11 @@ extern TTF_Font *gFont;
 extern TTF_Font *stopwatch_font;
 extern TTF_Font *gameover_font;
 
-extern unordered_map<string, SDL_Texture *> textures;
 extern map<entity_id, sprite_component> sprites;
-// extern unordered_map<entity_id, sprite_component> sprites;
 extern map<entity_id, sprite_component> bg_sprites;
+extern unordered_map<powerup_type, int> powerups_collected;
+extern unordered_map<string, SDL_Texture *> textures;
+extern unordered_map<entity_id, int> hitpoints;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, generator_component> generators;
 extern unordered_map<entity_id, bool> inputs;
@@ -88,6 +89,7 @@ function<void(pair<entity_id, bool>)> cleanup_entity_marked_for_deletion =
         bg_sprites.erase(id);
         powerup_types.erase(id);
         is_powerup.erase(id);
+        hitpoints.erase(id);
         // is_marked_for_deletion.erase(id);
         is_blood_pixel.erase(id);
         entities.erase(remove(entities.begin(), entities.end(), id),
@@ -128,6 +130,8 @@ void cleanup_data_structures() {
   bat_vx_vec.clear();
   powerup_types.clear();
   is_powerup.clear();
+  hitpoints.clear();
+  powerups_collected.clear();
 }
 
 void cleanup() {

@@ -55,6 +55,7 @@ extern entity_id player_id;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> soulshard_spawn_rate_distribution;
 
+extern unordered_map<entity_id, int> hitpoints;
 extern unordered_map<string, int> num_clips;
 extern unordered_map<string, SDL_Texture *> textures;
 extern unordered_map<entity_id, powerup_type> powerup_types;
@@ -468,20 +469,27 @@ function<void(entity_id, entity_id)> check_for_knife_collision_with_enemy =
       sprite_component enemy = sprites[enemy_id];
       sprite_component knife = sprites[id];
       if (SDL_HasIntersection(&knife.dest, &enemy.dest)) {
-        const int x = enemy.dest.x + enemy.dest.w / 2;
-        const int y = enemy.dest.y + enemy.dest.h / 2;
-        const int num_pixels = config["blood_pixel_count"];
-        is_marked_for_deletion[enemy_id] = true;
+
+        hitpoints[enemy_id]--;
         is_marked_for_deletion[id] = true;
-        num_collisions++;
-        enemies_killed[type]++;
-        spawn_soulshard(enemy.dest.x, enemy.dest.y);
-        spawn_blood_pixels(x, y, num_pixels);
-        if (is_marked_for_deletion[id]) {
-          num_knives++;
-          if (num_knives > max_num_knives) {
-            num_knives = max_num_knives;
-          }
+        num_knives++;
+        if (num_knives > max_num_knives) {
+          num_knives = max_num_knives;
+        }
+
+        mPrint("enemy hp is now: " + to_string(hitpoints[enemy_id]));
+
+        if (hitpoints[enemy_id] <= 0) {
+          // const double scale = transforms[enemy_id].scale;
+          const int x = enemy.dest.x + enemy.dest.w / 2;
+          const int y = enemy.dest.y + enemy.dest.h / 2;
+          const int num_pixels = config["blood_pixel_count"];
+          is_marked_for_deletion[enemy_id] = true;
+          num_collisions++;
+          enemies_killed[type]++;
+          // spawn_soulshard(enemy.dest.x, enemy.dest.y);
+          spawn_soulshard(x, y);
+          spawn_blood_pixels(x, y, num_pixels);
         }
       }
     };
@@ -566,15 +574,36 @@ void update_generators() {
       if (active && frame_count % cooldown == 0) {
         switch (generators[id].type) {
         case ENEMY_TYPE_EYEBALL: {
+          switch (screen_position) {
+          case SCREEN_POSITION_LEFT: {
+            // SDL_Texture *eyeball_texture = textures["eyeball"];
+            SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
+            // x = -w;
+            x = -w / num_clips["eyeball"];
+            // x = config["target_texture_width"];
+            y = config["target_texture_height"] / 2;
+            vx_dir = 1.0;
 
-          // start by always spawning on right
-          SDL_Texture *bat_texture = textures["eyeball"];
-          SDL_QueryTexture(bat_texture, NULL, NULL, &w, &h);
-          // x = -w;
-          // x = -w / num_clips["eyeball"];
-          x = config["target_texture_width"];
-          y = config["target_texture_height"] / 2;
-          vx_dir = -1.0;
+            scale = 2.0;
+          } break;
+
+          case SCREEN_POSITION_RIGHT: {
+
+            // start by always spawning on right
+            // SDL_Texture *bat_texture = textures["eyeball"];
+            SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
+            // x = -w;
+            // x = -w / num_clips["eyeball"];
+            x = config["target_texture_width"];
+            y = config["target_texture_height"] / 2;
+            vx_dir = -1.0;
+            scale = 2.0;
+
+          } break;
+          default:
+            break;
+          }
+
           spawn_eyeball(x, y, vx_dir, vy_dir, scale);
 
         } break;

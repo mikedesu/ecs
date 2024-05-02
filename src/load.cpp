@@ -130,8 +130,8 @@ void load_gameover_texture() {
 void load_stopwatch_text() {
 
   // unsigned long milliseconds = SDL_GetTicks64() - game_begin_time;
-  unsigned long milliseconds =
-      SDL_GetTicks64() - game_begin_time + (99 * 60 * 1000);
+  unsigned long milliseconds = SDL_GetTicks64() - game_begin_time;
+  // SDL_GetTicks64() - game_begin_time + (99 * 60 * 1000);
   unsigned long seconds = milliseconds / 1000;
   unsigned long minutes = seconds / 60;
   seconds = seconds % 60;

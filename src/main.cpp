@@ -118,6 +118,7 @@ vector<double> bat_vx_vec;
 vector<int> bat_y_vec;
 
 map<entity_id, sprite_component> sprites;
+unordered_map<entity_id, int> hitpoints;
 unordered_map<entity_id, powerup_type> powerup_types;
 unordered_map<entity_id, enemy_type> enemy_types;
 unordered_map<entity_id, transform_component> transforms;

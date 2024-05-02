@@ -23,6 +23,7 @@ extern mt19937 g;
 extern unordered_map<string, SDL_Texture *> textures;
 extern unordered_map<string, size_t> config;
 extern unordered_map<powerup_type, int> powerups_collected;
+extern unordered_map<powerup_type, int> powerups_collected;
 
 extern vector<double> bat_vx_vec;
 extern vector<int> bat_y_vec;
@@ -294,13 +295,34 @@ void init_game() {
   init_after_load_textures();
   spawn_skull(0, 0);
   // spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 30, 60 * 30);
-  // spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 4, 60 * 30, 0,
-  //                SCREEN_POSITION_RIGHT);
 
   // spawn_generator(ENEMY_TYPE_BAT, true, 4, 60 * 8, 60 * 30, 600,
 
-  // spawn_generator(ENEMY_TYPE_EYEBALL, true, 4, 60 * 8, 60 * 30, 0,
-  //                 SCREEN_POSITION_RIGHT);
+  // need to add in group-spawning for eyeballs
+  // spawn_generator(ENEMY_TYPE_EYEBALL, true, 1, 60 * 8, 60 * 30, 300,
+  //                SCREEN_POSITION_LEFT);
+
+  enemy_type type = ENEMY_TYPE_EYEBALL;
+  bool is_active = true;
+  int groupnum = 1;
+  int cooldown = 60 * 8;
+  int cooldown_reduction = 60 * 30;
+  int frame_begin = 0;
+  screen_position_t screen_position = SCREEN_POSITION_LEFT;
+  // screen_position_t screen_position = SCREEN_POSITION_RIGHT;
+  spawn_generator(type, is_active, groupnum, cooldown, cooldown_reduction,
+                  frame_begin, screen_position);
+
+  type = ENEMY_TYPE_BAT;
+  groupnum = 2;
+  cooldown = 60 * 4;
+  cooldown_reduction = 60 * 30;
+  frame_begin = 0;
+  screen_position = SCREEN_POSITION_RIGHT;
+
+  spawn_generator(type, is_active, groupnum, cooldown, cooldown_reduction,
+                  frame_begin, screen_position);
+  // SCREEN_POSITION_RIGHT);
 
   // spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 4, 60 * 30, 0,
   //                 SCREEN_POSITION_RIGHT);
