@@ -84,7 +84,7 @@ void bg_spawn_candle(const int x, const int y, const double vx, const double vy,
                      const double scale) {
   const string key = "candle";
   const int numclips = num_clips[key];
-  mPrint("spawning candle with numclips: " + to_string(numclips));
+  //  mPrint("spawning candle with numclips: " + to_string(numclips));
   const bool is_animating = true;
   const int src_x = 0;
   const int src_y = 0;

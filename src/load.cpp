@@ -98,7 +98,7 @@ bool check_if_json_has_member_and_is_double(Value &v, string member) {
 }
 
 void load_gameover_texture() {
-  mPrint("load gameover texture");
+  // mPrint("load gameover texture");
   const string gameover_text = "GAMEOVER";
   gameover_surface = TTF_RenderText_Blended_Wrapped(
       gameover_font, gameover_text.c_str(), textColor, DEBUG_TEXT_WRAP_LEN);
