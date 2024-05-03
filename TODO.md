@@ -407,3 +407,12 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 - [x] beginning of eyeball enemy testing
 - [ ] somehow i broke the candle animation, need to fix that
     - [ ] it is rendering all 3 frames as if it is failing to parse numclips
+
+## 3 Mary 2024
+
+- [ ] working on enemy damage flashes
+    - [ ] for some reason bat texture is fucking up
+    - [ ] tried hard-coding "bat-dmg" key on spawn and removed "bat" but game won't load...
+    - [ ] need to trace thru the loading and find where it is getting stuck
+
+

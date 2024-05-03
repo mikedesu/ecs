@@ -426,6 +426,7 @@ void handle_load_texture_by_type(Value &v) {
 }
 
 void load_textures() {
+  mPrint("begin load textures");
   // Document d = load_textures_document();
   Document d = load_document("config/textures.json");
   if (d.IsArray()) {
@@ -438,6 +439,7 @@ void load_textures() {
   }
 
   load_gameover_texture();
+  mPrint("end load textures");
 }
 
 void json_value_has_member_is_int_set_config(Document &d, string member) {

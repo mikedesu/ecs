@@ -234,6 +234,7 @@ void init() {
 }
 
 void init_bat_vectors() {
+  mPrint("init bat vectors");
   bat_vx_vec.push_back(-4.0);
   bat_vx_vec.push_back(-3.5);
   bat_vx_vec.push_back(-3.0);
@@ -241,7 +242,16 @@ void init_bat_vectors() {
   bat_vx_vec.push_back(-2.0);
   bat_vx_vec.push_back(-1.5);
 
-  SDL_Texture *t = textures["bat"];
+  // string key = "bat";
+  string key = "bat-dmg";
+
+  if (textures.find(key) == textures.end()) {
+    mPrint("Failed to find texture: " + key);
+    cleanup_and_exit_with_failure();
+  }
+
+  SDL_Texture *t = textures[key];
+  // SDL_Texture *t = textures["bat"];
   int w, h;
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
 
@@ -253,11 +263,14 @@ void init_bat_vectors() {
 }
 
 void init_after_load_textures() {
+  mPrint("begin init after load textures");
   init_bat_vectors();
   init_game_vars();
+  mPrint("end init after load textures");
 }
 
 void init_game_vars() {
+  mPrint("begin init game vars");
   player_id = -1;
   game_begin_time = SDL_GetTicks();
 
@@ -287,12 +300,20 @@ void init_game_vars() {
   powerups_collected.clear();
 
   powerups_onscreen = 0;
+  mPrint("end init game vars");
 }
 
 void init_game() {
+  mPrint("begin init game");
   cleanup_data_structures();
+
+  mPrint("");
   bg_init();
+
+  mPrint("");
   init_after_load_textures();
+
+  mPrint("");
   spawn_skull(0, 0);
   // spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 30, 60 * 30);
 
@@ -302,6 +323,7 @@ void init_game() {
   // spawn_generator(ENEMY_TYPE_EYEBALL, true, 1, 60 * 8, 60 * 30, 300,
   //                SCREEN_POSITION_LEFT);
 
+  mPrint("");
   enemy_type type = ENEMY_TYPE_EYEBALL;
   bool is_active = true;
   int groupnum = 1;
@@ -320,8 +342,10 @@ void init_game() {
   frame_begin = 0;
   screen_position = SCREEN_POSITION_RIGHT;
 
+  mPrint("");
   spawn_generator(type, is_active, groupnum, cooldown, cooldown_reduction,
                   frame_begin, screen_position);
+  mPrint("");
   // SCREEN_POSITION_RIGHT);
 
   // spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 4, 60 * 30, 0,

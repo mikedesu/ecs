@@ -214,18 +214,27 @@ int main() {
 
   handle_init_target_texture();
   load_textures();
+
+  mPrint("load debug text");
   load_debug_text();
+  mPrint("load debug texture rects");
   init_debug_texture_rects();
+  mPrint("load stopwatch text");
   load_stopwatch_text();
 
   // init_stopwatch_texture_rects();
 
+  mPrint("");
   init_player_hud_texture_rects();
 
+  mPrint("");
   // get the width and height of the texture
   init_target_texture_rects();
 
+  mPrint("");
   do_fullscreen();
+
+  mPrint("");
   init_game();
 
   mPrint("main loop...");
