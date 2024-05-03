@@ -354,18 +354,23 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   transform_component transform = t.second;
   transform.x += transform.vx;
   transform.y += transform.vy;
+  const double scale = transform.scale;
+  double x = transform.x;
+  double y = transform.y;
+  double src_w = sprites[id].src.w;
+  double src_h = sprites[id].src.h;
+  double dest_w = src_w * scale;
+  double dest_h = src_h * scale;
   if (id == player_id) {
-    if (transform.x < 0) {
+    if (x < 0) {
       transform.x = 0;
-    } else if (transform.x >
-               config["target_texture_width"] - sprites[id].dest.w) {
-      transform.x = config["target_texture_width"] - sprites[id].dest.w;
+    } else if (x > config["target_texture_width"] - dest_w) {
+      transform.x = config["target_texture_width"] - dest_w;
     }
-    if (transform.y < 0) {
+    if (y < 0) {
       transform.y = 0;
-    } else if (transform.y >
-               config["target_texture_height"] - sprites[id].dest.h) {
-      transform.y = config["target_texture_height"] - sprites[id].dest.h;
+    } else if (y > config["target_texture_height"] - dest_h) {
+      transform.y = config["target_texture_height"] - dest_h;
     }
   }
 
@@ -375,14 +380,14 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
 
   sprites[id].dest.x = transform.x;
   sprites[id].dest.y = transform.y;
-  sprites[id].dest.w = sprites[id].src.w * transform.scale;
-  sprites[id].dest.h = sprites[id].src.h * transform.scale;
+  sprites[id].dest.w = dest_w;
+  sprites[id].dest.h = dest_h;
   switch (entity_types[id]) {
   case ENTITY_TYPE_ENEMY: {
     const int w = sprites[id].src.w;
-    const int left = 2 * -w;
+    const int left = 2 * -w * scale;
     // const int window_width = config["window_width"];
-    const int right = window_width + 2 * w;
+    const int right = window_width + (2 * w * scale);
     const int x = transforms[id].x;
     const bool mark = x < left || x > right;
     is_marked_for_deletion[id] = mark;
@@ -478,7 +483,8 @@ function<void(entity_id, entity_id)> check_for_knife_collision_with_enemy =
 
         hitpoints[enemy_id]--;
 
-        sprites[enemy_id].dmg_frames = 4;
+        // sprites[enemy_id].dmg_frames = 4;
+        sprites[enemy_id].dmg_frames = 8;
 
         // is_damaged[enemy_id] = true;
         is_marked_for_deletion[id] = true;
@@ -589,25 +595,31 @@ void update_generators() {
             // SDL_Texture *eyeball_texture = textures["eyeball"];
             SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
             // x = -w;
-            x = -w / num_clips["eyeball"];
+            // scale = 2.0;
+            scale = rand() % 4 + 1;
+            // scale = 4;
+            //  scale = rand() % 4 + 1;
+            x = scale * -w / num_clips["eyeball"];
             // x = config["target_texture_width"];
             y = config["target_texture_height"] / 2;
             vx_dir = 1.0;
 
-            scale = 2.0;
           } break;
 
           case SCREEN_POSITION_RIGHT: {
 
             // start by always spawning on right
             // SDL_Texture *bat_texture = textures["eyeball"];
-            SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
+            // SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
             // x = -w;
             // x = -w / num_clips["eyeball"];
+
+            scale = rand() % 4 + 1;
+            // scale = rand() % 8 + 1;
+            //  scale = 2.0;
             x = config["target_texture_width"];
             y = config["target_texture_height"] / 2;
             vx_dir = -1.0;
-            scale = 2.0;
 
           } break;
           default:

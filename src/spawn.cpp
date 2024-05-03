@@ -274,7 +274,8 @@ void spawn_eyeball(const double x, const double y, const double vx,
   // assert(x > 0);
   // assert(y >= 0);
   // assert(y < config["target_texture_height"]);
-  mPrint("spawning eyeball with vx: " + to_string(vx));
+  mPrint("spawning eyeball with vx: " + to_string(vx) +
+         " and scale: " + to_string(scale));
   const string key = "eyeball";
   SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
   const int numclips = num_clips[key];
@@ -285,7 +286,10 @@ void spawn_eyeball(const double x, const double y, const double vx,
   is_enemy[id] = true;
   entity_types[id] = ENTITY_TYPE_ENEMY;
   enemy_types[id] = ENEMY_TYPE_EYEBALL;
-  hitpoints[id] = 4;
+
+  hitpoints[id] = (int)scale > 1 ? scale : 1;
+  // hitpoints[id] = 4;
+
   mPrint("spawned eyeball with hp: " + to_string(hitpoints[id]));
 }
 
