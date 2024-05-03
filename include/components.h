@@ -41,6 +41,7 @@ typedef struct {
   int num_clips;
   SDL_Texture *texture;
   SDL_Texture *dmg_texture;
+  int dmg_frames;
   SDL_Rect src;
   SDL_Rect dest;
 } sprite_component;

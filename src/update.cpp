@@ -65,7 +65,7 @@ extern unordered_map<entity_id, generator_component> generators;
 extern map<entity_id, sprite_component> sprites;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, transform_component> bg_transforms;
-extern unordered_map<entity_id, bool> is_damaged;
+// extern unordered_map<entity_id, bool> is_damaged;
 extern unordered_map<entity_id, bool> is_soulshard;
 extern unordered_map<entity_id, bool> is_rotating;
 extern unordered_map<entity_id, bool> is_knife;
@@ -223,7 +223,10 @@ function<void(entity_id)> update_skull_collision = [](const entity_id id) {
       break;
     case ENTITY_TYPE_ENEMY:
       is_marked_for_deletion[id] = true;
-      is_damaged[player_id] = true;
+      // is_damaged[player_id] = true;
+
+      sprites[player_id].dmg_frames = 10;
+
       player_health--;
       if (player_health <= 0) {
         mPrint("Gameover!");
@@ -474,7 +477,10 @@ function<void(entity_id, entity_id)> check_for_knife_collision_with_enemy =
         // knife collides with enemy
 
         hitpoints[enemy_id]--;
-        is_damaged[enemy_id] = true;
+
+        sprites[enemy_id].dmg_frames = 4;
+
+        // is_damaged[enemy_id] = true;
         is_marked_for_deletion[id] = true;
         num_knives++;
         if (num_knives > max_num_knives) {

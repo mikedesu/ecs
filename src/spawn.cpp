@@ -102,7 +102,8 @@ entity_id spawn_entity(const string key, const bool is_animating,
   const entity_id id = get_next_entity_id();
   const double dx = x;
   const double dy = y;
-  sprites[id] = {is_animating, 0, numclips, t, t2, {0, 0, w, h}, {x, y, w, h}};
+  sprites[id] = {is_animating, 0, numclips,     t,
+                 t2,           0, {0, 0, w, h}, {x, y, w, h}};
   transforms[id] = {dx, dy, 0, 0, 0, 1};
   entities.push_back(id);
   // mPrint("spawned entity with id: " + to_string(id));
@@ -405,8 +406,8 @@ void spawn_blood_pixels(const int x, const int y, const int n) {
   // if we have too many blood pixels, dont bother spawning anymore
   for (int i = 0; i < n; i++) {
     entity_id id = get_next_entity_id();
-    sprites[id] = {is_animating, 0,           numclips, t, NULL,
-                   {0, 0, w, h}, {x, y, w, h}};
+    sprites[id] = {is_animating, 0, numclips,     t,
+                   NULL,         0, {0, 0, w, h}, {x, y, w, h}};
     transforms[id] = {dx, dy,
                       // blood_velocity_negative_distribution(rng_generator),
                       // blood_velocity_distribution(rng_generator),

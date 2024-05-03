@@ -44,9 +44,10 @@ function<void(sprite_pair)> draw_sprite = [](const sprite_pair p) {
   const entity_id id = p.first;
   SDL_Texture *t = p.second.texture;
 
-  if (is_damaged[id]) {
+  if (p.second.dmg_frames > 0) {
     t = sprites[id].dmg_texture;
-    is_damaged[id] = false;
+    sprites[id].dmg_frames--;
+    // is_damaged[id] = false;
   }
 
   // SDL_RenderCopyEx(renderer, p.second.texture, &p.second.src, &p.second.dest,

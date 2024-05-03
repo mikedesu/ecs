@@ -129,7 +129,7 @@ unordered_map<entity_id, generator_component> generators;
 unordered_map<entity_id, entity_type> entity_types;
 unordered_map<int, bool> is_pressed;
 unordered_map<entity_id, bool> inputs;
-unordered_map<entity_id, bool> is_damaged;
+// unordered_map<entity_id, bool> is_damaged;
 unordered_map<entity_id, bool> is_rotating;
 unordered_map<entity_id, bool> is_collidable;
 unordered_map<entity_id, bool> is_blood_pixel;
