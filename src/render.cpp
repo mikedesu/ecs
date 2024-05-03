@@ -23,6 +23,7 @@ extern map<entity_id, sprite_component> bg_sprites;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, transform_component> bg_transforms;
 extern unordered_map<entity_id, bool> is_flipped;
+extern unordered_map<entity_id, bool> is_damaged;
 extern SDL_Texture *debug_texture;
 extern SDL_Texture *gameover_texture;
 extern SDL_Texture *stopwatch_texture;
@@ -41,7 +42,15 @@ extern void load_stopwatch_text();
 
 function<void(sprite_pair)> draw_sprite = [](const sprite_pair p) {
   const entity_id id = p.first;
-  SDL_RenderCopyEx(renderer, p.second.texture, &p.second.src, &p.second.dest,
+  SDL_Texture *t = p.second.texture;
+
+  if (is_damaged[id]) {
+    t = sprites[id].dmg_texture;
+    is_damaged[id] = false;
+  }
+
+  // SDL_RenderCopyEx(renderer, p.second.texture, &p.second.src, &p.second.dest,
+  SDL_RenderCopyEx(renderer, t, &p.second.src, &p.second.dest,
                    transforms[id].angle, NULL,
                    is_flipped[id] ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
 };

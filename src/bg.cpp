@@ -74,7 +74,7 @@ void bg_spawn_grave(const int x, const int y, const double vx, const double vy,
   const double dy = y;
   w = w / numclips;
   const entity_id id = get_next_entity_id();
-  bg_sprites[id] = {is_animating,         0,           numclips, t,
+  bg_sprites[id] = {is_animating,         0,           numclips, t, NULL,
                     {src_x, src_y, w, h}, {x, y, w, h}};
   bg_transforms[id] = {dx, dy, vx, vy, angle, scale};
   entities.push_back(id);
@@ -95,7 +95,7 @@ void bg_spawn_candle(const int x, const int y, const double vx, const double vy,
   const double dy = y;
   w = w / numclips;
   const entity_id id = get_next_entity_id();
-  bg_sprites[id] = {is_animating,         0,           numclips, t,
+  bg_sprites[id] = {is_animating,         0,           numclips, t, NULL,
                     {src_x, src_y, w, h}, {x, y, w, h}};
   bg_transforms[id] = {dx, dy, vx, vy, angle, scale};
   entities.push_back(id);
@@ -117,7 +117,7 @@ void bg_spawn_moon(const int x, const int y, const double vx, const double vy,
   const entity_id id = get_next_entity_id();
   get_texture_width_height(t);
   w = w / numclips;
-  bg_sprites[id] = {is_animating,         0,           numclips, t,
+  bg_sprites[id] = {is_animating,         0,           numclips, t, NULL,
                     {src_x, src_y, w, h}, {x, y, w, h}};
   bg_transforms[id] = {dest_x, dest_y, vx, vy, angle, scale};
   entities.push_back(id);
