@@ -40,6 +40,7 @@ extern TTF_Font *gameover_font;
 // extern unordered_map<entity_id, bool> is_damaged;
 extern map<entity_id, sprite_component> sprites;
 extern map<entity_id, sprite_component> bg_sprites;
+extern unordered_map<entity_id, int> explosion_frames;
 extern unordered_map<powerup_type, int> powerups_collected;
 extern unordered_map<string, SDL_Texture *> textures;
 extern unordered_map<entity_id, int> hitpoints;
@@ -94,6 +95,7 @@ function<void(pair<entity_id, bool>)> cleanup_entity_marked_for_deletion =
         hitpoints.erase(id);
         // is_marked_for_deletion.erase(id);
         is_blood_pixel.erase(id);
+        explosion_frames.erase(id);
         entities.erase(remove(entities.begin(), entities.end(), id),
                        entities.end());
         entities_marked_for_deletion_tmp.push_back(id);
@@ -109,6 +111,7 @@ void cleanup_textures() {
 }
 
 void cleanup_data_structures() {
+  explosion_frames.clear();
   entities.clear();
   entities_marked_for_deletion_tmp.clear();
   is_pressed.clear();

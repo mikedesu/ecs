@@ -60,6 +60,7 @@ extern vector<double> bat_vx_vec;
 
 extern map<entity_id, sprite_component> sprites;
 
+extern unordered_map<entity_id, int> explosion_frames;
 extern unordered_map<entity_id, int> hitpoints;
 extern unordered_map<string, int> num_clips;
 extern unordered_map<string, size_t> config;
@@ -86,6 +87,7 @@ extern vector<entity_id> entities;
 
 extern entity_id get_next_entity_id();
 
+void spawn_small_explosion(const int x, const int y);
 void spawn_knife();
 void spawn_bat(const double x, const double y, const double vx, const double vy,
                const double scale);
@@ -396,6 +398,23 @@ void spawn_powerup() {
   powerup_types[id] = poweruptype;
   entity_types[id] = ENTITY_TYPE_ITEM;
   powerups_onscreen++;
+}
+
+void spawn_small_explosion(const int x, const int y) {
+  const string key = "explosion-2-small";
+  // const string key = "explosion-small";
+  SDL_Texture *t = textures[key];
+  // custom width/height defined in config/textures.json
+  SDL_QueryTexture(t, NULL, NULL, &w, &h);
+  const bool is_anim = true;
+  const int numclips = num_clips[key];
+  const double dx = x;
+  const double dy = y;
+  entity_id id = spawn_entity(key, is_anim, numclips, x, y);
+  entity_types[id] = ENTITY_TYPE_EXPLOSION;
+  transforms[id] = {dx, dy, 0, 0, 0, 2.0};
+  explosion_frames[id] = numclips * 6;
+  entities.push_back(id);
 }
 
 void spawn_blood_pixels(const int x, const int y, const int n) {

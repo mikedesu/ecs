@@ -55,6 +55,7 @@ extern entity_id player_id;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> soulshard_spawn_rate_distribution;
 
+extern unordered_map<entity_id, int> explosion_frames;
 extern unordered_map<entity_id, int> hitpoints;
 extern unordered_map<string, int> num_clips;
 extern unordered_map<string, SDL_Texture *> textures;
@@ -88,12 +89,15 @@ extern void spawn_soulshard(const int x, const int y);
 extern void spawn_powerup();
 extern void spawn_bat(const double x, const double y, const double vx,
                       const double vy, const double scale);
-void spawn_bats(const double x, const double y, const double scale,
-                const double vx, const double vy, const int number);
-void spawn_eyeball(const double x, const double y, const double vx,
-                   const double vy, const double scale);
-
+extern void spawn_bats(const double x, const double y, const double scale,
+                       const double vx, const double vy, const int number);
+extern void spawn_eyeball(const double x, const double y, const double vx,
+                          const double vy, const double scale);
+extern void spawn_small_explosion(const int x, const int y);
 extern void spawn_blood_pixels(const int x, const int y, const int n);
+
+extern void spawn_small_explosion(const int x, const int y);
+
 extern double distance(const int x1, const int y1, const int x2, const int y2);
 extern void cleanup();
 
@@ -485,8 +489,12 @@ function<void(entity_id, entity_id)> check_for_knife_collision_with_enemy =
 
         // sprites[enemy_id].dmg_frames = 4;
         sprites[enemy_id].dmg_frames = 8;
+        const double scale = transforms[enemy_id].scale;
 
-        // is_damaged[enemy_id] = true;
+        spawn_small_explosion(enemy.dest.x + scale * enemy.src.w / 4,
+                              enemy.dest.y + scale * enemy.src.h / 4);
+
+        // delete the knife
         is_marked_for_deletion[id] = true;
         num_knives++;
         if (num_knives > max_num_knives) {
@@ -717,6 +725,18 @@ void update_knife_cooldown() {
   }
 }
 
+void update_explosions() {
+  for (auto kv : explosion_frames) {
+    entity_id id = kv.first;
+    int frames = kv.second;
+    if (frames <= 0) {
+      is_marked_for_deletion[id] = true;
+    } else {
+      explosion_frames[id]--;
+    }
+  }
+}
+
 void update() {
   update_bg_transform_components();
   update_bg_animations();
@@ -726,4 +746,5 @@ void update() {
   update_collisions();
   update_generators();
   update_knife_cooldown();
+  update_explosions();
 }

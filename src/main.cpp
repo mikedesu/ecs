@@ -141,6 +141,7 @@ unordered_map<entity_id, bool> is_flipped;
 unordered_map<entity_id, bool> is_generator;
 unordered_map<entity_id, bool> is_marked_for_deletion;
 unordered_map<entity_id, int> blood_pixel_lifetime;
+unordered_map<entity_id, int> explosion_frames;
 unordered_map<enemy_type, int> enemies_killed;
 unordered_map<powerup_type, int> powerups_collected;
 unordered_map<string, SDL_Texture *> textures;
