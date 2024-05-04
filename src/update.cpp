@@ -55,6 +55,7 @@ extern entity_id player_id;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> soulshard_spawn_rate_distribution;
 
+extern unordered_map<entity_id, int> knife_charges;
 extern unordered_map<entity_id, int> explosion_frames;
 extern unordered_map<entity_id, int> hitpoints;
 extern unordered_map<string, int> num_clips;
@@ -477,6 +478,7 @@ function<void(rotation_pair)> handle_rotation = [](const rotation_pair p) {
   }
 };
 
+// REFACTOR
 function<void(entity_id, entity_id)> check_for_knife_collision_with_enemy =
     [](const entity_id id, const entity_id enemy_id) {
       enemy_type type = enemy_types[enemy_id];
@@ -485,14 +487,21 @@ function<void(entity_id, entity_id)> check_for_knife_collision_with_enemy =
       if (SDL_HasIntersection(&knife.dest, &enemy.dest)) {
         // knife collides with enemy
 
-        hitpoints[enemy_id]--;
+        // knife damage is a function of current knife charge
+        // atm, we have no way to track every knive's charge
+        // we need a map that stores entity_id,int
+        // we might be able to get rid of is_knife
+        int knife_charge = knife_charges[id];
+        int damage = 1 + knife_charge;
+        hitpoints[enemy_id] -= damage;
 
         // sprites[enemy_id].dmg_frames = 4;
         sprites[enemy_id].dmg_frames = 8;
         const double scale = transforms[enemy_id].scale;
+        const int x = enemy.dest.x + scale * enemy.src.w / 4;
+        const int y = enemy.dest.y + scale * enemy.src.h / 4;
 
-        spawn_small_explosion(enemy.dest.x + scale * enemy.src.w / 4,
-                              enemy.dest.y + scale * enemy.src.h / 4);
+        spawn_small_explosion(x, y);
 
         // delete the knife
         is_marked_for_deletion[id] = true;
@@ -628,6 +637,7 @@ void update_generators() {
         switch (generators[id].type) {
         case ENEMY_TYPE_EYEBALL: {
 
+          scale = 4.0;
           handle_eyeball_generator(id, scale);
           /*
         switch (screen_position) {

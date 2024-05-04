@@ -135,7 +135,10 @@ unordered_map<entity_id, bool> is_collidable;
 unordered_map<entity_id, bool> is_blood_pixel;
 unordered_map<entity_id, bool> is_enemy;
 unordered_map<entity_id, bool> is_soulshard;
+
 unordered_map<entity_id, bool> is_knife;
+unordered_map<entity_id, int> knife_charges;
+
 unordered_map<entity_id, bool> is_powerup;
 unordered_map<entity_id, bool> is_flipped;
 unordered_map<entity_id, bool> is_generator;

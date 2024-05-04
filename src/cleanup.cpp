@@ -38,6 +38,7 @@ extern TTF_Font *stopwatch_font;
 extern TTF_Font *gameover_font;
 
 // extern unordered_map<entity_id, bool> is_damaged;
+extern unordered_map<entity_id, int> knife_charges;
 extern map<entity_id, sprite_component> sprites;
 extern map<entity_id, sprite_component> bg_sprites;
 extern unordered_map<entity_id, int> explosion_frames;
@@ -83,7 +84,10 @@ function<void(pair<entity_id, bool>)> cleanup_entity_marked_for_deletion =
         is_rotating.erase(id);
         is_collidable.erase(id);
         is_enemy.erase(id);
+
         is_knife.erase(id);
+        knife_charges.erase(id);
+
         is_soulshard.erase(id);
         is_flipped.erase(id);
         is_generator.erase(id);
@@ -137,6 +141,7 @@ void cleanup_data_structures() {
   is_powerup.clear();
   hitpoints.clear();
   powerups_collected.clear();
+  knife_charges.clear();
   // is_damaged.clear();
 }
 

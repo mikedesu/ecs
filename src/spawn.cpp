@@ -60,6 +60,7 @@ extern vector<double> bat_vx_vec;
 
 extern map<entity_id, sprite_component> sprites;
 
+extern unordered_map<entity_id, int> knife_charges;
 extern unordered_map<entity_id, int> explosion_frames;
 extern unordered_map<entity_id, int> hitpoints;
 extern unordered_map<string, int> num_clips;
@@ -154,6 +155,7 @@ void handle_knife_charge_rotation(const entity_id id) {
   }
 }
 
+// REFACTOR
 void spawn_knife() {
   if (!knife_cooldown && num_knives) {
     string key = "knife";
@@ -175,9 +177,11 @@ void spawn_knife() {
     const double angle = flipped ? 180.0 : 0.0;
     double vx = current_knife_speed;
     if (flipped && knife_charge) {
-      vx = -current_knife_speed * knife_charge - knife_charge;
+      vx = -current_knife_speed * knife_charge;
+      // vx = -current_knife_speed * knife_charge - knife_charge;
     } else if (knife_charge) {
-      vx = current_knife_speed * knife_charge + knife_charge;
+      vx = current_knife_speed * knife_charge;
+      // vx = current_knife_speed * knife_charge + knife_charge;
     } else if (flipped) {
       vx = -current_knife_speed;
     }
@@ -218,6 +222,8 @@ void spawn_knife() {
       knife_cooldown = current_knife_cooldown;
       num_knives_fired++;
       if (i == 0) {
+        knife_charges[id] = knife_charge;
+
         knife_charge--;
         if (knife_charge < 0) {
           knife_charge = 0;

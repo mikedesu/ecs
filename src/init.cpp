@@ -323,12 +323,13 @@ void init_game() {
   // spawn_generator(ENEMY_TYPE_EYEBALL, true, 1, 60 * 8, 60 * 30, 300,
   //                SCREEN_POSITION_LEFT);
 
-  mPrint("");
+  // mPrint("");
   enemy_type type = ENEMY_TYPE_EYEBALL;
   bool is_active = true;
   int groupnum = 1;
   int cooldown = 60 * 8;
-  int cooldown_reduction = 60 * 30;
+  int cooldown_reduction = 0;
+  // int cooldown_reduction = 60 * 30;
   int frame_begin = 0;
   screen_position_t screen_position = SCREEN_POSITION_LEFT;
   // screen_position_t screen_position = SCREEN_POSITION_RIGHT;
@@ -336,17 +337,19 @@ void init_game() {
                   frame_begin, screen_position);
 
   type = ENEMY_TYPE_BAT;
-  groupnum = 2;
-  cooldown = 60 * 4;
-  cooldown_reduction = 60 * 30;
+  groupnum = 4;
+  cooldown = 60 * 5;
+  // cooldown_reduction = 60 * 30;
+  // cooldown_reduction = 60 * 30;
+  cooldown_reduction = 0;
   frame_begin = 0;
   screen_position = SCREEN_POSITION_RIGHT;
 
-  mPrint("");
+  // mPrint("");
   spawn_generator(type, is_active, groupnum, cooldown, cooldown_reduction,
                   frame_begin, screen_position);
-  mPrint("");
-  // SCREEN_POSITION_RIGHT);
+  // mPrint("");
+  //  SCREEN_POSITION_RIGHT);
 
   // spawn_generator(ENEMY_TYPE_BAT, true, 2, 60 * 4, 60 * 30, 0,
   //                 SCREEN_POSITION_RIGHT);
