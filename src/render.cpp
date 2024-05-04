@@ -100,9 +100,11 @@ void render_gameover() {
 void render_frame() {
   // clear the target texture
   SDL_SetRenderTarget(renderer, target_texture);
+  // SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+  //  SDL_SetRenderDrawColor(renderer, 0x66, 0x66, 0x66, 255);
   SDL_SetRenderDrawColor(renderer, 20, 20, 20, 255);
   SDL_RenderClear(renderer);
-  render_bg_sprites();
+  // render_bg_sprites();
   render_sprites();
   //  reset the render target
   SDL_SetRenderTarget(renderer, NULL);

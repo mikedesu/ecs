@@ -159,6 +159,7 @@ void spawn_knife() {
     string key = "knife";
     if (knife_charge >= 2) {
       key = "knife-blue";
+      // key = "knife-red";
     }
     const int largeness = powerups_collected[POWERUP_TYPE_KNIFE_LARGENESS];
     const double scale = 1 + (0.1 * largeness);

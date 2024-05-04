@@ -20,6 +20,7 @@
   {"type": "texture_colormod","key": "powerup-skull-speed","path": "img/powerup-sheet4x.png","r": 255,"g": 255,"b": 255},
   {"type": "texture_colormod","key": "powerup-magnetism-threshold","path": "img/soulshard-white-sheet4x.png", "numclips": 8, "r": 255,"g": 0,"b": 255},
   {"type": "texture_colormod","key": "knife-blue","path": "img/knife-alt4x.png","r": 0,"g": 0,"b": 255},
+  {"type": "texture_colormod","key": "knife-red","path": "img/knife-alt4x.png","r": 255,"g": 0,"b": 0},
   {"type": "texture_colormod","key": "explosion-small","path": "img/explosion-small-sheet4x.png","numclips":8,"r": 255,"g": 0,"b": 0},
   {"type": "texture_colormod","key": "explosion-2-small","path": "img/explosion-2-small4x-sheet.png","numclips":4,"r": 255,"g": 255,"b": 255},
   {"type": "pixel","key": "blood-pixel","r": 255,"g": 0,"b": 0,"w": 4,"h": 4}

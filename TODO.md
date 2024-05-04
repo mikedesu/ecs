@@ -405,14 +405,34 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 ## 1 May 2024
 
 - [x] beginning of eyeball enemy testing
-- [ ] somehow i broke the candle animation, need to fix that
-    - [ ] it is rendering all 3 frames as if it is failing to parse numclips
+- [x] somehow i broke the candle animation, need to fix that
+    - [x] it is rendering all 3 frames as if it is failing to parse numclips
 
-## 3 Mary 2024
+## 3 May 2024
 
-- [ ] working on enemy damage flashes
-    - [ ] for some reason bat texture is fucking up
-    - [ ] tried hard-coding "bat-dmg" key on spawn and removed "bat" but game won't load...
-    - [ ] need to trace thru the loading and find where it is getting stuck
+- [x] working on enemy damage flashes (FIXED)
+    - [x] for some reason bat texture is fucking up
+    - [x] tried hard-coding "bat-dmg" key on spawn and removed "bat" but game won't load...
+    - [x] need to trace thru the loading and find where it is getting stuck
+
+
+## 4 May 2024
+
+- [ ] gameover screen is kind of boring
+- [ ] we could begin implementing complex movements
+    - [ ] lock onto player
+    - [ ] sinewave movement
+    - [ ] multi-phase movement
+    - [ ] spawning from top or bottom of screen
+- [ ] powerup tweaks
+    - [ ] limit the number of speed-ups
+    - [ ] implement skull-shrink powerup
+        - [ ] reduces the sprite dest rect by some amount
+- [ ] spawn rate for eyeballs 
+- [ ] pass scale into enemy generators
+- [ ] pass HP into enemy generators
+- [ ] generator counters / some "way" to turn them on/off
+- [ ] some "way" to remove generators / clean them up when they are off
+
 
 
