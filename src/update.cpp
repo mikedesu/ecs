@@ -578,6 +578,35 @@ void update_bg_transform_components() {
   for_each(bg_transforms.begin(), bg_transforms.end(), handle_bg_transform);
 }
 
+void handle_eyeball_generator(entity_id id, const double scale) {
+
+  screen_position_t position = generators[id].screen_position;
+  int x = -1;
+  int y = -1;
+  int vx_dir = 0;
+  int vy_dir = 0;
+
+  switch (position) {
+  case SCREEN_POSITION_LEFT: {
+    SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
+    // scale = 2.0;
+    x = scale * -w / num_clips["eyeball"];
+    y = config["target_texture_height"] / 2;
+    vx_dir = 1.0;
+  } break;
+  case SCREEN_POSITION_RIGHT: {
+    // scale = 2.0;
+    x = config["target_texture_width"];
+    y = config["target_texture_height"] / 2;
+    vx_dir = -1.0;
+  } break;
+  default:
+    break;
+  }
+  spawn_eyeball(x, y, vx_dir, vy_dir, scale);
+}
+
+// REFACTORING
 void update_generators() {
   for (auto kv : is_generator) {
     entity_id id = kv.first;
@@ -598,46 +627,33 @@ void update_generators() {
       if (active && frame_count % cooldown == 0) {
         switch (generators[id].type) {
         case ENEMY_TYPE_EYEBALL: {
-          switch (screen_position) {
-          case SCREEN_POSITION_LEFT: {
-            // SDL_Texture *eyeball_texture = textures["eyeball"];
-            SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
-            // x = -w;
-            // scale = 2.0;
-            scale = rand() % 4 + 1;
-            // scale = 4;
-            //  scale = rand() % 4 + 1;
-            x = scale * -w / num_clips["eyeball"];
-            // x = config["target_texture_width"];
-            y = config["target_texture_height"] / 2;
-            vx_dir = 1.0;
 
-          } break;
-
-          case SCREEN_POSITION_RIGHT: {
-
-            // start by always spawning on right
-            // SDL_Texture *bat_texture = textures["eyeball"];
-            // SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
-            // x = -w;
-            // x = -w / num_clips["eyeball"];
-
-            scale = rand() % 4 + 1;
-            // scale = rand() % 8 + 1;
-            //  scale = 2.0;
-            x = config["target_texture_width"];
-            y = config["target_texture_height"] / 2;
-            vx_dir = -1.0;
-
-          } break;
-          default:
-            break;
-          }
-
-          spawn_eyeball(x, y, vx_dir, vy_dir, scale);
+          handle_eyeball_generator(id, scale);
+          /*
+        switch (screen_position) {
+        case SCREEN_POSITION_LEFT: {
+          SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
+          scale = 2.0;
+          x = scale * -w / num_clips["eyeball"];
+          y = config["target_texture_height"] / 2;
+          vx_dir = 1.0;
+        } break;
+        case SCREEN_POSITION_RIGHT: {
+          scale = 2.0;
+          x = config["target_texture_width"];
+          y = config["target_texture_height"] / 2;
+          vx_dir = -1.0;
+        } break;
+        default:
+          break;
+        }
+        spawn_eyeball(x, y, vx_dir, vy_dir, scale);
+          */
 
         } break;
+
         case ENEMY_TYPE_BAT: {
+
           switch (screen_position) {
           case SCREEN_POSITION_LEFT: {
             SDL_Texture *bat_texture = textures["bat"];
@@ -645,17 +661,11 @@ void update_generators() {
             x = -w / num_clips["bat"];
             y = config["target_texture_height"] / 2;
             vx_dir = -1.0;
-            // scale = 1.0;
-            // vy_dir = 0.0;
-            // spawn_bats(x, y, scale, vx_dir, vy_dir, group);
           } break;
           case SCREEN_POSITION_RIGHT: {
             x = config["target_texture_width"];
             y = config["target_texture_height"] / 2;
             vx_dir = 1.0;
-            // scale = 1.0;
-            // vy_dir = 0.0;
-            // spawn_bats(x, y, scale, vx_dir, vy_dir, group);
           } break;
           default:
             break;
@@ -667,7 +677,7 @@ void update_generators() {
           break;
         }
       }
-      // if the generator has a "cooldown reduction" set to non-zero,
+      // if the generator has "cooldown reduction" set to nonzero,
       // then every N frames, reduce the cooldown by half until we hit a
       // minimum
 

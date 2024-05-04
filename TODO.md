@@ -433,6 +433,6 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 - [ ] pass HP into enemy generators
 - [ ] generator counters / some "way" to turn them on/off
 - [ ] some "way" to remove generators / clean them up when they are off
-
+- [ ] clean up `update_generators`
 
 
