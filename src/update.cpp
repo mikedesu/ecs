@@ -438,11 +438,11 @@ function<void(sprite_pair)> update_bg_animation = [](const sprite_pair p) {
   }
 };
 
-void update_bg_animations() {
+inline void update_bg_animations() {
   for_each(bg_sprites.begin(), bg_sprites.end(), update_bg_animation);
 }
 
-void update_bg_transform_components() {
+inline void update_bg_transform_components() {
   for_each(bg_transforms.begin(), bg_transforms.end(), handle_bg_transform);
 }
 
@@ -535,39 +535,39 @@ void update_generators() {
   }
 }
 
-void update_skull_collisions() {
+inline void update_skull_collisions() {
   for_each(entities.begin(), entities.end(), update_skull_collision);
 }
 
-void update_animations() {
+inline void update_animations() {
   for_each(sprites.begin(), sprites.end(), update_animation);
 }
 
-void update_knife_collisions() {
+inline void update_knife_collisions() {
   for_each(is_knife.begin(), is_knife.end(), check_for_knife_collision);
 }
 
-void update_collisions() {
+inline void update_collisions() {
   update_knife_collisions();
   update_skull_collisions();
 }
 
-void update_rotations() {
+inline void update_rotations() {
   for_each(is_rotating.begin(), is_rotating.end(), handle_rotation);
 }
 
-void update_transform_components() {
+inline void update_transform_components() {
   for_each(transforms.begin(), transforms.end(), handle_transform);
 }
 
-void update_knife_cooldown() {
+inline void update_knife_cooldown() {
   knife_cooldown--;
   if (knife_cooldown <= 0) {
     knife_cooldown = 0;
   }
 }
 
-void update_explosions() {
+inline void update_explosions() {
   for (auto kv : explosion_frames) {
     entity_id id = kv.first;
     int frames = kv.second;
