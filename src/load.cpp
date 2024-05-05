@@ -16,15 +16,12 @@
 using rapidjson::Document;
 using rapidjson::StringBuffer;
 using rapidjson::Value;
-
 using std::snprintf;
 using std::string;
 using std::unordered_map;
 using std::vector;
 
 extern SDL_Color stopwatch_text_color;
-
-// external variables
 extern int powerups_onscreen;
 extern unordered_map<string, size_t> config;
 extern int current_soulshard_magnetism_threshold;
@@ -68,7 +65,6 @@ extern entity_id player_id;
 extern int gameover_count;
 extern unsigned long game_begin_time;
 extern unordered_map<string, int> num_clips;
-
 extern int window_width;
 extern int window_height;
 
@@ -130,17 +126,14 @@ void load_gameover_texture() {
 }
 
 void load_stopwatch_text() {
-
   // unsigned long milliseconds = SDL_GetTicks64() - game_begin_time;
   unsigned long milliseconds = SDL_GetTicks64() - game_begin_time;
   // SDL_GetTicks64() - game_begin_time + (99 * 60 * 1000);
   unsigned long seconds = milliseconds / 1000;
   unsigned long minutes = seconds / 60;
   seconds = seconds % 60;
-
   // snprintf(stopwatch_text, 128, "%lu", SDL_GetTicks64());
   snprintf(stopwatch_text, 128, "%lu:%02lu", minutes, seconds);
-
   stopwatch_surface =
       TTF_RenderText_Blended_Wrapped(stopwatch_font, stopwatch_text,
                                      stopwatch_text_color, DEBUG_TEXT_WRAP_LEN);
@@ -166,7 +159,6 @@ void load_stopwatch_text() {
     // Get image dimensions
     mWidth = stopwatch_surface->w;
     mHeight = stopwatch_surface->h;
-
     // init_stopwatch_texture_rects();
     stopwatch_texture_src.x = 0;
     stopwatch_texture_src.y = 0;
@@ -174,7 +166,6 @@ void load_stopwatch_text() {
     stopwatch_texture_dest.y = 0;
     stopwatch_texture_src.w = stopwatch_texture_dest.w = stopwatch_surface->w;
     stopwatch_texture_src.h = stopwatch_texture_dest.h = stopwatch_surface->h;
-
     // Get rid of old surface
     SDL_FreeSurface(stopwatch_surface);
     stopwatch_surface = nullptr;
@@ -252,9 +243,8 @@ void load_texture_with_color_mod(string key, string path, const int numclips,
   SDL_SetTextureColorMod(t, r, g, b);
   textures[key] = t;
   num_clips[key] = numclips;
-
-  mPrint("load texture with color mod: " + key + "," + path + "," +
-         to_string(r) + "," + to_string(g) + "," + to_string(b));
+  // mPrint("load texture with color mod: " + key + "," + path + "," +
+  //        to_string(r) + "," + to_string(g) + "," + to_string(b));
 }
 
 void load_pixel(string key, Uint8 r, Uint8 g, Uint8 b, int w, int h) {
@@ -280,7 +270,6 @@ void handle_load_pixel(Value &v) {
       cleanup_and_exit_with_failure();
     }
   }
-
   if (!v["r"].IsInt() || !v["g"].IsInt() || !v["b"].IsInt() ||
       !v["w"].IsInt() || !v["h"].IsInt()) {
     string msg = "config/textures.json array element has invalid r, g, b, w, "
@@ -288,13 +277,11 @@ void handle_load_pixel(Value &v) {
     mPrint(msg);
     cleanup_and_exit_with_failure();
   }
-
   if (!v["key"].IsString()) {
     string msg = "config/textures.json array element has invalid key";
     mPrint(msg);
     cleanup_and_exit_with_failure();
   }
-
   string key = v["key"].GetString();
   int r = v["r"].GetInt();
   int g = v["g"].GetInt();
@@ -320,7 +307,6 @@ void handle_load_texture_with_color_mod(Value &v) {
       cleanup_and_exit_with_failure();
     }
   }
-
   for (string key : integer_keys) {
     if (!v[key.c_str()].IsInt()) {
       string msg = "config/textures.json array element has invalid " + key;
@@ -328,7 +314,6 @@ void handle_load_texture_with_color_mod(Value &v) {
       cleanup_and_exit_with_failure();
     }
   }
-
   for (string key : str_keys) {
     if (!v[key.c_str()].IsString()) {
       string msg = "config/textures.json array element has invalid " + key;
@@ -336,7 +321,6 @@ void handle_load_texture_with_color_mod(Value &v) {
       cleanup_and_exit_with_failure();
     }
   }
-
   string key = v["key"].GetString();
   string path = v["path"].GetString();
   int r = v["r"].GetInt();
@@ -347,12 +331,10 @@ void handle_load_texture_with_color_mod(Value &v) {
   if (check_if_json_has_member_and_is_int(v, "numclips")) {
     numclips = v["numclips"].GetInt();
   }
-
   load_texture_with_color_mod(key, path, numclips, r, g, b);
 }
 
 void handle_load_texture(Value &v) {
-
   int clips = 1;
   if (!json_value_has_member_is_string(v, "path")) {
     string msg = "config/textures.json array element has no path";
@@ -367,10 +349,8 @@ void handle_load_texture(Value &v) {
   if (check_if_json_has_member_and_is_int(v, "numclips")) {
     clips = v["numclips"].GetInt();
   }
-
   string path = v["path"].GetString();
   string key = v["key"].GetString();
-
   load_texture(key, path, clips);
 }
 
@@ -439,7 +419,6 @@ void load_textures() {
       handle_load_texture_by_type(v);
     }
   }
-
   load_gameover_texture();
   mPrint("end load textures");
 }
@@ -461,14 +440,11 @@ void load_main_config() {
   json_value_has_member_is_int_set_config(d, "blood_pixel_count");
   json_value_has_member_is_int_set_config(d, "default_magnetism_threshold");
   // copy over default window width and height as default window width values
-
   config["window_width"] = config["default_window_width"];
   config["window_height"] = config["default_window_height"];
   window_width = config["window_width"];
   window_height = config["window_height"];
-
   config["target_texture_width"] = config["default_window_width"];
   config["target_texture_height"] = config["default_window_height"];
-
   current_soulshard_magnetism_threshold = config["default_magnetism_threshold"];
 }
