@@ -2,19 +2,18 @@
 #include "components.h"
 #include "enemy_type.h"
 #include "entity_id.h"
-#include "mPrint.h"
+// #include "mPrint.h"
 #include <SDL_render.h>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 using std::string;
-using std::to_string;
 using std::unordered_map;
 using std::vector;
 
-extern SDL_Joystick *joystick;
 extern SDL_Renderer *renderer;
+extern SDL_Window *window;
 extern entity_id next_entity_id;
 extern bool is_fullscreen;
 extern int frame_count;
@@ -22,34 +21,29 @@ extern int w;
 extern int h;
 extern SDL_Rect target_texture_dest;
 extern unordered_map<string, size_t> config;
-extern SDL_Window *window;
 extern unordered_map<string, SDL_Texture *> textures;
 extern unordered_map<enemy_type, int> enemies_killed;
 extern unordered_map<entity_id, generator_component> generators;
 extern unordered_map<entity_id, bool> is_generator;
-extern unordered_map<entity_id, bool> is_powerup;
 extern vector<entity_id> entities;
 
-bool get_texture_width_height_for_key(string key);
-bool get_texture_width_height(SDL_Texture *t);
+entity_id get_next_entity_id() { return next_entity_id++; }
 
-// size_t count_powerups_onscreen() {
-//   size_t count = 0;
-//   for (auto kv : is_powerup) {
-//     if (kv.second) {
-//       count++;
-//     }
-//   }
-//   return count;
-// }
-
-entity_id get_next_entity_id() {
-  // mPrint("next_entity_id: " + to_string(next_entity_id));
-  return next_entity_id++;
+bool get_texture_width_height(SDL_Texture *t) {
+  w = -1;
+  h = -1;
+  SDL_QueryTexture(t, NULL, NULL, &w, &h);
+  return w != -1 && h != -1;
 }
 
-double distance(const int x1, const int y1, const int x2, const int y2) {
-  return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+bool get_texture_width_height_for_key(string key) {
+  w = -1;
+  h = -1;
+  bool rv = false;
+  if (textures.find(key) != textures.end()) {
+    rv = get_texture_width_height(textures[key]);
+  }
+  return rv;
 }
 
 size_t get_num_enemies_killed() {
@@ -125,38 +119,4 @@ void screenshot() {
                        screenshot->pixels, screenshot->pitch);
   SDL_SaveBMP(screenshot, filepath);
   SDL_FreeSurface(screenshot);
-}
-
-void do_joystick() {
-  if (SDL_NumJoysticks() < 1) {
-    mPrint("No joysticks plugged in");
-
-    // apparently, if we init for joystick, we cant read keys like we used to
-    // there has to be a way for both keyboard events and gamepad/joystick
-    // events to be read
-
-  } else {
-
-    joystick = SDL_JoystickOpen(0);
-    if (!joystick) {
-      mPrint("Could not get joystick: " + string(SDL_GetError()));
-    }
-  }
-}
-
-bool get_texture_width_height_for_key(string key) {
-  w = -1;
-  h = -1;
-  bool rv = false;
-  if (textures.find(key) != textures.end()) {
-    rv = get_texture_width_height(textures[key]);
-  }
-  return rv;
-}
-
-bool get_texture_width_height(SDL_Texture *t) {
-  w = -1;
-  h = -1;
-  SDL_QueryTexture(t, NULL, NULL, &w, &h);
-  return w != -1 && h != -1;
 }

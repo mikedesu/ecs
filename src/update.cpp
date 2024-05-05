@@ -1,4 +1,3 @@
-// #include "bg_entity_type.h"
 #include "components.h"
 #include "enemy_type.h"
 #include "entity_id.h"
@@ -27,12 +26,11 @@ using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
 
-extern int cooldown_min;
-
-extern int w, h;
-extern int powerups_onscreen;
 extern bool is_gameover;
-extern unordered_map<string, size_t> config;
+extern int w;
+extern int h;
+extern int cooldown_min;
+extern int powerups_onscreen;
 extern int current_soulshard_magnetism_threshold;
 extern int current_knife_speed;
 extern int current_player_speed;
@@ -54,7 +52,9 @@ extern int knife_charge;
 extern entity_id player_id;
 extern default_random_engine rng_generator;
 extern uniform_real_distribution<double> soulshard_spawn_rate_distribution;
-
+extern map<entity_id, sprite_component> sprites;
+extern map<entity_id, sprite_component> bg_sprites;
+extern unordered_map<string, size_t> config;
 extern unordered_map<entity_id, int> knife_charges;
 extern unordered_map<entity_id, int> explosion_frames;
 extern unordered_map<entity_id, int> hitpoints;
@@ -64,10 +64,8 @@ extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, enemy_type> enemy_types;
 extern unordered_map<entity_id, entity_type> entity_types;
 extern unordered_map<entity_id, generator_component> generators;
-extern map<entity_id, sprite_component> sprites;
 extern unordered_map<entity_id, transform_component> transforms;
 extern unordered_map<entity_id, transform_component> bg_transforms;
-// extern unordered_map<entity_id, bool> is_damaged;
 extern unordered_map<entity_id, bool> is_soulshard;
 extern unordered_map<entity_id, bool> is_rotating;
 extern unordered_map<entity_id, bool> is_knife;
@@ -80,13 +78,9 @@ extern unordered_map<entity_id, int> blood_pixel_lifetime;
 extern unordered_map<entity_id, double> rotation_speeds;
 extern unordered_map<enemy_type, int> enemies_killed;
 extern unordered_map<powerup_type, int> powerups_collected;
-
-extern map<entity_id, sprite_component> bg_sprites;
-
 extern vector<entity_id> entities;
 
 extern void spawn_soulshard(const int x, const int y);
-// extern void spawn_eyeball();
 extern void spawn_powerup();
 extern void spawn_bat(const double x, const double y, const double vx,
                       const double vy, const double scale);
@@ -96,11 +90,11 @@ extern void spawn_eyeball(const double x, const double y, const double vx,
                           const double vy, const double scale);
 extern void spawn_small_explosion(const int x, const int y);
 extern void spawn_blood_pixels(const int x, const int y, const int n);
-
 extern void spawn_small_explosion(const int x, const int y);
 
-extern double distance(const int x1, const int y1, const int x2, const int y2);
-extern void cleanup();
+inline double distance(const int x1, const int y1, const int x2, const int y2) {
+  return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+}
 
 function<void()> handle_update_skull_collision_knife = []() {
   num_knives++;
@@ -114,7 +108,6 @@ function<void()> handle_update_skull_collision_knife = []() {
 function<void()> handle_update_skull_collision_soulshard = []() {
   player_soulshards++;
   total_soulshards_collected++;
-  // if (player_soulshards >= POWERUP_COST) {
   if (player_soulshards >= POWERUP_COST && powerups_onscreen < 11) {
     spawn_powerup();
     player_soulshards -= POWERUP_COST;
@@ -195,19 +188,6 @@ function<void(entity_id)> handle_update_skull_collision_powerup =
       powerups_onscreen--;
     };
 
-// function<void(entity_id)> handle_update_skull_collision_enemy =
-//     [](const entity_id id) {
-//       // is_marked_for_deletion[id] = true;
-//       player_health--;
-//       if (player_health <= 0) {
-//         mPrint("Gameover!");
-//
-//         is_gameover = true;
-//         // cleanup();
-//         // quit = true;
-//       }
-//     };
-
 function<void(entity_id)> update_skull_collision = [](const entity_id id) {
   if (id == player_id) {
     return;
@@ -228,10 +208,7 @@ function<void(entity_id)> update_skull_collision = [](const entity_id id) {
       break;
     case ENTITY_TYPE_ENEMY:
       is_marked_for_deletion[id] = true;
-      // is_damaged[player_id] = true;
-
       sprites[player_id].dmg_frames = 10;
-
       player_health--;
       if (player_health <= 0) {
         mPrint("Gameover!");
@@ -246,10 +223,8 @@ function<void(entity_id)> update_skull_collision = [](const entity_id id) {
       break;
     }
   }
-
   switch (entity_types[id]) {
   case ENTITY_TYPE_SOULSHARD:
-    // case ENTITY_TYPE_ITEM:
     handle_magneticism(id);
     break;
   default:
@@ -275,27 +250,6 @@ function<void(transform_pair)> handle_bg_transform =
       sprite.dest.h = sprite.src.h * transform.scale;
     };
 
-// bounds checking, player cannot move beyond texture
-// function<void(const entity_id, transform_component &)>
-// handle_skull_transform
-// =
-//    [](const entity_id id, transform_component &transform) {
-//      sprite_component sprite = sprites[id];
-//      if (transform.x < 0) {
-//        transform.x = 0;
-//      } else if (transform.x > config["target_texture_width"] -
-//      sprite.dest.w)
-//      {
-//        transform.x = config["target_texture_width"] - sprite.dest.w;
-//      }
-//      if (transform.y < 0) {
-//        transform.y = 0;
-//      } else if (transform.y >
-//                 config["target_texture_height"] - sprite.dest.h) {
-//        transform.y = config["target_texture_height"] - sprite.dest.h;
-//      }
-//    };
-
 function<void(const entity_id)> handle_enemy_transform =
     [](const entity_id id) {
       const int w = sprites[id].src.w;
@@ -316,7 +270,6 @@ function<void(const entity_id)> handle_knife_soulshard_transform =
           transforms[id].x < 2 * -sprites[id].src.w ||
           transforms[id].x > config["window_width"] + 2 * sprites[id].src.w;
       is_marked_for_deletion[id] = is_marked;
-      // if (is_knife[id] && is_marked) {
       if (entity_types[id] == ENTITY_TYPE_KNIFE && is_marked) {
         num_knives++;
         if (num_knives > max_num_knives) {
@@ -324,35 +277,6 @@ function<void(const entity_id)> handle_knife_soulshard_transform =
         }
       }
     };
-
-// function<void(const entity_id)> handle_powerup_transform =
-//     [](const entity_id id) {
-//       const bool mark =
-//           transforms[id].x < 2 * -sprites[id].src.w ||
-//           transforms[id].x > config["window_width"] + 2 * sprites[id].src.w
-//           || transforms[id].y < 2 * -sprites[id].src.h || transforms[id].y
-//           > config["window_width"] + 2 * sprites[id].src.h;
-//       is_marked_for_deletion[id] = mark;
-//       if (mark) {
-//         powerups_onscreen--;
-//       }
-//     };
-
-// function<void(const entity_id)> handle_blood_pixel_transform =
-//     [](const entity_id id) {
-//       const int left = 0;
-//       const int right = config["window_width"];
-//       const int top = 0;
-//       const int bottom = config["window_height"];
-//       const int x = transforms[id].x;
-//       const int y = transforms[id].y;
-//  blood_pixel_lifetime[id]--;
-//  const bool mark = x < left || x > right || y < top || y > bottom ||
-//                    blood_pixel_lifetime[id] <= 0;
-//      const bool mark = x < left || x > right || y < top || y > bottom;
-// blood_pixel_lifetime[id] <= 0;
-//      is_marked_for_deletion[id] = mark;
-//    };
 
 function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   entity_id id = t.first;
@@ -378,11 +302,8 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
       transform.y = config["target_texture_height"] - dest_h;
     }
   }
-
-  // transforms[id] = transform;
   transforms[id].x = transform.x;
   transforms[id].y = transform.y;
-
   sprites[id].dest.x = transform.x;
   sprites[id].dest.y = transform.y;
   sprites[id].dest.w = dest_w;
@@ -391,7 +312,6 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   case ENTITY_TYPE_ENEMY: {
     const int w = sprites[id].src.w;
     const int left = 2 * -w * scale;
-    // const int window_width = config["window_width"];
     const int right = window_width + (2 * w * scale);
     const int x = transforms[id].x;
     const bool mark = x < left || x > right;
@@ -401,10 +321,8 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
     }
   } break;
   case ENTITY_TYPE_KNIFE: {
-    bool is_marked =
-        transforms[id].x < 2 * -sprites[id].src.w ||
-        // transforms[id].x > config["window_width"] + 2 * sprites[id].src.w;
-        transforms[id].x > window_width + 2 * sprites[id].src.w;
+    bool is_marked = transforms[id].x < 2 * -sprites[id].src.w ||
+                     transforms[id].x > window_width + 2 * sprites[id].src.w;
     is_marked_for_deletion[id] = is_marked;
     if (is_marked) {
       num_knives++;
@@ -414,10 +332,8 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
     }
   } break;
   case ENTITY_TYPE_SOULSHARD: {
-    bool is_marked =
-        transforms[id].x < 2 * -sprites[id].src.w ||
-        // transforms[id].x > config["window_width"] + 2 * sprites[id].src.w;
-        transforms[id].x > window_width + 2 * sprites[id].src.w;
+    bool is_marked = transforms[id].x < 2 * -sprites[id].src.w ||
+                     transforms[id].x > window_width + 2 * sprites[id].src.w;
     is_marked_for_deletion[id] = is_marked;
   } break;
   case ENTITY_TYPE_ITEM: {
@@ -432,35 +348,18 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
   } break;
   case ENTITY_TYPE_PARTICLE: {
     blood_pixel_lifetime[id]--;
-    is_marked_for_deletion[id] =
-        blood_pixel_lifetime[id] <= 0; // x < left || x > right ||
+    is_marked_for_deletion[id] = blood_pixel_lifetime[id] <= 0;
   } break;
   default:
     break;
   }
-  //}
-
-  // if (id != player_id && entity_types[id] == ENTITY_TYPE_ENEMY) {
-  //   handle_enemy_transform(id);
-  // } else if (id != player_id && (entity_types[id] == ENTITY_TYPE_KNIFE ||
-  //                                entity_types[id] ==
-  //                                ENTITY_TYPE_SOULSHARD))
-  //                                {
-  //   handle_knife_soulshard_transform(id);
-  // } else if (id != player_id && entity_types[id] == ENTITY_TYPE_ITEM) {
-  //   handle_powerup_transform(id);
-  // } else if (id != player_id && entity_types[id] == ENTITY_TYPE_PARTICLE) {
-  //   handle_blood_pixel_transform(id);
-  // }
 };
 
 function<void(rotation_pair)> handle_rotation = [](const rotation_pair p) {
   entity_id id = p.first;
   if (p.second) {
     transform_component transform = transforms[p.first];
-    // if (is_knife[p.first]) {
-
-    switch (entity_types[p.first]) {
+    switch (entity_types[id]) {
     case ENTITY_TYPE_KNIFE:
       transform.angle += rotation_speeds[p.first];
       break;
@@ -468,12 +367,6 @@ function<void(rotation_pair)> handle_rotation = [](const rotation_pair p) {
       transform.angle += 1.0;
       break;
     }
-
-    // if (entity_types[p.first] == ENTITY_TYPE_KNIFE) {
-    //   transform.angle += rotation_speeds[p.first];
-    // } else {
-    //   transform.angle += 1.0;
-    // }
     transforms[id] = transform;
   }
 };
@@ -486,7 +379,6 @@ function<void(entity_id, entity_id)> check_for_knife_collision_with_enemy =
       sprite_component knife = sprites[id];
       if (SDL_HasIntersection(&knife.dest, &enemy.dest)) {
         // knife collides with enemy
-
         // knife damage is a function of current knife charge
         // atm, we have no way to track every knive's charge
         // we need a map that stores entity_id,int
@@ -494,69 +386,36 @@ function<void(entity_id, entity_id)> check_for_knife_collision_with_enemy =
         int knife_charge = knife_charges[id];
         int damage = 1 + knife_charge;
         hitpoints[enemy_id] -= damage;
-
-        // sprites[enemy_id].dmg_frames = 4;
         sprites[enemy_id].dmg_frames = 8;
         const double scale = transforms[enemy_id].scale;
         const int x = enemy.dest.x + scale * enemy.src.w / 4;
         const int y = enemy.dest.y + scale * enemy.src.h / 4;
-
         spawn_small_explosion(x, y);
-
         // delete the knife
         is_marked_for_deletion[id] = true;
         num_knives++;
         if (num_knives > max_num_knives) {
           num_knives = max_num_knives;
         }
-
         mPrint("enemy hp is now: " + to_string(hitpoints[enemy_id]));
-
         if (hitpoints[enemy_id] <= 0) {
-          // const double scale = transforms[enemy_id].scale;
           const int x = enemy.dest.x + enemy.dest.w / 2;
           const int y = enemy.dest.y + enemy.dest.h / 2;
           const int num_pixels = config["blood_pixel_count"];
           is_marked_for_deletion[enemy_id] = true;
           num_collisions++;
           enemies_killed[type]++;
-          // spawn_soulshard(enemy.dest.x, enemy.dest.y);
           spawn_soulshard(x, y);
           spawn_blood_pixels(x, y, num_pixels);
         }
       }
     };
 
-// function<void(entity_id)> check_for_knife_collision = [](const entity_id
-// id)
-// {
 function<void(pair<entity_id, bool>)> check_for_knife_collision =
     [](const pair<entity_id, bool> knife) {
       entity_id id = knife.first;
       for (auto p : is_enemy) {
         entity_id enemy_id = p.first;
-        // entity_type t = entity_types[enemy_id];
-        //  if (id == enemy_id) {
-        //    continue;
-        //  } else if (t == ENTITY_TYPE_PARTICLE) {
-        //    mPrint("is_blood_pixel[enemy_id]");
-        //    continue;
-        //  } else if (t == ENTITY_TYPE_SOULSHARD) {
-        //    mPrint("is_soulshard[enemy_id]");
-        //    continue;
-        //  } else if (t == ENTITY_TYPE_ITEM) {
-        //    mPrint("is_powerup[enemy_id]");
-        //    continue;
-        //  } else if (t == ENTITY_TYPE_KNIFE) {
-        //    mPrint("is_knife[enemy_id]");
-        //    continue;
-        //  }
-        //
-        //  if (id == enemy_id || is_blood_pixel[enemy_id] ||
-        //     is_soulshard[enemy_id] || is_powerup[enemy_id] ||
-        //     is_knife[enemy_id]) {
-        //   continue;
-        // }
         check_for_knife_collision_with_enemy(id, enemy_id);
       }
     };
@@ -588,23 +447,19 @@ void update_bg_transform_components() {
 }
 
 void handle_eyeball_generator(entity_id id, const double scale) {
-
   screen_position_t position = generators[id].screen_position;
   int x = -1;
   int y = -1;
   int vx_dir = 0;
   int vy_dir = 0;
-
   switch (position) {
   case SCREEN_POSITION_LEFT: {
     SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
-    // scale = 2.0;
     x = scale * -w / num_clips["eyeball"];
     y = config["target_texture_height"] / 2;
     vx_dir = 1.0;
   } break;
   case SCREEN_POSITION_RIGHT: {
-    // scale = 2.0;
     x = config["target_texture_width"];
     y = config["target_texture_height"] / 2;
     vx_dir = -1.0;
@@ -615,6 +470,31 @@ void handle_eyeball_generator(entity_id id, const double scale) {
   spawn_eyeball(x, y, vx_dir, vy_dir, scale);
 }
 
+void handle_bat_generator(entity_id id, const double scale) {
+  screen_position_t position = generators[id].screen_position;
+  int x = -1;
+  int y = -1;
+  int vx_dir = 0;
+  int vy_dir = 0;
+  int group = generators[id].group;
+  switch (position) {
+  case SCREEN_POSITION_LEFT: {
+    SDL_QueryTexture(textures["bat"], NULL, NULL, &w, &h);
+    x = scale * -w / num_clips["bat"];
+    y = config["target_texture_height"] / 2;
+    vx_dir = -1.0; // flipped
+  } break;
+  case SCREEN_POSITION_RIGHT: {
+    x = config["target_texture_width"];
+    y = config["target_texture_height"] / 2;
+    vx_dir = 1.0; // flipped
+  } break;
+  default:
+    break;
+  }
+  spawn_bats(x, y, scale, vx_dir, vy_dir, group);
+}
+
 // REFACTORING
 void update_generators() {
   for (auto kv : is_generator) {
@@ -622,67 +502,21 @@ void update_generators() {
     const bool active = generators[id].active;
     const int cooldown = generators[id].cooldown;
     const int cooldown_reduction = generators[id].cooldown_reduction;
-    const int group = generators[id].group;
     const int frame_begin = generators[id].frame_begin;
-    const screen_position_t screen_position = generators[id].screen_position;
-    int x = 0;
-    int y = config["target_texture_height"] / 2;
-    double vx_dir = -1.0;
     double scale = 1.0;
-    double vy_dir = 0.0;
-
-    // if (frame_begin >= frame_count) {
     if (frame_count >= frame_begin) {
       if (active && frame_count % cooldown == 0) {
         switch (generators[id].type) {
         case ENEMY_TYPE_EYEBALL: {
-
           scale = 4.0;
           handle_eyeball_generator(id, scale);
-          /*
-        switch (screen_position) {
-        case SCREEN_POSITION_LEFT: {
-          SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
-          scale = 2.0;
-          x = scale * -w / num_clips["eyeball"];
-          y = config["target_texture_height"] / 2;
-          vx_dir = 1.0;
-        } break;
-        case SCREEN_POSITION_RIGHT: {
-          scale = 2.0;
-          x = config["target_texture_width"];
-          y = config["target_texture_height"] / 2;
-          vx_dir = -1.0;
-        } break;
-        default:
-          break;
-        }
-        spawn_eyeball(x, y, vx_dir, vy_dir, scale);
-          */
-
         } break;
 
         case ENEMY_TYPE_BAT: {
-
-          switch (screen_position) {
-          case SCREEN_POSITION_LEFT: {
-            SDL_Texture *bat_texture = textures["bat"];
-            SDL_QueryTexture(bat_texture, NULL, NULL, &w, &h);
-            x = -w / num_clips["bat"];
-            y = config["target_texture_height"] / 2;
-            vx_dir = -1.0;
-          } break;
-          case SCREEN_POSITION_RIGHT: {
-            x = config["target_texture_width"];
-            y = config["target_texture_height"] / 2;
-            vx_dir = 1.0;
-          } break;
-          default:
-            break;
-          }
-          spawn_bats(x, y, scale, vx_dir, vy_dir, group);
-
+          scale = 2.0;
+          handle_bat_generator(id, scale);
         } break;
+
         default:
           break;
         }
@@ -690,11 +524,11 @@ void update_generators() {
       // if the generator has "cooldown reduction" set to nonzero,
       // then every N frames, reduce the cooldown by half until we hit a
       // minimum
-
-      bool check = cooldown_reduction && frame_count > 0;
-      check = check && cooldown > cooldown_min;
-      check = check && frame_count % cooldown_reduction == 0;
-      if (check) {
+      bool do_cooldown_reduce = cooldown_reduction && frame_count > 0;
+      do_cooldown_reduce = do_cooldown_reduce && cooldown > cooldown_min;
+      do_cooldown_reduce =
+          do_cooldown_reduce && frame_count % cooldown_reduction == 0;
+      if (do_cooldown_reduce) {
         generators[id].cooldown = cooldown / 2;
       }
     }
@@ -710,7 +544,6 @@ void update_animations() {
 }
 
 void update_knife_collisions() {
-  // for_each(entities.begin(), entities.end(), check_for_knife_collision);
   for_each(is_knife.begin(), is_knife.end(), check_for_knife_collision);
 }
 
@@ -723,19 +556,8 @@ void update_rotations() {
   for_each(is_rotating.begin(), is_rotating.end(), handle_rotation);
 }
 
-// static int times = 0;
-// static int start_ticks = 0;
-
 void update_transform_components() {
-  // start_ticks = SDL_GetTicks();
   for_each(transforms.begin(), transforms.end(), handle_transform);
-
-  // times += (SDL_GetTicks() - start_ticks);
-
-  // if (frame_count % 60 == 0) {
-  //   mPrint("update_transform_components: " + to_string(times / 60));
-  //   times = 0;
-  // }
 }
 
 void update_knife_cooldown() {
