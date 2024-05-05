@@ -358,10 +358,10 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
 function<void(rotation_pair)> handle_rotation = [](const rotation_pair p) {
   entity_id id = p.first;
   if (p.second) {
-    transform_component transform = transforms[p.first];
+    transform_component transform = transforms[id];
     switch (entity_types[id]) {
     case ENTITY_TYPE_KNIFE:
-      transform.angle += rotation_speeds[p.first];
+      transform.angle += rotation_speeds[id];
       break;
     default:
       transform.angle += 1.0;
@@ -383,21 +383,20 @@ function<void(entity_id, entity_id)> check_for_knife_collision_with_enemy =
         // atm, we have no way to track every knive's charge
         // we need a map that stores entity_id,int
         // we might be able to get rid of is_knife
-        int knife_charge = knife_charges[id];
-        int damage = 1 + knife_charge;
+        const int knife_charge = knife_charges[id];
+        const int damage = 1 + knife_charge;
+        const int x = enemy.dest.x + enemy.dest.w / 2;
+        const int y = enemy.dest.y + enemy.dest.h / 2;
+        spawn_small_explosion(x, y);
         hitpoints[enemy_id] -= damage;
         sprites[enemy_id].dmg_frames = 8;
-        const double scale = transforms[enemy_id].scale;
-        const int x = enemy.dest.x + scale * enemy.src.w / 4;
-        const int y = enemy.dest.y + scale * enemy.src.h / 4;
-        spawn_small_explosion(x, y);
         // delete the knife
         is_marked_for_deletion[id] = true;
         num_knives++;
         if (num_knives > max_num_knives) {
           num_knives = max_num_knives;
         }
-        mPrint("enemy hp is now: " + to_string(hitpoints[enemy_id]));
+        // mPrint("enemy hp is now: " + to_string(hitpoints[enemy_id]));
         if (hitpoints[enemy_id] <= 0) {
           const int x = enemy.dest.x + enemy.dest.w / 2;
           const int y = enemy.dest.y + enemy.dest.h / 2;
@@ -499,22 +498,17 @@ void handle_bat_generator(entity_id id, const double scale) {
 void update_generators() {
   for (auto kv : is_generator) {
     entity_id id = kv.first;
-    const bool active = generators[id].active;
     const int cooldown = generators[id].cooldown;
-    const int cooldown_reduction = generators[id].cooldown_reduction;
-    const int frame_begin = generators[id].frame_begin;
-    double scale = 1.0;
-    if (frame_count >= frame_begin) {
-      if (active && frame_count % cooldown == 0) {
+    const int reduction = generators[id].cooldown_reduction;
+    if (frame_count >= generators[id].frame_begin) {
+      if (generators[id].active && frame_count % cooldown == 0) {
         switch (generators[id].type) {
         case ENEMY_TYPE_EYEBALL: {
-          scale = 4.0;
-          handle_eyeball_generator(id, scale);
+          handle_eyeball_generator(id, 4.0);
         } break;
 
         case ENEMY_TYPE_BAT: {
-          scale = 2.0;
-          handle_bat_generator(id, scale);
+          handle_bat_generator(id, 1.0);
         } break;
 
         default:
@@ -524,11 +518,10 @@ void update_generators() {
       // if the generator has "cooldown reduction" set to nonzero,
       // then every N frames, reduce the cooldown by half until we hit a
       // minimum
-      bool do_cooldown_reduce = cooldown_reduction && frame_count > 0;
-      do_cooldown_reduce = do_cooldown_reduce && cooldown > cooldown_min;
-      do_cooldown_reduce =
-          do_cooldown_reduce && frame_count % cooldown_reduction == 0;
-      if (do_cooldown_reduce) {
+      bool do_reduce = reduction && frame_count > 0;
+      do_reduce = do_reduce && cooldown > cooldown_min;
+      do_reduce = do_reduce && frame_count % reduction == 0;
+      if (do_reduce) {
         generators[id].cooldown = cooldown / 2;
       }
     }
@@ -561,10 +554,7 @@ inline void update_transform_components() {
 }
 
 inline void update_knife_cooldown() {
-  knife_cooldown--;
-  if (knife_cooldown <= 0) {
-    knife_cooldown = 0;
-  }
+  knife_cooldown = knife_cooldown > 0 ? knife_cooldown - 1 : 0;
 }
 
 inline void update_explosions() {
@@ -583,10 +573,10 @@ void update() {
   update_bg_transform_components();
   update_bg_animations();
   update_transform_components();
-  update_rotations();
   update_animations();
+  update_rotations();
   update_collisions();
   update_generators();
-  update_knife_cooldown();
   update_explosions();
+  update_knife_cooldown();
 }
