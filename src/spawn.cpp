@@ -2,12 +2,11 @@
 #include "components.h"
 #include "entity_id.h"
 #include "entity_type.h"
-#include "mPrint.h"
 // #include "mPrint.h"
 #include "powerup_type.h"
 #include <SDL_render.h>
 #include <algorithm>
-#include <cassert>
+// #include <cassert>
 #include <map>
 #include <random>
 #include <string>
@@ -21,17 +20,14 @@ using std::map;
 using std::mt19937;
 using std::shuffle;
 using std::string;
-using std::to_string;
+// using std::to_string;
 using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
 
 extern mt19937 g;
-
 extern vector<int> bat_y_vec;
-
 extern entity_id player_id;
-
 extern int powerups_onscreen;
 extern int w;
 extern int h;
@@ -46,20 +42,14 @@ extern int num_knives_fired;
 extern int player_money;
 extern int player_health;
 extern int player_max_health;
-
 extern default_random_engine rng_generator;
-
 extern uniform_real_distribution<double> unit_distribution;
-// extern uniform_real_distribution<double> eyeball_vx_distribution;
 extern uniform_real_distribution<double> texture_height_distribution;
 extern uniform_real_distribution<double> blood_velocity_positive_distribution;
 extern uniform_real_distribution<double> blood_velocity_negative_distribution;
 extern uniform_real_distribution<double> blood_velocity_distribution;
-
 extern vector<double> bat_vx_vec;
-
 extern map<entity_id, sprite_component> sprites;
-
 extern unordered_map<entity_id, int> knife_charges;
 extern unordered_map<entity_id, int> explosion_frames;
 extern unordered_map<entity_id, int> hitpoints;
@@ -85,21 +75,13 @@ extern unordered_map<entity_id, bool> is_generator;
 extern unordered_map<powerup_type, int> powerups_collected;
 extern unordered_map<entity_id, double> rotation_speeds;
 extern vector<entity_id> entities;
-
 extern entity_id get_next_entity_id();
-
-void spawn_small_explosion(const int x, const int y);
-void spawn_knife();
-void spawn_bat(const double x, const double y, const double vx, const double vy,
-               const double scale);
 
 entity_id spawn_entity(const string key, const bool is_animating,
                        const int numclips, const int x, const int y) {
   const string dmg_key = key + "-dmg";
-
   SDL_Texture *t = textures[key];
   SDL_Texture *t2 = textures[dmg_key];
-
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
   w = w / numclips;
   const entity_id id = get_next_entity_id();
@@ -109,50 +91,22 @@ entity_id spawn_entity(const string key, const bool is_animating,
                  t2,           0, {0, 0, w, h}, {x, y, w, h}};
   transforms[id] = {dx, dy, 0, 0, 0, 1};
   entities.push_back(id);
-  // mPrint("spawned entity with id: " + to_string(id));
   return id;
 }
 
-void spawn_skull(const int x, const int y) {
-  mPrint("spawn skull");
-  if (player_id == -1) {
-    const string key = "skull";
-    const bool is_anim = false;
-    // const int num_frames = 2;
-    const int num_frames = num_clips[key];
-    mPrint("num_frames: " + to_string(num_frames));
-    const entity_id id = spawn_entity(key, is_anim, num_frames, x, y);
-    inputs[id] = true;
-    player_id = id;
-    entity_types[id] = ENTITY_TYPE_PLAYER;
-  }
-  mPrint("end spawn skull");
-}
-
-void spawn_soulshard(const int x, const int y) {
-  const string key = "soulshard";
-  const bool is_anim = true;
-  // const int num_frames = 8;
-  const int num_frames = num_clips[key];
-  const entity_id id = spawn_entity("soulshard", is_anim, num_frames, x, y);
-  const double vx = -1.0;
-  transforms[id].vx = vx;
-  is_soulshard[id] = true;
-  entity_types[id] = ENTITY_TYPE_SOULSHARD;
-}
-
-void handle_knife_charge_decrement() {
-  knife_charge--;
-  if (knife_charge < 0) {
-    knife_charge = 0;
-  }
-}
-
-void handle_knife_charge_rotation(const entity_id id) {
-  if (knife_charge > 0) {
-    is_rotating[id] = true;
-    rotation_speeds[id] = 5.0 * knife_charge;
-  }
+void spawn_bat(const double x, const double y, const double vx, const double vy,
+               const double scale) {
+  const string key = "bat";
+  SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
+  const int numclips = num_clips[key];
+  const entity_id id = spawn_entity(key, true, numclips, x, y);
+  const double angle = 0.0;
+  transforms[id] = {x, y, vx, vy, angle, scale};
+  is_collidable[id] = true;
+  is_enemy[id] = true;
+  entity_types[id] = ENTITY_TYPE_ENEMY;
+  enemy_types[id] = ENEMY_TYPE_BAT;
+  hitpoints[id] = 1;
 }
 
 // REFACTOR
@@ -161,7 +115,6 @@ void spawn_knife() {
     string key = "knife";
     if (knife_charge >= 2) {
       key = "knife-blue";
-      // key = "knife-red";
     }
     const int largeness = powerups_collected[POWERUP_TYPE_KNIFE_LARGENESS];
     const double scale = 1 + (0.1 * largeness);
@@ -178,10 +131,8 @@ void spawn_knife() {
     double vx = current_knife_speed;
     if (flipped && knife_charge) {
       vx = -current_knife_speed * knife_charge;
-      // vx = -current_knife_speed * knife_charge - knife_charge;
     } else if (knife_charge) {
       vx = current_knife_speed * knife_charge;
-      // vx = current_knife_speed * knife_charge + knife_charge;
     } else if (flipped) {
       vx = -current_knife_speed;
     }
@@ -206,7 +157,6 @@ void spawn_knife() {
     const bool do_spray = powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] > 0;
     int i = 0;
     const int numclips = num_clips[key];
-    // for(int i=0; i<total_knives; i++) {
     do {
       id = spawn_entity(key, false, numclips, x, y);
       vy = !do_spray ? 0
@@ -223,7 +173,6 @@ void spawn_knife() {
       num_knives_fired++;
       if (i == 0) {
         knife_charges[id] = knife_charge;
-
         knife_charge--;
         if (knife_charge < 0) {
           knife_charge = 0;
@@ -235,20 +184,54 @@ void spawn_knife() {
   }
 }
 
+void spawn_small_explosion(const int x, const int y) {
+  const string key = "explosion-2-small";
+  SDL_Texture *t = textures[key];
+  SDL_QueryTexture(t, NULL, NULL, &w, &h);
+  const bool is_anim = true;
+  const int numclips = num_clips[key];
+  const double dx = x;
+  const double dy = y;
+  entity_id id = spawn_entity(key, is_anim, numclips, x, y);
+  entity_types[id] = ENTITY_TYPE_EXPLOSION;
+  transforms[id] = {dx, dy, 0, 0, 0, 2.0};
+  explosion_frames[id] = numclips * 6;
+  entities.push_back(id);
+}
+
+void spawn_skull(const int x, const int y) {
+  if (player_id == -1) {
+    const string key = "skull";
+    const bool is_anim = false;
+    const int num_frames = num_clips[key];
+    const entity_id id = spawn_entity(key, is_anim, num_frames, x, y);
+    inputs[id] = true;
+    player_id = id;
+    entity_types[id] = ENTITY_TYPE_PLAYER;
+  }
+}
+
+void spawn_soulshard(const int x, const int y) {
+  const string key = "soulshard";
+  const bool is_anim = true;
+  const int num_frames = num_clips[key];
+  const entity_id id = spawn_entity("soulshard", is_anim, num_frames, x, y);
+  const double vx = -1.0;
+  transforms[id].vx = vx;
+  is_soulshard[id] = true;
+  entity_types[id] = ENTITY_TYPE_SOULSHARD;
+}
+
 void spawn_bats(const double x, const double y, const double scale,
                 const double vx, const double vy, const int number) {
-  assert(number > 0);
-  assert(number < 10);
+  if (number < 1 || number > 10) {
+    return;
+  }
   string key = "bat";
   SDL_Texture *t = textures[key];
   SDL_QueryTexture(t, NULL, NULL, &w, &h);
   w = w / num_clips[key];
-  // const int right = config["target_texture_width"] + w;
-  // const int bottom = config["target_texture_height"] - h * scale;
-  // assert(x > 0 && x < right);
-  // assert(y > 0 && y < bottom);
   double tmp_y = y;
-  // double vy = 0;
   shuffle(bat_vx_vec.begin(), bat_vx_vec.end(), g);
   shuffle(bat_y_vec.begin(), bat_y_vec.end(), g);
   for (int i = 0; i < number; i++) {
@@ -258,30 +241,8 @@ void spawn_bats(const double x, const double y, const double scale,
   }
 }
 
-void spawn_bat(const double x, const double y, const double vx, const double vy,
-               const double scale) {
-  // assert(x > 0);
-  // assert(y >= 0);
-  // assert(y < config["target_texture_height"]);
-  mPrint("spawning bat with vx: " + to_string(vx));
-  const string key = "bat";
-  SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
-  const int numclips = num_clips[key];
-  const entity_id id = spawn_entity(key, true, numclips, x, y);
-  const double angle = 0.0;
-  transforms[id] = {x, y, vx, vy, angle, scale};
-  is_collidable[id] = true;
-  is_enemy[id] = true;
-  entity_types[id] = ENTITY_TYPE_ENEMY;
-  enemy_types[id] = ENEMY_TYPE_BAT;
-  hitpoints[id] = 1;
-  //  mPrint("spawned bat with id: " + to_string(id));
-}
-
 void spawn_eyeball(const double x, const double y, const double vx,
                    const double vy, const double scale) {
-  mPrint("spawning eyeball with vx: " + to_string(vx) +
-         " and scale: " + to_string(scale));
   const string key = "eyeball";
   SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
   const int numclips = num_clips[key];
@@ -292,19 +253,12 @@ void spawn_eyeball(const double x, const double y, const double vx,
   is_enemy[id] = true;
   entity_types[id] = ENTITY_TYPE_ENEMY;
   enemy_types[id] = ENEMY_TYPE_EYEBALL;
-
   hitpoints[id] = (int)scale > 1 ? scale : 1;
-
-  mPrint("spawned eyeball with hp: " + to_string(hitpoints[id]));
 }
 
 void spawn_generator(enemy_type type, bool active, int group, int cooldown,
                      int cooldown_reduction, int frame_begin,
                      screen_position_t screen_position) {
-
-  mPrint("spawn generator");
-  mPrint("frame_begin: " + to_string(frame_begin));
-
   if (type > ENEMY_TYPE_COUNT) {
     return;
   }
@@ -317,14 +271,6 @@ void spawn_generator(enemy_type type, bool active, int group, int cooldown,
   if (frame_begin < 0) {
     return;
   }
-
-  // doesnt allow multiple generators of the same type
-  // for (auto kv : generators) {
-  //  const generator_component generator = kv.second;
-  //  if (generator.type == type) {
-  //    return;
-  //  }
-  //}
   const entity_id id = get_next_entity_id();
   generators[id] = {
       type,        active,         group, cooldown, cooldown_reduction,
@@ -338,6 +284,7 @@ void spawn_powerup() {
   powerup_type poweruptype;
   poweruptype = (powerup_type)(rand() % POWERUP_TYPE_COUNT);
   // omit hearts from spawning if player health is max
+  // this needs to be re-written to be more intelligent
   if (player_health == player_max_health) {
     while (poweruptype == POWERUP_TYPE_HEART) {
       poweruptype = (powerup_type)(rand() % POWERUP_TYPE_COUNT);
@@ -381,15 +328,11 @@ void spawn_powerup() {
     break;
   case POWERUP_TYPE_SKULL_SPEED:
     key = "powerup-skull-speed";
-    // current_player_speed += 2;
     break;
-
   case POWERUP_TYPE_MAGNETISM_THRESHOLD:
     key = "powerup-magnetism-threshold";
     num_frames = 8;
     is_anim = true;
-    // t = textures[key];
-    // SDL_QueryTexture(t, NULL, NULL, &w, &h);
     break;
   default:
     break;
@@ -401,23 +344,6 @@ void spawn_powerup() {
   powerup_types[id] = poweruptype;
   entity_types[id] = ENTITY_TYPE_ITEM;
   powerups_onscreen++;
-}
-
-void spawn_small_explosion(const int x, const int y) {
-  const string key = "explosion-2-small";
-  // const string key = "explosion-small";
-  SDL_Texture *t = textures[key];
-  // custom width/height defined in config/textures.json
-  SDL_QueryTexture(t, NULL, NULL, &w, &h);
-  const bool is_anim = true;
-  const int numclips = num_clips[key];
-  const double dx = x;
-  const double dy = y;
-  entity_id id = spawn_entity(key, is_anim, numclips, x, y);
-  entity_types[id] = ENTITY_TYPE_EXPLOSION;
-  transforms[id] = {dx, dy, 0, 0, 0, 2.0};
-  explosion_frames[id] = numclips * 6;
-  entities.push_back(id);
 }
 
 void spawn_blood_pixels(const int x, const int y, const int n) {
