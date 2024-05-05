@@ -37,7 +37,6 @@ extern TTF_Font *gFont;
 extern TTF_Font *stopwatch_font;
 extern TTF_Font *gameover_font;
 
-// extern unordered_map<entity_id, bool> is_damaged;
 extern unordered_map<entity_id, int> knife_charges;
 extern map<entity_id, sprite_component> sprites;
 extern map<entity_id, sprite_component> bg_sprites;
@@ -63,7 +62,6 @@ extern unordered_map<int, bool> is_pressed;
 extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, bool> is_powerup;
 extern unordered_map<string, int> num_clips;
-
 extern vector<entity_id> entities;
 extern vector<entity_id> entities_marked_for_deletion_tmp;
 extern vector<double> bat_vx_vec;
@@ -84,14 +82,11 @@ function<void(pair<entity_id, bool>)> cleanup_entity_marked_for_deletion =
         is_rotating.erase(id);
         is_collidable.erase(id);
         is_enemy.erase(id);
-
         is_knife.erase(id);
         knife_charges.erase(id);
-
         is_soulshard.erase(id);
         is_flipped.erase(id);
         is_generator.erase(id);
-        // is_damaged.erase(id);
         entity_types.erase(id);
         bg_sprites.erase(id);
         powerup_types.erase(id);
@@ -110,7 +105,6 @@ void cleanup_textures() {
   for_each(textures.begin(), textures.end(),
            [](auto kv) { SDL_DestroyTexture(kv.second); });
   textures.clear();
-
   num_clips.clear();
 }
 
@@ -142,35 +136,23 @@ void cleanup_data_structures() {
   hitpoints.clear();
   powerups_collected.clear();
   knife_charges.clear();
-  // is_damaged.clear();
 }
 
 void cleanup() {
-  // mPrint("cleaning up");
-  // mPrint("cleaning up entities");
-  // mPrint("cleaning up SDL");
-  // mPrint("cleaning up SDL textures");
   cleanup_data_structures();
   cleanup_textures();
-  // mPrint("cleaning up debug texture");
   SDL_DestroyTexture(debug_texture);
-  // mPrint("cleaning up debug bg texture");
   SDL_DestroyTexture(debug_bg_texture);
   SDL_DestroyTexture(stopwatch_texture);
   SDL_DestroyTexture(target_texture);
-  // mPrint("cleaning up renderer");
   SDL_DestroyRenderer(renderer);
   if (text_surface) {
-    // mPrint("cleaning up text surface");
     SDL_FreeSurface(text_surface);
   }
   if (stopwatch_surface) {
     SDL_FreeSurface(stopwatch_surface);
   }
-
-  // mPrint("cleaning up window");
   SDL_DestroyWindow(window);
-  // mPrint("cleaning up TTF");
   TTF_CloseFont(gFont);
   TTF_CloseFont(stopwatch_font);
   TTF_CloseFont(gameover_font);

@@ -71,8 +71,10 @@ extern unordered_map<string, int> num_clips;
 
 extern int window_width;
 extern int window_height;
+
+inline double fps() { return frame_count / (SDL_GetTicks64() / 1000.0f); }
+
 // external functions
-extern double fps();
 extern size_t get_num_enemies_killed();
 extern void cleanup_and_exit_with_failure();
 extern void cleanup_and_exit_with_failure_mprint(string msg);
