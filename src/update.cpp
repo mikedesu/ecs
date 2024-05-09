@@ -482,6 +482,7 @@ void handle_bat_generator(entity_id id, const double scale) {
   int y = -1;
   int vx_dir = 0;
   int vy_dir = 0;
+  int hp = generators[id].hp;
   int group = generators[id].group;
   switch (position) {
   case SCREEN_POSITION_LEFT: {
@@ -499,7 +500,7 @@ void handle_bat_generator(entity_id id, const double scale) {
     break;
   }
   // spawn_bats(x, y, scale, vx_dir, vy_dir, group);
-  spawn_bats(x, y, scale, vx_dir, vy_dir, group, 1);
+  spawn_bats(x, y, scale, vx_dir, vy_dir, group, hp);
 }
 
 // REFACTORING

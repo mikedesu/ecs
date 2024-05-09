@@ -261,7 +261,7 @@ void spawn_eyeball(const double x, const double y, const double vx,
 }
 
 void spawn_generator(enemy_type type, bool active, int group, int cooldown,
-                     int cooldown_reduction, int frame_begin,
+                     int cooldown_reduction, int frame_begin, int hp,
                      screen_position_t screen_position) {
   if (type > ENEMY_TYPE_COUNT) {
     return;
@@ -275,10 +275,14 @@ void spawn_generator(enemy_type type, bool active, int group, int cooldown,
   if (frame_begin < 0) {
     return;
   }
+  if (hp < 1) {
+    return;
+  }
+
   const entity_id id = get_next_entity_id();
   generators[id] = {
-      type,        active,         group, cooldown, cooldown_reduction,
-      frame_begin, screen_position};
+      type,        active, group,          cooldown, cooldown_reduction,
+      frame_begin, hp,     screen_position};
   is_generator[id] = true;
   entity_types[id] = ENTITY_TYPE_GENERATOR;
   entities.push_back(id);

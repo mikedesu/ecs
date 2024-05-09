@@ -80,7 +80,8 @@ extern void bg_init();
 extern void spawn_skull(const int x, const int y);
 extern void spawn_generator(enemy_type type, bool active, int group,
                             int cooldown, int cooldown_reduction,
-                            int frame_begin, screen_position_t screen_position);
+                            int frame_begin, int hp,
+                            screen_position_t screen_position);
 
 void init_game_vars() {
   mPrint("begin init game vars");
@@ -275,15 +276,17 @@ void init_game() {
   int cooldown = 60 * 8;
   int cooldown_reduction = 0;
   int frame_begin = 0;
+  int hp = 4;
   screen_position_t screen_position = SCREEN_POSITION_LEFT;
   spawn_generator(type, is_active, groupnum, cooldown, cooldown_reduction,
-                  frame_begin, screen_position);
+                  frame_begin, hp, screen_position);
   type = ENEMY_TYPE_BAT;
   groupnum = 4;
   cooldown = 60 * 5;
   cooldown_reduction = 0;
   frame_begin = 0;
+  hp = 1;
   screen_position = SCREEN_POSITION_RIGHT;
   spawn_generator(type, is_active, groupnum, cooldown, cooldown_reduction,
-                  frame_begin, screen_position);
+                  frame_begin, hp, screen_position);
 }
