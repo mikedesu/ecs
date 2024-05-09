@@ -30,7 +30,7 @@
 - [x] scaling up graphics to make 4x the new 'default' 1x
 - [x] faster movement using the SHIFT key
 - [x] knife "catching" mechanic
-    - [ ] needs tuning, basically "uncatchable" after so-many speedups/sizeups
+    - [x] needs tuning, basically "uncatchable" after so-many speedups/sizeups
 - [x] generic enemy generator
     - [x] eyeball generator
 - [x] count number of knives fired
@@ -57,9 +57,9 @@
     - [x] spawn on every bat kill 
 - [ ] power-ups
     - [x] knife cooldown reduction
-    - [ ] knife speed increase
+    - [x] knife speed increase
     - [x] knife size increase
-    - [ ] knife spread increase (shotgun)
+    - [x] knife spread increase (shotgun)
     - [ ] knife angular rotation (damage)
 - [ ] enemy spawn wave pressure
     - [x] increasing the generator rate
@@ -127,10 +127,10 @@
     - [ ] enemies killed
     - [ ] enemies escaped
     - [ ] damaged by # of enemies
-- [ ] restart game after game-over
-- [ ] pause game
-- [ ] un-pause game
-- [ ] powerup that increases movement speed
+- [x] restart game after game-over
+- [x] pause game
+- [x] un-pause game
+- [x] powerup that increases movement speed
 - [ ] negative-powerup that increases enemy movement speed
 - [ ] negative-powerup that increases enemy spawn rate
 - [ ] negative-powerup that increases enemy size
@@ -198,7 +198,7 @@
 - [ ] explosion animation
 - [ ] fire animation
 - [ ] move the magnetic-soulshard variables into main so that they can be tune-able over time
-    - [ ] magnet range
+    - [x] magnet range
     - [ ] magnet speed
 - [ ] gameover
     - [x] on player death, need to trigger some gameover event / state
@@ -350,8 +350,8 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
     - [ ] spawning a lot of extra knives is appearing to have a big slowdown effect on the game
         - [ ] possibly due to the rectangle modulation
             - [ ] one way we might fix this is to pre-calculate the destination rectangle
-- [ ] put a cap on how many player-speed powerups you can get
-    - [ ] currently, moving too fast is possible after getting so-many speedups
+- [x] put a cap on how many player-speed powerups you can get
+    - [x] currently, moving too fast is possible after getting so-many speedups
 - [x] converted sprites to a `map` but it isn't seeming to improve performance at all
     - [ ] attempting to cut blood pixel count in half seemed to work, but there is still a significant performance slowdown around ~2000 entities on screen
     - [ ] it is possible that attempting to manage blood pixel lifetimes is causing the slowdown...
@@ -425,7 +425,7 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
     - [ ] multi-phase movement
     - [ ] spawning from top or bottom of screen
 - [ ] powerup tweaks
-    - [ ] limit the number of speed-ups
+    - [x] limit the number of speed-ups
     - [ ] implement skull-shrink powerup
         - [ ] reduces the sprite dest rect by some amount
 - [ ] spawn rate for eyeballs 
@@ -434,5 +434,27 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 - [ ] generator counters / some "way" to turn them on/off
 - [ ] some "way" to remove generators / clean them up when they are off
 - [ ] clean up `update_generators`
+
+## 9 May 2024
+
+- [ ] asset packing
+    - [ ] do we NEED to do this?
+        - [ ] too much work to encrypt/decrypt/pack assets in general
+        - [ ] to what benefit? someone will just reverse-engineer everything anyway
+        - [ ] the game is open source for a reason...
+        - [ ] ideally, other people could make and use their own graphics if they wish!
+- [ ] sound effects
+    - [ ] need some free oldschool 8-bit-ish sound effects to just throw in for various in-game events
+        - [ ] getting hit
+        - [ ] picking up a powerup
+        - [ ] moving
+        - [ ] firing a knife
+        - [ ] enemy death
+        - [ ] enemy hit
+        - [ ] gameover
+        - [ ] pause
+        - [ ] game restart
+
+
 
 

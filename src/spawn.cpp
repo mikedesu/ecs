@@ -95,7 +95,7 @@ entity_id spawn_entity(const string key, const bool is_animating,
 }
 
 void spawn_bat(const double x, const double y, const double vx, const double vy,
-               const double scale) {
+               const double scale, const int hp) {
   const string key = "bat";
   SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
   const int numclips = num_clips[key];
@@ -106,7 +106,8 @@ void spawn_bat(const double x, const double y, const double vx, const double vy,
   is_enemy[id] = true;
   entity_types[id] = ENTITY_TYPE_ENEMY;
   enemy_types[id] = ENEMY_TYPE_BAT;
-  hitpoints[id] = 1;
+  // hitpoints[id] = 1;
+  hitpoints[id] = hp;
 }
 
 // REFACTOR
@@ -223,7 +224,8 @@ void spawn_soulshard(const int x, const int y) {
 }
 
 void spawn_bats(const double x, const double y, const double scale,
-                const double vx, const double vy, const int number) {
+                const double vx, const double vy, const int number,
+                const int hp) {
   if (number < 1 || number > 10) {
     return;
   }
@@ -237,12 +239,13 @@ void spawn_bats(const double x, const double y, const double scale,
   for (int i = 0; i < number; i++) {
     double myvx = bat_vx_vec[i] * vx;
     tmp_y = bat_y_vec[i];
-    spawn_bat(x, tmp_y, myvx, vy, scale);
+    // spawn_bat(x, tmp_y, myvx, vy, scale);
+    spawn_bat(x, tmp_y, myvx, vy, scale, hp);
   }
 }
 
 void spawn_eyeball(const double x, const double y, const double vx,
-                   const double vy, const double scale) {
+                   const double vy, const double scale, const int hp) {
   const string key = "eyeball";
   SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
   const int numclips = num_clips[key];
@@ -253,7 +256,8 @@ void spawn_eyeball(const double x, const double y, const double vx,
   is_enemy[id] = true;
   entity_types[id] = ENTITY_TYPE_ENEMY;
   enemy_types[id] = ENEMY_TYPE_EYEBALL;
-  hitpoints[id] = (int)scale > 1 ? scale : 1;
+  // hitpoints[id] = (int)scale > 1 ? scale : 1;
+  hitpoints[id] = hp;
 }
 
 void spawn_generator(enemy_type type, bool active, int group, int cooldown,

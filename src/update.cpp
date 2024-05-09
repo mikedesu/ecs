@@ -81,12 +81,13 @@ extern vector<entity_id> entities;
 
 extern void spawn_soulshard(const int x, const int y);
 extern void spawn_powerup();
-extern void spawn_bat(const double x, const double y, const double vx,
-                      const double vy, const double scale);
+// extern void spawn_bat(const double x, const double y, const double vx,
+//                       const double vy, const double scale);
 extern void spawn_bats(const double x, const double y, const double scale,
-                       const double vx, const double vy, const int number);
+                       const double vx, const double vy, const int number,
+                       const int hp);
 extern void spawn_eyeball(const double x, const double y, const double vx,
-                          const double vy, const double scale);
+                          const double vy, const double scale, const int hp);
 extern void spawn_small_explosion(const int x, const int y);
 extern void spawn_blood_pixels(const int x, const int y, const int n);
 extern void spawn_small_explosion(const int x, const int y);
@@ -469,7 +470,10 @@ void handle_eyeball_generator(entity_id id, const double scale) {
   default:
     break;
   }
-  spawn_eyeball(x, y, vx_dir, vy_dir, scale);
+
+  const int hp = 4;
+
+  spawn_eyeball(x, y, vx_dir, vy_dir, scale, hp);
 }
 
 void handle_bat_generator(entity_id id, const double scale) {
@@ -494,7 +498,8 @@ void handle_bat_generator(entity_id id, const double scale) {
   default:
     break;
   }
-  spawn_bats(x, y, scale, vx_dir, vy_dir, group);
+  // spawn_bats(x, y, scale, vx_dir, vy_dir, group);
+  spawn_bats(x, y, scale, vx_dir, vy_dir, group, 1);
 }
 
 // REFACTORING
