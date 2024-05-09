@@ -73,7 +73,6 @@ extern unordered_map<entity_id, bool> is_enemy;
 extern unordered_map<entity_id, bool> is_generator;
 extern unordered_map<entity_id, bool> is_powerup;
 extern unordered_map<entity_id, bool> is_marked_for_deletion;
-extern unordered_map<entity_id, bool> is_blood_pixel;
 extern unordered_map<entity_id, int> blood_pixel_lifetime;
 extern unordered_map<entity_id, double> rotation_speeds;
 extern unordered_map<enemy_type, int> enemies_killed;
@@ -153,15 +152,16 @@ function<void(entity_id)> handle_update_skull_collision_powerup =
       powerup_type type = powerup_types[id];
       switch (type) {
       case POWERUP_TYPE_SKULL_SPEED:
-        current_player_speed += 2;
+        if (current_player_speed < 20) {
+          current_player_speed += 2;
+        }
         break;
       case POWERUP_TYPE_MAGNETISM_THRESHOLD:
         current_soulshard_magnetism_threshold += 20;
         break;
       case POWERUP_TYPE_KNIFE_COOLDOWN:
-        current_knife_cooldown -= 5;
-        if (current_knife_cooldown < 10) {
-          current_knife_cooldown = 10;
+        if (current_knife_cooldown > 10) {
+          current_knife_cooldown -= 5;
         }
         break;
       case POWERUP_TYPE_KNIFE_QUANTITY:
@@ -172,7 +172,10 @@ function<void(entity_id)> handle_update_skull_collision_powerup =
         }
         break;
       case POWERUP_TYPE_KNIFE_SPEED:
-        current_knife_speed += 1;
+        if (current_knife_speed < 10) {
+          current_knife_speed += 1;
+        }
+
         break;
       case POWERUP_TYPE_HEART:
         player_health++;

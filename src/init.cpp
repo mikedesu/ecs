@@ -96,6 +96,7 @@ void init_game_vars() {
   player_max_health = 3;
   player_soulshards = 0;
   total_soulshards_collected = 0;
+  default_knife_speed = 4;
   current_knife_speed = default_knife_speed;
   knife_cooldown = 0;
   current_knife_cooldown = default_knife_cooldown;

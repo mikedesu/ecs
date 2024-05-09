@@ -58,7 +58,7 @@ extern unordered_map<string, size_t> config;
 extern unordered_map<entity_id, bool> inputs;
 extern unordered_map<string, SDL_Texture *> textures;
 extern unordered_map<entity_id, entity_type> entity_types;
-extern unordered_map<entity_id, bool> is_blood_pixel;
+// extern unordered_map<entity_id, bool> is_blood_pixel;
 extern unordered_map<entity_id, int> blood_pixel_lifetime;
 extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, enemy_type> enemy_types;
@@ -365,7 +365,7 @@ void spawn_blood_pixels(const int x, const int y, const int n) {
                       // blood_velocity_distribution(rng_generator),
                       blood_velocity_positive_distribution(rng_generator),
                       blood_velocity_distribution(rng_generator), 0, 1};
-    is_blood_pixel[id] = true;
+    // is_blood_pixel[id] = true;
     blood_pixel_lifetime[id] = rand() % 120;
     entity_types[id] = ENTITY_TYPE_PARTICLE;
     entities.push_back(id);

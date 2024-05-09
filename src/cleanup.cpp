@@ -55,7 +55,8 @@ extern unordered_map<entity_id, bool> is_knife;
 extern unordered_map<entity_id, bool> is_flipped;
 extern unordered_map<entity_id, bool> is_generator;
 extern unordered_map<entity_id, bool> is_marked_for_deletion;
-extern unordered_map<entity_id, bool> is_blood_pixel;
+// extern unordered_map<entity_id, bool> is_blood_pixel;
+extern unordered_map<entity_id, int> blood_pixel_lifetime;
 extern unordered_map<enemy_type, int> enemies_killed;
 extern unordered_map<entity_id, entity_type> entity_types;
 extern unordered_map<int, bool> is_pressed;
@@ -93,7 +94,8 @@ function<void(pair<entity_id, bool>)> cleanup_entity_marked_for_deletion =
         is_powerup.erase(id);
         hitpoints.erase(id);
         // is_marked_for_deletion.erase(id);
-        is_blood_pixel.erase(id);
+        // is_blood_pixel.erase(id);
+        blood_pixel_lifetime.erase(id);
         explosion_frames.erase(id);
         entities.erase(remove(entities.begin(), entities.end(), id),
                        entities.end());
@@ -112,6 +114,7 @@ void cleanup_data_structures() {
   explosion_frames.clear();
   entities.clear();
   entities_marked_for_deletion_tmp.clear();
+  blood_pixel_lifetime.clear();
   is_pressed.clear();
   is_rotating.clear();
   is_collidable.clear();
@@ -126,7 +129,7 @@ void cleanup_data_structures() {
   transforms.clear();
   generators.clear();
   inputs.clear();
-  is_blood_pixel.clear();
+  // is_blood_pixel.clear();
   entity_types.clear();
   bg_sprites.clear();
   bat_y_vec.clear();

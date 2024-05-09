@@ -130,7 +130,7 @@ unordered_map<entity_id, bool> inputs;
 // unordered_map<entity_id, bool> is_damaged;
 unordered_map<entity_id, bool> is_rotating;
 unordered_map<entity_id, bool> is_collidable;
-unordered_map<entity_id, bool> is_blood_pixel;
+// unordered_map<entity_id, bool> is_blood_pixel;
 unordered_map<entity_id, bool> is_enemy;
 unordered_map<entity_id, bool> is_soulshard;
 unordered_map<entity_id, bool> is_knife;
