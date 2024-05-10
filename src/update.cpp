@@ -455,6 +455,7 @@ void handle_eyeball_generator(entity_id id, const double scale) {
   int y = -1;
   int vx_dir = 0;
   int vy_dir = 0;
+  int spawn_count = generators[id].spawn_count;
   switch (position) {
   case SCREEN_POSITION_LEFT: {
     SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
@@ -473,7 +474,14 @@ void handle_eyeball_generator(entity_id id, const double scale) {
 
   const int hp = 4;
 
-  spawn_eyeball(x, y, vx_dir, vy_dir, scale, hp);
+  // if (spawn_count > 0) {
+  if (spawn_count > 0 || spawn_count == -1) {
+    spawn_eyeball(x, y, vx_dir, vy_dir, scale, hp);
+    if (spawn_count > 0) {
+      generators[id].spawn_count--;
+    }
+  }
+  // spawn_eyeball(x, y, vx_dir, vy_dir, scale, hp);
 }
 
 void handle_bat_generator(entity_id id, const double scale) {
@@ -484,6 +492,7 @@ void handle_bat_generator(entity_id id, const double scale) {
   int vy_dir = 0;
   int hp = generators[id].hp;
   int group = generators[id].group;
+  int spawn_count = generators[id].spawn_count;
   switch (position) {
   case SCREEN_POSITION_LEFT: {
     SDL_QueryTexture(textures["bat"], NULL, NULL, &w, &h);
@@ -499,8 +508,17 @@ void handle_bat_generator(entity_id id, const double scale) {
   default:
     break;
   }
+
+  if (spawn_count > 0 || spawn_count == -1) {
+    spawn_bats(x, y, scale, vx_dir, vy_dir, group, hp);
+
+    // decrement the spawn count
+    if (spawn_count > 0) {
+      generators[id].spawn_count--;
+    }
+  }
   // spawn_bats(x, y, scale, vx_dir, vy_dir, group);
-  spawn_bats(x, y, scale, vx_dir, vy_dir, group, hp);
+  // spawn_bats(x, y, scale, vx_dir, vy_dir, group, hp);
 }
 
 // REFACTORING

@@ -201,14 +201,14 @@ int main() {
   init_game();
   while (!quit) {
     handle_input();
-    // if (!is_paused && !is_gameover) {
-    //   handle_input_component();
-    //   update();
-    //   render_frame();
-    //   cleanup_entities_marked_for_deletion();
-    // } else if (is_gameover) {
-    render_gameover(); // prob should be handled in render_frame()
-    //}
+    if (!is_paused && !is_gameover) {
+      handle_input_component();
+      update();
+      render_frame();
+      cleanup_entities_marked_for_deletion();
+    } else if (is_gameover) {
+      render_gameover(); // prob should be handled in render_frame()
+    }
   }
   cleanup();
   return EXIT_SUCCESS;

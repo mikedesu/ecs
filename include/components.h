@@ -23,6 +23,7 @@ typedef struct {
   int cooldown;
   int cooldown_reduction;
   int frame_begin;
+  int spawn_count;
   int hp;
   screen_position_t screen_position;
 } generator_component;
