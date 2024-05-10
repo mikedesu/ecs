@@ -172,6 +172,7 @@ void load_debug_text();
 void load_stopwatch_text();
 void load_textures();
 void load_main_config();
+void load_generators();
 void render_frame();
 void render_gameover();
 void update();
@@ -199,6 +200,9 @@ int main() {
   init_target_texture_rects();
   do_fullscreen();
   init_game();
+
+  load_generators();
+
   while (!quit) {
     handle_input();
     if (!is_paused && !is_gameover) {

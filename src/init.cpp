@@ -270,6 +270,8 @@ void init_game() {
   bg_init();
   init_after_load_textures();
   spawn_skull(0, 0);
+
+  /*
   enemy_type type = ENEMY_TYPE_EYEBALL;
   bool is_active = true;
   int groupnum = 1;
@@ -281,9 +283,11 @@ void init_game() {
   screen_position_t screen_position = SCREEN_POSITION_LEFT;
   spawn_generator(type, is_active, groupnum, cooldown, cooldown_reduction,
                   frame_begin, spawn_count, hp, screen_position);
+  */
 
   // example of how we can dynamically create generators
   // these would need to be cleaned up once spawn_count reaches 0
+  /*
   for (int i = 1; i < 6; i++) {
     type = ENEMY_TYPE_BAT;
     groupnum = i;
@@ -296,6 +300,7 @@ void init_game() {
     spawn_generator(type, is_active, groupnum, cooldown, cooldown_reduction,
                     frame_begin, spawn_count, hp, screen_position);
   }
+  */
 
   /*
   type = ENEMY_TYPE_BAT;

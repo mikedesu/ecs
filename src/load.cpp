@@ -74,6 +74,10 @@ inline double fps() { return frame_count / (SDL_GetTicks64() / 1000.0f); }
 extern size_t get_num_enemies_killed();
 extern void cleanup_and_exit_with_failure();
 extern void cleanup_and_exit_with_failure_mprint(string msg);
+extern void spawn_generator(enemy_type type, bool active, int group,
+                            int cooldown, int cooldown_reduction,
+                            int frame_begin, int spawn_count, int hp,
+                            screen_position_t screen_position);
 
 // declarations
 void load_debug_text();
@@ -356,7 +360,7 @@ void handle_load_texture(Value &v) {
 
 const Document load_document(string path) {
   const size_t read_buffer_size = 65536;
-  char readBuffer[read_buffer_size];
+  char readBuffer[read_buffer_size] = {0};
   Document d;
   FILE *fp = fopen(path.c_str(), "r");
   if (fp == nullptr) {
@@ -447,4 +451,69 @@ void load_main_config() {
   config["target_texture_width"] = config["default_window_width"];
   config["target_texture_height"] = config["default_window_height"];
   current_soulshard_magnetism_threshold = config["default_magnetism_threshold"];
+}
+
+void load_generators() {
+  Document d = load_document("config/generators.json");
+
+  string int_keys[] = {"groupnum",    "cooldown",    "cooldown_reduction",
+                       "spawn_count", "frame_begin", "hp"};
+  string str_keys[] = {"type", "position"};
+
+  if (d.IsArray()) {
+    for (auto &v : d.GetArray()) {
+      check_if_json_value_is_object(v);
+
+      for (string key : int_keys) {
+        if (!v.HasMember(key.c_str()) || !v[key.c_str()].IsInt()) {
+          string msg = "config/generators.json array element has no " + key;
+          mPrint(msg);
+          cleanup_and_exit_with_failure();
+        }
+      }
+
+      for (string key : str_keys) {
+        if (!v.HasMember(key.c_str()) || !v[key.c_str()].IsString()) {
+          string msg = "config/generators.json array element has no " + key;
+          mPrint(msg);
+          cleanup_and_exit_with_failure();
+        }
+      }
+
+      enemy_type type = ENEMY_TYPE_EYEBALL;
+      string type_str = v["type"].GetString();
+      if (type_str == "eyeball") {
+        type = ENEMY_TYPE_EYEBALL;
+      } else if (type_str == "bat") {
+        type = ENEMY_TYPE_BAT;
+      } else {
+        string msg = "config/generators.json array element has invalid type";
+        mPrint(msg);
+        cleanup_and_exit_with_failure();
+      }
+
+      bool is_active = true;
+      int groupnum = v["groupnum"].GetInt();
+      int cooldown = v["cooldown"].GetInt();
+      int cooldown_reduction = v["cooldown_reduction"].GetInt();
+      int spawn_count = v["spawn_count"].GetInt();
+      int frame_begin = v["frame_begin"].GetInt();
+      int hp = v["hp"].GetInt();
+      screen_position_t screen_position = SCREEN_POSITION_LEFT;
+      string position = v["position"].GetString();
+      if (position == "left") {
+        screen_position = SCREEN_POSITION_LEFT;
+      } else if (position == "right") {
+        screen_position = SCREEN_POSITION_RIGHT;
+      } else {
+        string msg =
+            "config/generators.json array element has invalid position";
+        mPrint(msg);
+        cleanup_and_exit_with_failure();
+      }
+
+      spawn_generator(type, is_active, groupnum, cooldown, cooldown_reduction,
+                      frame_begin, spawn_count, hp, screen_position);
+    }
+  }
 }

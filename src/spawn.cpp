@@ -2,7 +2,7 @@
 #include "components.h"
 #include "entity_id.h"
 #include "entity_type.h"
-// #include "mPrint.h"
+#include "mPrint.h"
 #include "powerup_type.h"
 #include <SDL_render.h>
 #include <algorithm>
@@ -20,7 +20,7 @@ using std::map;
 using std::mt19937;
 using std::shuffle;
 using std::string;
-// using std::to_string;
+using std::to_string;
 using std::uniform_real_distribution;
 using std::unordered_map;
 using std::vector;
@@ -263,6 +263,7 @@ void spawn_eyeball(const double x, const double y, const double vx,
 void spawn_generator(enemy_type type, bool active, int group, int cooldown,
                      int cooldown_reduction, int frame_begin, int spawn_count,
                      int hp, screen_position_t screen_position) {
+
   if (type > ENEMY_TYPE_COUNT) {
     return;
   }
@@ -281,6 +282,11 @@ void spawn_generator(enemy_type type, bool active, int group, int cooldown,
   if (hp < 1) {
     return;
   }
+
+  mPrint("spawn_generator: " + to_string(type) + " " + to_string(active) + " " +
+         to_string(group) + " " + to_string(cooldown) + " " +
+         to_string(cooldown_reduction) + " " + to_string(frame_begin) + " " +
+         to_string(spawn_count) + " " + to_string(hp));
 
   const entity_id id = get_next_entity_id();
   generators[id] = {
