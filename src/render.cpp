@@ -15,6 +15,7 @@ using std::string;
 using std::unordered_map;
 
 extern int w, h, frame_count;
+extern int window_width, window_height;
 extern unordered_map<string, size_t> config;
 extern SDL_Renderer *renderer;
 extern map<entity_id, sprite_component> sprites;
@@ -76,8 +77,8 @@ void render_gameover() {
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderClear(renderer);
   SDL_QueryTexture(gameover_texture, NULL, NULL, &w, &h);
-  const int x = target_texture_dest.w / 4;
-  const int y = 0;
+  const int x = window_width / 2 - w / 2;
+  const int y = window_height / 2 - h / 2;
   SDL_Rect src = {0, 0, w, h};
   SDL_Rect dest = {x, y, w, h};
   SDL_RenderCopy(renderer, gameover_texture, &src, &dest);
