@@ -90,6 +90,7 @@ extern void spawn_eyeball(const double x, const double y, const double vx,
                           const double vy, const double scale, const int hp);
 extern void spawn_goblin(const double x, const double y, const double vx,
                          const double vy, const double scale, const int hp);
+void spawn_goblin_bullet(entity_id id);
 
 extern void spawn_small_explosion(const int x, const int y);
 extern void spawn_blood_pixels(const int x, const int y, const int n);
@@ -652,6 +653,22 @@ inline void update_explosions() {
   }
 }
 
+inline void update_entity_special_actions() {
+  for (auto kv : is_enemy) {
+    entity_id id = kv.first;
+
+    switch (enemy_types[id]) {
+    case ENEMY_TYPE_GOBLIN: {
+      if (frame_count % 120 == 0) {
+        mPrint("spawn goblin knife");
+
+        spawn_goblin_bullet(id);
+      }
+    } break;
+    }
+  }
+}
+
 void update() {
   update_bg_transform_components();
   update_bg_animations();
@@ -662,4 +679,6 @@ void update() {
   update_generators();
   update_explosions();
   update_knife_cooldown();
+
+  update_entity_special_actions();
 }

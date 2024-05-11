@@ -25,6 +25,6 @@
   {"type": "texture_colormod","key": "knife-red","path": "img/knife-alt4x.png","r": 255,"g": 0,"b": 0},
   {"type": "texture_colormod","key": "explosion-small","path": "img/explosion-small-sheet4x.png","numclips":8,"r": 255,"g": 0,"b": 0},
   {"type": "texture_colormod","key": "explosion-2-small","path": "img/explosion-2-small4x-sheet.png","numclips":4,"r": 255,"g": 255,"b": 255},
-  {"type": "pixel","key": "blood-pixel","r": 255,"g": 0,"b": 0,"w": 4,"h": 4}
+  {"type": "pixel","key": "blood-pixel","r": 255,"g": 0,"b": 0,"w": 4,"h": 4},
   {"type": "pixel","key": "goblin-bullet","r": 0,"g": 255,"b": 0,"w": 32,"h": 32}
 ]
