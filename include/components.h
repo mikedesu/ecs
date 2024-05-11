@@ -25,6 +25,7 @@ typedef struct {
   int frame_begin;
   int spawn_count;
   int hp;
+  double scale;
   screen_position_t screen_position;
 } generator_component;
 

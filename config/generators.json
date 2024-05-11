@@ -1,4 +1,4 @@
 [
-  {"type":"eyeball","groupnum":1,"cooldown":300,"cooldown_reduction":0,"spawn_count":1,"frame_begin":300,"hp":4,"position":"left"},
-  {"type":"bat","groupnum":4,"cooldown":300,"cooldown_reduction":0,"spawn_count":1,"frame_begin":300,"hp":2,"position":"right"}
+  {"type":"eyeball","groupnum":1,"cooldown":600,"cooldown_reduction":0,"spawn_count":4,"frame_begin":300,"hp":4,"scale":4.0,"position":"left"},
+  {"type":"bat","groupnum":4,"cooldown":240,"cooldown_reduction":0,"spawn_count":-1,"frame_begin":240,"hp":1,"scale":1.0,"position":"right"}
 ]

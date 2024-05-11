@@ -77,7 +77,7 @@ extern void cleanup_and_exit_with_failure_mprint(string msg);
 extern void spawn_generator(enemy_type type, bool active, int group,
                             int cooldown, int cooldown_reduction,
                             int frame_begin, int spawn_count, int hp,
-                            screen_position_t screen_position);
+                            double scale, screen_position_t screen_position);
 
 // declarations
 void load_debug_text();
@@ -459,6 +459,7 @@ void load_generators() {
   string int_keys[] = {"groupnum",    "cooldown",    "cooldown_reduction",
                        "spawn_count", "frame_begin", "hp"};
   string str_keys[] = {"type", "position"};
+  string double_keys[] = {"scale"};
 
   if (d.IsArray()) {
     for (auto &v : d.GetArray()) {
@@ -474,6 +475,14 @@ void load_generators() {
 
       for (string key : str_keys) {
         if (!v.HasMember(key.c_str()) || !v[key.c_str()].IsString()) {
+          string msg = "config/generators.json array element has no " + key;
+          mPrint(msg);
+          cleanup_and_exit_with_failure();
+        }
+      }
+
+      for (string key : double_keys) {
+        if (!v.HasMember(key.c_str()) || !v[key.c_str()].IsDouble()) {
           string msg = "config/generators.json array element has no " + key;
           mPrint(msg);
           cleanup_and_exit_with_failure();
@@ -499,6 +508,8 @@ void load_generators() {
       int spawn_count = v["spawn_count"].GetInt();
       int frame_begin = v["frame_begin"].GetInt();
       int hp = v["hp"].GetInt();
+      double scale = v["scale"].GetDouble();
+
       screen_position_t screen_position = SCREEN_POSITION_LEFT;
       string position = v["position"].GetString();
       if (position == "left") {
@@ -513,7 +524,7 @@ void load_generators() {
       }
 
       spawn_generator(type, is_active, groupnum, cooldown, cooldown_reduction,
-                      frame_begin, spawn_count, hp, screen_position);
+                      frame_begin, spawn_count, hp, scale, screen_position);
     }
   }
 }

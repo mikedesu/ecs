@@ -449,13 +449,15 @@ inline void update_bg_transform_components() {
   for_each(bg_transforms.begin(), bg_transforms.end(), handle_bg_transform);
 }
 
-void handle_eyeball_generator(entity_id id, const double scale) {
+// void handle_eyeball_generator(entity_id id, const double scale) {
+void handle_eyeball_generator(entity_id id) {
   screen_position_t position = generators[id].screen_position;
   int x = -1;
   int y = -1;
   int vx_dir = 0;
   int vy_dir = 0;
   int spawn_count = generators[id].spawn_count;
+  double scale = generators[id].scale;
   switch (position) {
   case SCREEN_POSITION_LEFT: {
     SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
@@ -484,7 +486,8 @@ void handle_eyeball_generator(entity_id id, const double scale) {
   // spawn_eyeball(x, y, vx_dir, vy_dir, scale, hp);
 }
 
-void handle_bat_generator(entity_id id, const double scale) {
+// void handle_bat_generator(entity_id id, const double scale) {
+void handle_bat_generator(entity_id id) {
   screen_position_t position = generators[id].screen_position;
   int x = -1;
   int y = -1;
@@ -493,6 +496,7 @@ void handle_bat_generator(entity_id id, const double scale) {
   int hp = generators[id].hp;
   int group = generators[id].group;
   int spawn_count = generators[id].spawn_count;
+  double scale = generators[id].scale;
   switch (position) {
   case SCREEN_POSITION_LEFT: {
     SDL_QueryTexture(textures["bat"], NULL, NULL, &w, &h);
@@ -531,11 +535,13 @@ void update_generators() {
       if (generators[id].active && frame_count % cooldown == 0) {
         switch (generators[id].type) {
         case ENEMY_TYPE_EYEBALL: {
-          handle_eyeball_generator(id, 4.0);
+          // handle_eyeball_generator(id, 4.0);
+          handle_eyeball_generator(id);
         } break;
 
         case ENEMY_TYPE_BAT: {
-          handle_bat_generator(id, 1.0);
+          handle_bat_generator(id);
+          // handle_bat_generator(id, 1.0);
         } break;
 
         default:
