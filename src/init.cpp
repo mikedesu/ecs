@@ -82,6 +82,7 @@ extern void spawn_generator(enemy_type type, bool active, int group,
                             int cooldown, int cooldown_reduction,
                             int frame_begin, int spawn_count, int hp,
                             screen_position_t screen_position);
+extern void load_generators();
 
 void init_game_vars() {
   mPrint("begin init game vars");
@@ -270,6 +271,7 @@ void init_game() {
   bg_init();
   init_after_load_textures();
   spawn_skull(0, 0);
+  load_generators();
 
   /*
   enemy_type type = ENEMY_TYPE_EYEBALL;

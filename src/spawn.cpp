@@ -94,6 +94,26 @@ entity_id spawn_entity(const string key, const bool is_animating,
   return id;
 }
 
+void spawn_goblin(const double x, const double y, const double vx,
+                  const double vy, const double scale, const int hp) {
+
+  mPrint("spawn_goblin: " + to_string(x) + " " + to_string(y) + " " +
+         to_string(vx) + " " + to_string(vy) + " " + to_string(scale) + " " +
+         to_string(hp));
+  const string key = "goblin";
+  SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
+  const int numclips = num_clips[key];
+  const entity_id id = spawn_entity(key, true, numclips, x, y);
+  const double angle = 0.0;
+  transforms[id] = {x, y, vx, vy, angle, scale};
+  is_collidable[id] = true;
+  is_enemy[id] = true;
+  entity_types[id] = ENTITY_TYPE_ENEMY;
+  enemy_types[id] = ENEMY_TYPE_GOBLIN;
+  // hitpoints[id] = 1;
+  hitpoints[id] = hp;
+}
+
 void spawn_bat(const double x, const double y, const double vx, const double vy,
                const double scale, const int hp) {
   const string key = "bat";

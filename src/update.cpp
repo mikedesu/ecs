@@ -88,6 +88,9 @@ extern void spawn_bats(const double x, const double y, const double scale,
                        const int hp);
 extern void spawn_eyeball(const double x, const double y, const double vx,
                           const double vy, const double scale, const int hp);
+extern void spawn_goblin(const double x, const double y, const double vx,
+                         const double vy, const double scale, const int hp);
+
 extern void spawn_small_explosion(const int x, const int y);
 extern void spawn_blood_pixels(const int x, const int y, const int n);
 extern void spawn_small_explosion(const int x, const int y);
@@ -486,6 +489,46 @@ void handle_eyeball_generator(entity_id id) {
   // spawn_eyeball(x, y, vx_dir, vy_dir, scale, hp);
 }
 
+void handle_goblin_generator(entity_id id) {
+  // screen_position_t position = generators[id].screen_position;
+  int x = -1;
+  int y = -1;
+  int vx_dir = 0;
+  int vy_dir = 0;
+  int hp = generators[id].hp;
+  // int group = generators[id].group;
+  int spawn_count = generators[id].spawn_count;
+  double scale = generators[id].scale;
+  string key = "goblin";
+  // switch (position) {
+  // case SCREEN_POSITION_LEFT: {
+  SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
+  // x = scale * -w / num_clips[key];
+  x = config["target_texture_width"];
+  y = config["target_texture_height"] - h * scale;
+  vx_dir = -2.0; // flipped
+  //} break;
+  // case SCREEN_POSITION_RIGHT: {
+  //  x = config["target_texture_width"];
+  //  y = config["target_texture_height"] / 2;
+  //  vx_dir = 1.0; // flipped
+  //} break;
+  // default:
+  //  break;
+  //}
+
+  mPrint("spawn_count: " + to_string(spawn_count));
+
+  if (spawn_count > 0 || spawn_count == -1) {
+    spawn_goblin(x, y, vx_dir, vy_dir, scale, hp);
+
+    // decrement the spawn count
+    if (spawn_count > 0) {
+      generators[id].spawn_count--;
+    }
+  }
+}
+
 // void handle_bat_generator(entity_id id, const double scale) {
 void handle_bat_generator(entity_id id) {
   screen_position_t position = generators[id].screen_position;
@@ -533,7 +576,9 @@ void update_generators() {
     const int reduction = generators[id].cooldown_reduction;
     if (frame_count >= generators[id].frame_begin) {
       if (generators[id].active && frame_count % cooldown == 0) {
+        mPrint("frame_count: " + to_string(frame_count));
         switch (generators[id].type) {
+
         case ENEMY_TYPE_EYEBALL: {
           // handle_eyeball_generator(id, 4.0);
           handle_eyeball_generator(id);
@@ -542,6 +587,11 @@ void update_generators() {
         case ENEMY_TYPE_BAT: {
           handle_bat_generator(id);
           // handle_bat_generator(id, 1.0);
+        } break;
+
+        case ENEMY_TYPE_GOBLIN: {
+          handle_goblin_generator(id);
+          // handle_goblin_generator(id, 1.0);
         } break;
 
         default:

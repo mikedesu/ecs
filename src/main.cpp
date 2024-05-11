@@ -201,8 +201,6 @@ int main() {
   do_fullscreen();
   init_game();
 
-  load_generators();
-
   while (!quit) {
     handle_input();
     if (!is_paused && !is_gameover) {

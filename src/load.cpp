@@ -495,6 +495,9 @@ void load_generators() {
         type = ENEMY_TYPE_EYEBALL;
       } else if (type_str == "bat") {
         type = ENEMY_TYPE_BAT;
+      } else if (type_str == "goblin") {
+        type = ENEMY_TYPE_GOBLIN;
+
       } else {
         string msg = "config/generators.json array element has invalid type";
         mPrint(msg);
