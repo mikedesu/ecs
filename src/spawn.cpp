@@ -130,6 +130,19 @@ void spawn_bat(const double x, const double y, const double vx, const double vy,
   hitpoints[id] = hp;
 }
 
+void spawn_goblin_bullet(entity_id id) {
+  string key = "goblin-bullet";
+  const double scale = 1.0;
+  const sprite_component goblin = sprites[id];
+  const double x = goblin.dest.x + goblin.dest.w / 2;
+  const double y = goblin.dest.y;
+  const double vx = 0;
+  const double vy = 1.0;
+  entity_id bullet_id = spawn_entity(key, false, 1, x, y);
+  transforms[bullet_id] = {x, y, vx, vy, 0, scale};
+  entity_types[bullet_id] = ENTITY_TYPE_ENEMY_BULLET;
+}
+
 // REFACTOR
 void spawn_knife() {
   if (!knife_cooldown && num_knives) {
