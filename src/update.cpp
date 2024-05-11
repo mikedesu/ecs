@@ -358,6 +358,16 @@ function<void(transform_pair)> handle_transform = [](const transform_pair t) {
     blood_pixel_lifetime[id]--;
     is_marked_for_deletion[id] = blood_pixel_lifetime[id] <= 0;
   } break;
+
+  case ENTITY_TYPE_ENEMY_BULLET: {
+    bool is_marked = transforms[id].x < 2 * -sprites[id].src.w ||
+                     transforms[id].x > window_width + 2 * sprites[id].src.w ||
+                     transforms[id].y < 2 * -sprites[id].src.h ||
+                     transforms[id].y > window_width + 2 * sprites[id].src.h;
+    is_marked_for_deletion[id] = is_marked;
+
+  } break;
+
   default:
     break;
   }
