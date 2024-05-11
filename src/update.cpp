@@ -227,6 +227,16 @@ function<void(entity_id)> update_skull_collision = [](const entity_id id) {
       is_marked_for_deletion[id] = true;
       handle_update_skull_collision_powerup(id);
       break;
+    case ENTITY_TYPE_ENEMY_BULLET:
+      is_marked_for_deletion[id] = true;
+      sprites[player_id].dmg_frames = 10;
+      player_health--;
+      if (player_health <= 0) {
+        mPrint("Gameover!");
+        is_gameover = true;
+      }
+      break;
+
     default:
       break;
     }
