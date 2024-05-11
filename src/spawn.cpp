@@ -141,6 +141,7 @@ void spawn_goblin_bullet(entity_id id) {
   entity_id bullet_id = spawn_entity(key, false, 1, x, y);
   transforms[bullet_id] = {x, y, vx, vy, 0, scale};
   entity_types[bullet_id] = ENTITY_TYPE_ENEMY_BULLET;
+  is_rotating[bullet_id] = true;
 }
 
 // REFACTOR

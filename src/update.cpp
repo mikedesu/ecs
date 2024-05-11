@@ -381,6 +381,9 @@ function<void(rotation_pair)> handle_rotation = [](const rotation_pair p) {
     case ENTITY_TYPE_KNIFE:
       transform.angle += rotation_speeds[id];
       break;
+    case ENTITY_TYPE_ENEMY_BULLET:
+      transform.angle += 10.0;
+      break;
     default:
       transform.angle += 1.0;
       break;
@@ -669,8 +672,8 @@ inline void update_entity_special_actions() {
 
     switch (enemy_types[id]) {
     case ENEMY_TYPE_GOBLIN: {
-      if (frame_count % 120 == 0) {
-        mPrint("spawn goblin knife");
+      if (frame_count % 240 == 0) {
+        // mPrint("spawn goblin knife");
 
         spawn_goblin_bullet(id);
       }
