@@ -78,7 +78,8 @@ extern vector<entity_id> entities;
 extern entity_id get_next_entity_id();
 
 entity_id spawn_entity(const string key, const bool is_animating,
-                       const int numclips, const int x, const int y) {
+                       const int numclips, const int x, const int y,
+                       const double scale) {
   const string dmg_key = key + "-dmg";
   SDL_Texture *t = textures[key];
   SDL_Texture *t2 = textures[dmg_key];
@@ -87,9 +88,11 @@ entity_id spawn_entity(const string key, const bool is_animating,
   const entity_id id = get_next_entity_id();
   const double dx = x;
   const double dy = y;
-  sprites[id] = {is_animating, 0, numclips,     t,
-                 t2,           0, {0, 0, w, h}, {x, y, w, h}};
-  transforms[id] = {dx, dy, 0, 0, 0, 1};
+  // const double scale = 1.0;
+  sprites[id] = {
+      is_animating, 0, numclips,     t,
+      t2,           0, {0, 0, w, h}, {x, y, (int)scale * w, (int)scale * h}};
+  transforms[id] = {dx, dy, 0, 0, 0, scale};
   entities.push_back(id);
   return id;
 }
@@ -103,7 +106,8 @@ void spawn_goblin(const double x, const double y, const double vx,
   const string key = "goblin";
   SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
   const int numclips = num_clips[key];
-  const entity_id id = spawn_entity(key, true, numclips, x, y);
+  // const entity_id id = spawn_entity(key, true, numclips, x, y);
+  const entity_id id = spawn_entity(key, true, numclips, x, y, scale);
   const double angle = 0.0;
   transforms[id] = {x, y, vx, vy, angle, scale};
   is_collidable[id] = true;
@@ -119,7 +123,8 @@ void spawn_bat(const double x, const double y, const double vx, const double vy,
   const string key = "bat";
   SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
   const int numclips = num_clips[key];
-  const entity_id id = spawn_entity(key, true, numclips, x, y);
+  // const entity_id id = spawn_entity(key, true, numclips, x, y);
+  const entity_id id = spawn_entity(key, true, numclips, x, y, scale);
   const double angle = 0.0;
   transforms[id] = {x, y, vx, vy, angle, scale};
   is_collidable[id] = true;
@@ -151,7 +156,8 @@ void spawn_goblin_bullet(entity_id id) {
   // const double vx = 0;
   // const double vy = -1.0;
 
-  entity_id bullet_id = spawn_entity(key, false, 1, x, y);
+  // entity_id bullet_id = spawn_entity(key, false, 1, x, y);
+  entity_id bullet_id = spawn_entity(key, false, 1, x, y, scale);
   transforms[bullet_id] = {x, y, vx, vy, 0, scale};
   entity_types[bullet_id] = ENTITY_TYPE_ENEMY_BULLET;
   is_rotating[bullet_id] = true;
@@ -206,7 +212,8 @@ void spawn_knife() {
     int i = 0;
     const int numclips = num_clips[key];
     do {
-      id = spawn_entity(key, false, numclips, x, y);
+      // id = spawn_entity(key, false, numclips, x, y);
+      id = spawn_entity(key, false, numclips, x, y, scale);
       vy = !do_spray ? 0
                      : powerups_collected[POWERUP_TYPE_KNIFE_SPRAY] *
                            unit_distribution(rng_generator);
@@ -240,7 +247,9 @@ void spawn_small_explosion(const int x, const int y) {
   const int numclips = num_clips[key];
   const double dx = x;
   const double dy = y;
-  entity_id id = spawn_entity(key, is_anim, numclips, x, y);
+  const double scale = 1.0;
+  // entity_id id = spawn_entity(key, is_anim, numclips, x, y);
+  entity_id id = spawn_entity(key, is_anim, numclips, x, y, scale);
   entity_types[id] = ENTITY_TYPE_EXPLOSION;
   transforms[id] = {dx, dy, 0, 0, 0, 2.0};
   explosion_frames[id] = numclips * 6;
@@ -252,7 +261,9 @@ void spawn_skull(const int x, const int y) {
     const string key = "skull";
     const bool is_anim = false;
     const int num_frames = num_clips[key];
-    const entity_id id = spawn_entity(key, is_anim, num_frames, x, y);
+    const double scale = 1.0;
+    // const entity_id id = spawn_entity(key, is_anim, num_frames, x, y);
+    const entity_id id = spawn_entity(key, is_anim, num_frames, x, y, scale);
     inputs[id] = true;
     player_id = id;
     entity_types[id] = ENTITY_TYPE_PLAYER;
@@ -263,7 +274,10 @@ void spawn_soulshard(const int x, const int y) {
   const string key = "soulshard";
   const bool is_anim = true;
   const int num_frames = num_clips[key];
-  const entity_id id = spawn_entity("soulshard", is_anim, num_frames, x, y);
+  // const entity_id id = spawn_entity("soulshard", is_anim, num_frames, x, y);
+  const double scale = 1.0;
+  const entity_id id =
+      spawn_entity("soulshard", is_anim, num_frames, x, y, scale);
   const double vx = -1.0;
   transforms[id].vx = vx;
   is_soulshard[id] = true;
@@ -299,7 +313,8 @@ void spawn_eyeball(const double x, const double y, const double vx,
   const string key = "eyeball";
   SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
   const int numclips = num_clips[key];
-  const entity_id id = spawn_entity(key, true, numclips, x, y);
+  // const entity_id id = spawn_entity(key, true, numclips, x, y);
+  const entity_id id = spawn_entity(key, true, numclips, x, y, scale);
   const double angle = 0.0;
   transforms[id] = {x, y, vx, vy, angle, scale};
   is_collidable[id] = true;
@@ -404,7 +419,9 @@ void spawn_powerup() {
   default:
     break;
   }
-  id = spawn_entity(key, is_anim, num_frames, x, y);
+  // id = spawn_entity(key, is_anim, num_frames, x, y);
+  const double scale = 1.0;
+  id = spawn_entity(key, is_anim, num_frames, x, y, scale);
   transforms[id].vx = DEFAULT_POWERUP_VX;
   transforms[id].angle = angle;
   is_powerup[id] = true;

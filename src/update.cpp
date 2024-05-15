@@ -483,7 +483,7 @@ void handle_eyeball_generator(entity_id id) {
   int y = -1;
   int vx_dir = 0;
   int vy_dir = 0;
-  const int hp = 4;
+  const int hp = generators[id].hp;
   int spawn_count = generators[id].spawn_count;
   double scale = generators[id].scale;
   SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
