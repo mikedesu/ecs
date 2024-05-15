@@ -483,37 +483,42 @@ void handle_eyeball_generator(entity_id id) {
   int y = -1;
   int vx_dir = 0;
   int vy_dir = 0;
+  const int hp = 4;
   int spawn_count = generators[id].spawn_count;
   double scale = generators[id].scale;
+  SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
   switch (position) {
   case SCREEN_POSITION_LEFT: {
-    SDL_QueryTexture(textures["eyeball"], NULL, NULL, &w, &h);
+
     x = scale * -w / num_clips["eyeball"];
-    y = config["target_texture_height"] / 2;
+
+    // y = config["target_texture_height"] / 2;
+    y = rand() % (int)(config["target_texture_height"] - h * scale);
+
     vx_dir = 1.0;
   } break;
   case SCREEN_POSITION_RIGHT: {
+
     x = config["target_texture_width"];
-    y = config["target_texture_height"] / 2;
+
+    // y = config["target_texture_height"] / 2;
+    y = rand() % (int)(config["target_texture_height"] - h * scale);
+
     vx_dir = -1.0;
   } break;
   default:
     break;
   }
-
-  const int hp = 4;
-
-  // if (spawn_count > 0) {
   if (spawn_count > 0 || spawn_count == -1) {
     spawn_eyeball(x, y, vx_dir, vy_dir, scale, hp);
     if (spawn_count > 0) {
       generators[id].spawn_count--;
     }
   }
-  // spawn_eyeball(x, y, vx_dir, vy_dir, scale, hp);
 }
 
 void handle_goblin_generator(entity_id id) {
+  // at the moment, groupnumber and screen position aren't used
   // screen_position_t position = generators[id].screen_position;
   int x = -1;
   int y = -1;
@@ -524,28 +529,12 @@ void handle_goblin_generator(entity_id id) {
   int spawn_count = generators[id].spawn_count;
   double scale = generators[id].scale;
   string key = "goblin";
-  // switch (position) {
-  // case SCREEN_POSITION_LEFT: {
   SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
-  // x = scale * -w / num_clips[key];
   x = config["target_texture_width"];
   y = config["target_texture_height"] - h * scale;
   vx_dir = -2.0; // flipped
-  //} break;
-  // case SCREEN_POSITION_RIGHT: {
-  //  x = config["target_texture_width"];
-  //  y = config["target_texture_height"] / 2;
-  //  vx_dir = 1.0; // flipped
-  //} break;
-  // default:
-  //  break;
-  //}
-
-  mPrint("spawn_count: " + to_string(spawn_count));
-
   if (spawn_count > 0 || spawn_count == -1) {
     spawn_goblin(x, y, vx_dir, vy_dir, scale, hp);
-
     // decrement the spawn count
     if (spawn_count > 0) {
       generators[id].spawn_count--;
@@ -588,8 +577,6 @@ void handle_bat_generator(entity_id id) {
       generators[id].spawn_count--;
     }
   }
-  // spawn_bats(x, y, scale, vx_dir, vy_dir, group);
-  // spawn_bats(x, y, scale, vx_dir, vy_dir, group, hp);
 }
 
 // REFACTORING
@@ -600,24 +587,17 @@ void update_generators() {
     const int reduction = generators[id].cooldown_reduction;
     if (frame_count >= generators[id].frame_begin) {
       if (generators[id].active && frame_count % cooldown == 0) {
-        mPrint("frame_count: " + to_string(frame_count));
+        // mPrint("frame_count: " + to_string(frame_count));
         switch (generators[id].type) {
-
         case ENEMY_TYPE_EYEBALL: {
-          // handle_eyeball_generator(id, 4.0);
           handle_eyeball_generator(id);
         } break;
-
         case ENEMY_TYPE_BAT: {
           handle_bat_generator(id);
-          // handle_bat_generator(id, 1.0);
         } break;
-
         case ENEMY_TYPE_GOBLIN: {
           handle_goblin_generator(id);
-          // handle_goblin_generator(id, 1.0);
         } break;
-
         default:
           break;
         }

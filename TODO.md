@@ -429,9 +429,9 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
     - [ ] implement skull-shrink powerup
         - [ ] reduces the sprite dest rect by some amount
 - [ ] spawn rate for eyeballs 
-- [ ] pass scale into enemy generators
-- [ ] pass HP into enemy generators
-- [ ] generator counters / some "way" to turn them on/off
+- [x] pass scale into enemy generators
+- [x] pass HP into enemy generators
+- [x] generator counters / some "way" to turn them on/off
 - [ ] some "way" to remove generators / clean them up when they are off
 - [ ] clean up `update_generators`
 
@@ -455,6 +455,19 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
         - [ ] pause
         - [ ] game restart
 
+## 15 May 2024
+
+- [x] goblin bullets
+    - [x] fires directly up
+    - [x] fires at the player
+    - [ ] fires in a spread
+- [ ] three classes of goblins
+    - [x] one that fires bullets up
+    - [ ] one that fires bullets at the player
+    - [ ] one that fires bullets in a spread
+- [ ] eyeballs currently only spawn in one y-position
+    - [ ] need to randomize the y-position
+- [ ] need to consider moving gameconfig out of a map and into its own `struct` again
 
 
 

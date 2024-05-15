@@ -293,6 +293,9 @@ void spawn_bats(const double x, const double y, const double scale,
 
 void spawn_eyeball(const double x, const double y, const double vx,
                    const double vy, const double scale, const int hp) {
+  mPrint("spawn_eyeball: " + to_string(x) + " " + to_string(y) + " " +
+         to_string(vx) + " " + to_string(vy) + " " + to_string(scale) + " " +
+         to_string(hp));
   const string key = "eyeball";
   SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
   const int numclips = num_clips[key];
