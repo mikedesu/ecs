@@ -680,9 +680,12 @@ inline void update_entity_special_actions() {
   for (auto kv : is_enemy) {
     entity_id id = kv.first;
 
+    // eventually we will be able to define special actions via JSON file in a
+    // similar manner to everything else so as to avoid hard-coding the cases
+    // and frame frequencies
     switch (enemy_types[id]) {
     case ENEMY_TYPE_GOBLIN: {
-      if (frame_count % 240 == 0) {
+      if (frame_count % 120 == 0) {
         // mPrint("spawn goblin knife");
 
         spawn_goblin_bullet(id);

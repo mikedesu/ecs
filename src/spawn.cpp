@@ -134,10 +134,23 @@ void spawn_goblin_bullet(entity_id id) {
   string key = "goblin-bullet";
   const double scale = 1.0;
   const sprite_component goblin = sprites[id];
-  const double x = goblin.dest.x + goblin.dest.w / 2;
+  const double x = goblin.dest.x + goblin.dest.w / 2.0;
   const double y = goblin.dest.y;
-  const double vx = 0;
-  const double vy = -1.0;
+
+  // experiment time
+  // lets make the bullets fire at the player
+  // to do this, we need the player position
+  const int px = sprites[player_id].dest.x;
+  const int py = sprites[player_id].dest.y;
+
+  // calculate the angle between the player and the goblin
+  const double angle = atan2(py - y, px - x);
+  const double vx = cos(angle) * 4.0;
+  const double vy = sin(angle) * 4.0;
+
+  // const double vx = 0;
+  // const double vy = -1.0;
+
   entity_id bullet_id = spawn_entity(key, false, 1, x, y);
   transforms[bullet_id] = {x, y, vx, vy, 0, scale};
   entity_types[bullet_id] = ENTITY_TYPE_ENEMY_BULLET;
