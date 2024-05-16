@@ -470,4 +470,8 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 - [ ] need to consider moving gameconfig out of a map and into its own `struct` again
 
 
+## 16 May 2024
+
+- [ ] need to make sure data structures are properly cleaned-up after gameover and restart
+- [ ] powerup spawn positions are incorrect, can appear too-far above/below screen
 

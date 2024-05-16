@@ -1,3 +1,5 @@
 [
-  {"type":"eyeball","groupnum":1,"cooldown":60,"cooldown_reduction":0,"spawn_count":-1,"frame_begin":0,"hp":1,"scale":0.5,"position":"left"}
+  {"type":"bat","groupnum":1,"cooldown":120,"cooldown_reduction":0,"spawn_count":-1,"frame_begin":180,"hp":1,"scale":1.0,"position":"right"},
+  {"type":"eyeball","groupnum":1,"cooldown":240,"cooldown_reduction":0,"spawn_count":-1,"frame_begin":1200,"hp":4,"scale":2.0,"position":"left"},
+  {"type":"goblin","groupnum":1,"cooldown":240,"cooldown_reduction":0,"spawn_count":-1,"frame_begin":7200,"hp":1,"scale":4.0,"position":"right"}
 ]
