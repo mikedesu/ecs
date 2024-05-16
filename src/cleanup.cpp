@@ -37,6 +37,8 @@ extern TTF_Font *gFont;
 extern TTF_Font *stopwatch_font;
 extern TTF_Font *gameover_font;
 
+// extern int current_frame_count;
+
 extern unordered_map<entity_id, int> knife_charges;
 extern map<entity_id, sprite_component> sprites;
 extern map<entity_id, sprite_component> bg_sprites;

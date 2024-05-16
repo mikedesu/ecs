@@ -34,7 +34,9 @@ extern int powerups_onscreen;
 extern int current_soulshard_magnetism_threshold;
 extern int current_knife_speed;
 extern int current_player_speed;
-extern int frame_count;
+// extern int frame_count;
+extern int current_frame_count;
+// extern int total_frame_count;
 extern int window_width;
 extern int window_height;
 extern int num_collisions;
@@ -452,7 +454,7 @@ function<void(pair<entity_id, bool>)> check_for_knife_collision =
 
 function<void(sprite_pair)> update_animation = [](const sprite_pair p) {
   entity_id id = p.first;
-  if (sprites[id].is_animating && frame_count % 10 == 0) {
+  if (sprites[id].is_animating && current_frame_count % 10 == 0) {
     sprites[id].current_clip =
         (sprites[id].current_clip + 1) % sprites[id].num_clips;
     sprites[id].src.x = sprites[id].current_clip * sprites[id].src.w;
@@ -461,7 +463,7 @@ function<void(sprite_pair)> update_animation = [](const sprite_pair p) {
 
 function<void(sprite_pair)> update_bg_animation = [](const sprite_pair p) {
   entity_id id = p.first;
-  if (bg_sprites[id].is_animating && frame_count % 10 == 0) {
+  if (bg_sprites[id].is_animating && current_frame_count % 10 == 0) {
     bg_sprites[id].current_clip =
         (bg_sprites[id].current_clip + 1) % bg_sprites[id].num_clips;
     bg_sprites[id].src.x = bg_sprites[id].current_clip * bg_sprites[id].src.w;
@@ -585,8 +587,8 @@ void update_generators() {
     entity_id id = kv.first;
     const int cooldown = generators[id].cooldown;
     const int reduction = generators[id].cooldown_reduction;
-    if (frame_count >= generators[id].frame_begin) {
-      if (generators[id].active && frame_count % cooldown == 0) {
+    if (current_frame_count >= generators[id].frame_begin) {
+      if (generators[id].active && current_frame_count % cooldown == 0) {
         // mPrint("frame_count: " + to_string(frame_count));
         switch (generators[id].type) {
         case ENEMY_TYPE_EYEBALL: {
@@ -605,9 +607,9 @@ void update_generators() {
       // if the generator has "cooldown reduction" set to nonzero,
       // then every N frames, reduce the cooldown by half until we hit a
       // minimum
-      bool do_reduce = reduction && frame_count > 0;
+      bool do_reduce = reduction && current_frame_count > 0;
       do_reduce = do_reduce && cooldown > cooldown_min;
-      do_reduce = do_reduce && frame_count % reduction == 0;
+      do_reduce = do_reduce && current_frame_count % reduction == 0;
       if (do_reduce) {
         generators[id].cooldown = cooldown / 2;
       }
@@ -665,7 +667,7 @@ inline void update_entity_special_actions() {
     // and frame frequencies
     switch (enemy_types[id]) {
     case ENEMY_TYPE_GOBLIN: {
-      if (frame_count % 120 == 0) {
+      if (current_frame_count % 120 == 0) {
         // mPrint("spawn goblin knife");
 
         spawn_goblin_bullet(id);

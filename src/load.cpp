@@ -25,7 +25,9 @@ extern SDL_Color stopwatch_text_color;
 extern int powerups_onscreen;
 extern unordered_map<string, size_t> config;
 extern int current_soulshard_magnetism_threshold;
-extern int frame_count;
+// extern int frame_count;
+extern int total_frame_count;
+extern int current_frame_count;
 extern int num_collisions;
 extern int knife_cooldown;
 extern int knife_charge;
@@ -68,7 +70,8 @@ extern unordered_map<string, int> num_clips;
 extern int window_width;
 extern int window_height;
 
-inline double fps() { return frame_count / (SDL_GetTicks64() / 1000.0f); }
+// inline double fps() { return frame_count / (SDL_GetTicks64() / 1000.0f); }
+inline double fps() { return total_frame_count / (SDL_GetTicks64() / 1000.0f); }
 
 // external functions
 extern size_t get_num_enemies_killed();
@@ -178,7 +181,8 @@ void load_stopwatch_text() {
 
 void load_debug_text() {
   snprintf(texture_text, 1024,
-           "target texture: %ldx%ld\nwindow size: %ldx%ld\nframe_count: "
+           "target texture: %ldx%ld\nwindow size: "
+           "%ldx%ld\ncurrent_frame_count: %06d\ntotal_frame_count: "
            "%06d\nnum_entities: %ld\n"
            "fps: %.02f\nzoom: %.02f\nnum_collisions: "
            "%d\nknife_cooldown: %d\ncurrent_knife_cooldown: "
@@ -189,14 +193,14 @@ void load_debug_text() {
            "%d\nmagnetism threshold: %d\nplayer position: "
            "%.02f,%.02f\ngameover count: %d\npowerups onscreen: %d\n",
            config["target_texture_width"], config["target_texture_height"],
-           config["window_width"], config["window_height"], frame_count,
-           entities.size(), fps(), zoom, num_collisions, knife_cooldown,
-           current_knife_cooldown, num_knives, max_num_knives, num_knives_fired,
-           knife_charge, num_enemies_escaped, get_num_enemies_killed(),
-           player_health, player_max_health, player_soulshards,
-           total_soulshards_collected, current_soulshard_magnetism_threshold,
-           transforms[player_id].x, transforms[player_id].y, gameover_count,
-           powerups_onscreen);
+           config["window_width"], config["window_height"], current_frame_count,
+           total_frame_count, entities.size(), fps(), zoom, num_collisions,
+           knife_cooldown, current_knife_cooldown, num_knives, max_num_knives,
+           num_knives_fired, knife_charge, num_enemies_escaped,
+           get_num_enemies_killed(), player_health, player_max_health,
+           player_soulshards, total_soulshards_collected,
+           current_soulshard_magnetism_threshold, transforms[player_id].x,
+           transforms[player_id].y, gameover_count, powerups_onscreen);
   text_surface = TTF_RenderText_Blended_Wrapped(gFont, texture_text, textColor,
                                                 DEBUG_TEXT_WRAP_LEN);
   if (text_surface == nullptr) {

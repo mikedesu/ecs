@@ -39,6 +39,7 @@ extern int powerups_onscreen;
 extern int cooldown_min;
 extern int mWidth;
 extern int mHeight;
+extern int current_frame_count;
 extern int current_knife_speed;
 extern int default_knife_speed;
 extern int default_player_speed;
@@ -111,6 +112,7 @@ void init_game_vars() {
   cooldown_min = 30; // do-able no lag
   powerups_collected.clear();
   powerups_onscreen = 0;
+  current_frame_count = 0;
   mPrint("end init game vars");
 }
 

@@ -57,7 +57,12 @@ int img_flags = IMG_INIT_PNG;
 int result = -1;
 int w = 0;
 int h = 0;
+
+int total_frame_count = 0;
+int current_frame_count = 0;
+
 int frame_count = 0;
+
 int mWidth = -1;
 int mHeight = -1;
 int fullscreen_width = -1;

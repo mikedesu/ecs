@@ -14,7 +14,10 @@ using std::map;
 using std::string;
 using std::unordered_map;
 
-extern int w, h, frame_count;
+extern int w;
+extern int h;
+extern int current_frame_count;
+extern int total_frame_count;
 extern int window_width, window_height;
 extern unordered_map<string, size_t> config;
 extern SDL_Renderer *renderer;
@@ -86,7 +89,8 @@ void render_gameover() {
   SDL_RenderCopy(renderer, target_texture, &target_texture_src,
                  &target_texture_dest);
   SDL_RenderPresent(renderer);
-  frame_count++;
+  total_frame_count++;
+  current_frame_count++;
 }
 
 void render_frame() {
@@ -105,5 +109,6 @@ void render_frame() {
     load_debug_text();
   }
   SDL_RenderPresent(renderer);
-  frame_count++;
+  current_frame_count++;
+  total_frame_count++;
 }
