@@ -476,4 +476,13 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
     - [ ] goblins are spawning because the current frame is not being reset
         - [ ] need to distinguish the total frame_count for the game the whole time it is being run versus the total frame_count for this play thru (i.e. after game over)
 - [ ] powerup spawn positions are incorrect, can appear too-far above/below screen
+- [ ] need to pass in the bullet parameters to a JSON config, either generators or something else
+    - [ ] bullet frequency
+    - [ ] bullet speed
+    - [ ] count of bullets per round
+    - [ ] cooldown time between rounds
+    - [ ] bullet movement (directly up, left, down, right, spread, at player, homing)
+- [ ] dynamic movement for enemies  
+
+
 

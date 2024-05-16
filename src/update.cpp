@@ -667,7 +667,7 @@ inline void update_entity_special_actions() {
     // and frame frequencies
     switch (enemy_types[id]) {
     case ENEMY_TYPE_GOBLIN: {
-      if (current_frame_count % 120 == 0) {
+      if (current_frame_count % 30 == 0) {
         // mPrint("spawn goblin knife");
 
         spawn_goblin_bullet(id);
