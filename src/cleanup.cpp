@@ -1,5 +1,6 @@
 #include "SDL_handler.h"
 #include "components.h"
+#include "enemy_bullets.h"
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "entity_type.h"
@@ -65,6 +66,8 @@ extern unordered_map<int, bool> is_pressed;
 extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, bool> is_powerup;
 extern unordered_map<string, int> num_clips;
+extern unordered_map<enemy_type, enemy_bullet_definition>
+    enemy_bullet_definitions;
 extern vector<entity_id> entities;
 extern vector<entity_id> entities_marked_for_deletion_tmp;
 extern vector<double> bat_vx_vec;
@@ -143,9 +146,14 @@ void cleanup_data_structures() {
   knife_charges.clear();
 }
 
+// void cleanup_enemy_bullet_definitions() {
+//   enemy_bullet_definitions.clear();
+// }
+
 void cleanup() {
   cleanup_data_structures();
   cleanup_textures();
+  enemy_bullet_definitions.clear();
   SDL_DestroyTexture(debug_texture);
   SDL_DestroyTexture(debug_bg_texture);
   SDL_DestroyTexture(stopwatch_texture);

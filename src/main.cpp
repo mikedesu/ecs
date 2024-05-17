@@ -1,6 +1,7 @@
 #include "SDL_handler.h"
 #include "bg_entity_type.h"
 #include "components.h"
+#include "enemy_bullets.h"
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "entity_type.h"
@@ -122,6 +123,8 @@ vector<int> bat_y_vec;
 
 map<entity_id, sprite_component> sprites;
 map<entity_id, sprite_component> bg_sprites;
+
+unordered_map<enemy_type, enemy_bullet_definition> enemy_bullet_definitions;
 unordered_map<entity_id, int> hitpoints;
 unordered_map<entity_id, powerup_type> powerup_types;
 unordered_map<entity_id, enemy_type> enemy_types;
@@ -183,6 +186,7 @@ void render_gameover();
 void update();
 void init_game();
 void do_fullscreen();
+void load_enemy_bullet_definitions();
 
 int main() {
   load_main_config();
@@ -198,6 +202,7 @@ int main() {
   init();
   handle_init_target_texture();
   load_textures();
+  load_enemy_bullet_definitions();
   load_debug_text();
   init_debug_texture_rects();
   load_stopwatch_text();

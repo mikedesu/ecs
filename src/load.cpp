@@ -1,5 +1,6 @@
 #include "SDL_handler.h"
 #include "components.h"
+#include "enemy_bullets.h"
 #include "entity_id.h"
 #include "mPrint.h"
 #include "rapidjson/document.h"
@@ -24,6 +25,8 @@ using std::vector;
 extern SDL_Color stopwatch_text_color;
 extern int powerups_onscreen;
 extern unordered_map<string, size_t> config;
+extern unordered_map<enemy_type, enemy_bullet_definition>
+    enemy_bullet_definitions;
 extern int current_soulshard_magnetism_threshold;
 // extern int frame_count;
 extern int total_frame_count;
@@ -455,6 +458,80 @@ void load_main_config() {
   config["target_texture_width"] = config["default_window_width"];
   config["target_texture_height"] = config["default_window_height"];
   current_soulshard_magnetism_threshold = config["default_magnetism_threshold"];
+}
+
+void load_enemy_bullet_definitions() {
+  Document d = load_document("config/enemy-bullets.json");
+
+  string str_keys[] = {"type", "movement"};
+  string int_keys[] = {"speed", "frequency", "cooldown"};
+  string double_keys[] = {"scale"};
+
+  if (d.IsArray()) {
+    for (auto &v : d.GetArray()) {
+      check_if_json_value_is_object(v);
+
+      for (string key : str_keys) {
+        if (!v.HasMember(key.c_str()) || !v[key.c_str()].IsString()) {
+          string msg = "config/enemy-bullets.json array element has no " + key;
+          mPrint(msg);
+          cleanup_and_exit_with_failure();
+        }
+      }
+
+      for (string key : int_keys) {
+        if (!v.HasMember(key.c_str()) || !v[key.c_str()].IsInt()) {
+          string msg = "config/enemy-bullets.json array element has no " + key;
+          mPrint(msg);
+          cleanup_and_exit_with_failure();
+        }
+      }
+
+      for (string key : double_keys) {
+        if (!v.HasMember(key.c_str()) || !v[key.c_str()].IsDouble()) {
+          string msg = "config/enemy-bullets.json array element has no " + key;
+          mPrint(msg);
+          cleanup_and_exit_with_failure();
+        }
+      }
+
+      string type_str = v["type"].GetString();
+      enemy_type type = ENEMY_TYPE_EYEBALL;
+      if (type_str == "eyeball") {
+        type = ENEMY_TYPE_EYEBALL;
+      } else if (type_str == "bat") {
+        type = ENEMY_TYPE_BAT;
+      } else if (type_str == "goblin") {
+        type = ENEMY_TYPE_GOBLIN;
+      } else {
+        string msg = "config/enemy-bullets.json array element has invalid type";
+        mPrint(msg);
+        cleanup_and_exit_with_failure();
+      }
+
+      enemy_bullet_movement movement = ENEMY_BULLET_MOVEMENT_UP;
+      string movement_str = v["movement"].GetString();
+      if (movement_str == "up") {
+        movement = ENEMY_BULLET_MOVEMENT_UP;
+      } else if (movement_str == "towards-player") {
+        movement = ENEMY_BULLET_MOVEMENT_TOWARDS_PLAYER;
+      } else {
+        string msg =
+            "config/enemy-bullets.json array element has invalid movement";
+        mPrint(msg);
+        cleanup_and_exit_with_failure();
+      }
+
+      int speed = v["speed"].GetInt();
+      int frequency = v["frequency"].GetInt();
+      int cooldown = v["cooldown"].GetInt();
+      double scale = v["scale"].GetDouble();
+
+      enemy_bullet_definition def = {movement, speed, frequency, cooldown,
+                                     scale};
+      enemy_bullet_definitions[type] = def;
+    }
+  }
 }
 
 void load_generators() {

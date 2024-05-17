@@ -58,7 +58,6 @@ extern unordered_map<string, size_t> config;
 extern unordered_map<entity_id, bool> inputs;
 extern unordered_map<string, SDL_Texture *> textures;
 extern unordered_map<entity_id, entity_type> entity_types;
-// extern unordered_map<entity_id, bool> is_blood_pixel;
 extern unordered_map<entity_id, int> blood_pixel_lifetime;
 extern unordered_map<entity_id, powerup_type> powerup_types;
 extern unordered_map<entity_id, enemy_type> enemy_types;
@@ -136,6 +135,7 @@ void spawn_bat(const double x, const double y, const double vx, const double vy,
 }
 
 void spawn_goblin_bullet(entity_id id) {
+  // the key can be used to pull a bullet definition
   string key = "goblin-bullet";
   const double scale = 1.0;
   const sprite_component goblin = sprites[id];
@@ -147,7 +147,6 @@ void spawn_goblin_bullet(entity_id id) {
   // to do this, we need the player position
   const int px = sprites[player_id].dest.x;
   const int py = sprites[player_id].dest.y;
-
   // calculate the angle between the player and the goblin
   const double angle = atan2(py - y, px - x);
   const double vx = cos(angle) * 4.0;
