@@ -1,4 +1,5 @@
 #include "components.h"
+#include "enemy_bullets.h"
 #include "enemy_type.h"
 #include "entity_id.h"
 #include "entity_type.h"
@@ -79,6 +80,8 @@ extern unordered_map<entity_id, int> blood_pixel_lifetime;
 extern unordered_map<entity_id, double> rotation_speeds;
 extern unordered_map<enemy_type, int> enemies_killed;
 extern unordered_map<powerup_type, int> powerups_collected;
+extern unordered_map<enemy_type, enemy_bullet_definition>
+    enemy_bullet_definitions;
 extern vector<entity_id> entities;
 
 extern void spawn_soulshard(const int x, const int y);
@@ -658,44 +661,49 @@ inline void update_explosions() {
   }
 }
 
+inline void handle_goblin_bullets(entity_id id) {
+  static bool is_firing = true;
+  const int bullet_start_count =
+      enemy_bullet_definitions[ENEMY_TYPE_GOBLIN].count;
+  static int bullet_count = bullet_start_count;
+  const int bullet_freq = enemy_bullet_definitions[ENEMY_TYPE_GOBLIN].frequency;
+
+  // this is essentially "bullet_frequency"
+  // it is how often we want to fire a bullet
+  // in this case, once every 60 frames
+  // we can do something similar to "knife_cooldown"
+  // by tracking how many bullets have been fired
+  // and then refreshing this value
+  // for every entity firing a bullet
+  if (current_frame_count % bullet_freq == 0) {
+    // mPrint("spawn goblin knife");
+    if (is_firing) {
+      spawn_goblin_bullet(id);
+      bullet_count--;
+    } else {
+      bullet_count++;
+    }
+  }
+  if (bullet_count <= 0) {
+    is_firing = false;
+  } else if (bullet_count == bullet_start_count) {
+    is_firing = true;
+  }
+}
+
 inline void update_entity_special_actions() {
   for (auto kv : is_enemy) {
     entity_id id = kv.first;
 
     // this stuff is getting put into a JSON and then pulled out from a config
-    const int bullet_freq = 10;
-    const int bullet_start_count = 10;
-    static int bullet_count = bullet_start_count;
-    static bool is_firing = true;
+    // static bool is_firing = true;
 
     // eventually we will be able to define special actions via JSON file in a
     // similar manner to everything else so as to avoid hard-coding the cases
     // and frame frequencies
     switch (enemy_types[id]) {
     case ENEMY_TYPE_GOBLIN: {
-
-      // this is essentially "bullet_frequency"
-      // it is how often we want to fire a bullet
-      // in this case, once every 60 frames
-      // we can do something similar to "knife_cooldown"
-      // by tracking how many bullets have been fired
-      // and then refreshing this value
-      // for every entity firing a bullet
-      if (current_frame_count % bullet_freq == 0) {
-        // mPrint("spawn goblin knife");
-
-        if (is_firing) {
-          spawn_goblin_bullet(id);
-          bullet_count--;
-        } else {
-          bullet_count++;
-        }
-      }
-      if (bullet_count <= 0) {
-        is_firing = false;
-      } else if (bullet_count == bullet_start_count) {
-        is_firing = true;
-      }
+      handle_goblin_bullets(id);
 
     } break;
     }

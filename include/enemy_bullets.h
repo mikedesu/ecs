@@ -11,6 +11,6 @@ typedef struct {
   enemy_bullet_movement movement;
   int speed;
   int frequency;
-  int cooldown;
+  int count;
   double scale;
 } enemy_bullet_definition;

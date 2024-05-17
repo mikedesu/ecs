@@ -464,7 +464,7 @@ void load_enemy_bullet_definitions() {
   Document d = load_document("config/enemy-bullets.json");
 
   string str_keys[] = {"type", "movement"};
-  string int_keys[] = {"speed", "frequency", "cooldown"};
+  string int_keys[] = {"speed", "frequency", "count"};
   string double_keys[] = {"scale"};
 
   if (d.IsArray()) {
@@ -524,11 +524,10 @@ void load_enemy_bullet_definitions() {
 
       int speed = v["speed"].GetInt();
       int frequency = v["frequency"].GetInt();
-      int cooldown = v["cooldown"].GetInt();
+      int count = v["count"].GetInt();
       double scale = v["scale"].GetDouble();
 
-      enemy_bullet_definition def = {movement, speed, frequency, cooldown,
-                                     scale};
+      enemy_bullet_definition def = {movement, speed, frequency, count, scale};
       enemy_bullet_definitions[type] = def;
     }
   }

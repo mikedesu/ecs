@@ -1,5 +1,6 @@
 #include "SDL_handler.h"
 #include "components.h"
+#include "enemy_bullets.h"
 #include "entity_id.h"
 #include "entity_type.h"
 #include "mPrint.h"
@@ -73,6 +74,8 @@ extern unordered_map<entity_id, bool> is_powerup;
 extern unordered_map<entity_id, bool> is_generator;
 extern unordered_map<powerup_type, int> powerups_collected;
 extern unordered_map<entity_id, double> rotation_speeds;
+extern unordered_map<enemy_type, enemy_bullet_definition>
+    enemy_bullet_definitions;
 extern vector<entity_id> entities;
 extern entity_id get_next_entity_id();
 
@@ -142,15 +145,37 @@ void spawn_goblin_bullet(entity_id id) {
   const double x = goblin.dest.x + goblin.dest.w / 2.0;
   const double y = goblin.dest.y;
 
+  double vx = 0;
+  double vy = 0;
+
+  enemy_bullet_definition def = enemy_bullet_definitions[ENEMY_TYPE_GOBLIN];
+  switch (def.movement) {
+  case ENEMY_BULLET_MOVEMENT_UP:
+    vx = 0;
+    vy = -def.speed;
+    break;
+  case ENEMY_BULLET_MOVEMENT_TOWARDS_PLAYER:
+    // experiment time
+    // lets make the bullets fire at the player
+    // to do this, we need the player position
+    const int px = sprites[player_id].dest.x;
+    const int py = sprites[player_id].dest.y;
+    // calculate the angle between the player and the goblin
+    const double angle = atan2(py - y, px - x);
+    vx = cos(angle) * def.speed;
+    vy = sin(angle) * def.speed;
+    break;
+  }
+
   // experiment time
   // lets make the bullets fire at the player
   // to do this, we need the player position
-  const int px = sprites[player_id].dest.x;
-  const int py = sprites[player_id].dest.y;
+  // const int px = sprites[player_id].dest.x;
+  // const int py = sprites[player_id].dest.y;
   // calculate the angle between the player and the goblin
-  const double angle = atan2(py - y, px - x);
-  const double vx = cos(angle) * 4.0;
-  const double vy = sin(angle) * 4.0;
+  // const double angle = atan2(py - y, px - x);
+  // double vx = cos(angle) * 4.0;
+  // double vy = sin(angle) * 4.0;
 
   // const double vx = 0;
   // const double vy = -1.0;
