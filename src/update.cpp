@@ -662,16 +662,41 @@ inline void update_entity_special_actions() {
   for (auto kv : is_enemy) {
     entity_id id = kv.first;
 
+    // this stuff is getting put into a JSON and then pulled out from a config
+    const int bullet_freq = 10;
+    const int bullet_start_count = 10;
+    static int bullet_count = bullet_start_count;
+    static bool is_firing = true;
+
     // eventually we will be able to define special actions via JSON file in a
     // similar manner to everything else so as to avoid hard-coding the cases
     // and frame frequencies
     switch (enemy_types[id]) {
     case ENEMY_TYPE_GOBLIN: {
-      if (current_frame_count % 30 == 0) {
+
+      // this is essentially "bullet_frequency"
+      // it is how often we want to fire a bullet
+      // in this case, once every 60 frames
+      // we can do something similar to "knife_cooldown"
+      // by tracking how many bullets have been fired
+      // and then refreshing this value
+      // for every entity firing a bullet
+      if (current_frame_count % bullet_freq == 0) {
         // mPrint("spawn goblin knife");
 
-        spawn_goblin_bullet(id);
+        if (is_firing) {
+          spawn_goblin_bullet(id);
+          bullet_count--;
+        } else {
+          bullet_count++;
+        }
       }
+      if (bullet_count <= 0) {
+        is_firing = false;
+      } else if (bullet_count == bullet_start_count) {
+        is_firing = true;
+      }
+
     } break;
     }
   }
