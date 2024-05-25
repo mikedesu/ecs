@@ -1,3 +1,4 @@
 [
-  {"type":"goblin", "movement":"up", "speed":8, "frequency":60, "count":20, "scale":1.0}
+  {"type":"goblin", "movement":"up", "speed":8, "frequency":60, "count":20, "scale":1.0},
+  {"type":"goblin2", "movement":"towards-player", "speed":8, "frequency":60, "count":20, "scale":1.0}
 ]

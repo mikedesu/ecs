@@ -7,6 +7,8 @@
   {"type": "texture_colormod","key": "bat-dmg","path": "img/bat-white-sheet4x.png", "numclips":2, "r":255, "g":0, "b":0},
   {"type": "texture_colormod","key": "goblin","path": "img/goblin-01-sheet.png", "numclips":4, "r":255, "g":255, "b":255},
   {"type": "texture_colormod","key": "goblin-dmg","path": "img/goblin-01-sheet.png", "numclips":4, "r":255, "g":0, "b":0},
+  {"type": "texture_colormod","key": "goblin2","path": "img/goblin-01-sheet.png", "numclips":4, "r":255, "g":255, "b":255},
+  {"type": "texture_colormod","key": "goblin2-dmg","path": "img/goblin-01-sheet.png", "numclips":4, "r":128, "g":128, "b":128},
   {"type": "texture_colormod","key": "knife","path": "img/knife-alt4x.png", "numclips":1, "r":255, "g":255, "b":255},
   {"type": "texture_colormod","key": "soulshard","path": "img/soulshard-white-sheet4x.png", "numclips":8, "r":255, "g":255, "b":255},
   {"type": "texture_colormod","key": "powerup-heart","path": "img/heart-sheet4x.png","numclips":6,"r": 255,"g": 255,"b": 255},

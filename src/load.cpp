@@ -496,6 +496,9 @@ void load_enemy_bullet_definitions() {
       }
 
       string type_str = v["type"].GetString();
+
+      mPrint("**** type_str: " + type_str);
+
       enemy_type type = ENEMY_TYPE_EYEBALL;
       if (type_str == "eyeball") {
         type = ENEMY_TYPE_EYEBALL;
@@ -503,7 +506,11 @@ void load_enemy_bullet_definitions() {
         type = ENEMY_TYPE_BAT;
       } else if (type_str == "goblin") {
         type = ENEMY_TYPE_GOBLIN;
-      } else {
+      } else if (type_str == "goblin2") {
+        type = ENEMY_TYPE_GOBLIN_2;
+      }
+
+      else {
         string msg = "config/enemy-bullets.json array element has invalid type";
         mPrint(msg);
         cleanup_and_exit_with_failure();
@@ -511,6 +518,9 @@ void load_enemy_bullet_definitions() {
 
       enemy_bullet_movement movement = ENEMY_BULLET_MOVEMENT_UP;
       string movement_str = v["movement"].GetString();
+
+      mPrint("**** movement_str: " + movement_str);
+
       if (movement_str == "up") {
         movement = ENEMY_BULLET_MOVEMENT_UP;
       } else if (movement_str == "towards-player") {
@@ -577,8 +587,11 @@ void load_generators() {
         type = ENEMY_TYPE_BAT;
       } else if (type_str == "goblin") {
         type = ENEMY_TYPE_GOBLIN;
+      } else if (type_str == "goblin2") {
+        type = ENEMY_TYPE_GOBLIN_2;
+      }
 
-      } else {
+      else {
         string msg = "config/generators.json array element has invalid type";
         mPrint(msg);
         cleanup_and_exit_with_failure();

@@ -16,7 +16,8 @@
 #include <unordered_map>
 #include <vector>
 
-#define POWERUP_COST 5
+#define POWERUP_COST 3
+#define MAX_POWERUPS_ONSCREEN 10
 
 using std::default_random_engine;
 using std::for_each;
@@ -94,7 +95,8 @@ extern void spawn_bats(const double x, const double y, const double scale,
 extern void spawn_eyeball(const double x, const double y, const double vx,
                           const double vy, const double scale, const int hp);
 extern void spawn_goblin(const double x, const double y, const double vx,
-                         const double vy, const double scale, const int hp);
+                         const double vy, const double scale, const int hp,
+                         const enemy_type type);
 void spawn_goblin_bullet(entity_id id);
 
 extern void spawn_small_explosion(const int x, const int y);
@@ -117,7 +119,8 @@ function<void()> handle_update_skull_collision_knife = []() {
 function<void()> handle_update_skull_collision_soulshard = []() {
   player_soulshards++;
   total_soulshards_collected++;
-  if (player_soulshards >= POWERUP_COST && powerups_onscreen < 11) {
+  if (player_soulshards >= POWERUP_COST &&
+      powerups_onscreen <= MAX_POWERUPS_ONSCREEN) {
     spawn_powerup();
     player_soulshards -= POWERUP_COST;
   }
@@ -532,14 +535,25 @@ void handle_goblin_generator(entity_id id) {
   int hp = generators[id].hp;
   // int group = generators[id].group;
   int spawn_count = generators[id].spawn_count;
+  enemy_type type = generators[id].type;
   double scale = generators[id].scale;
-  string key = "goblin";
+
+  string key = type == ENEMY_TYPE_GOBLIN     ? "goblin"
+               : type == ENEMY_TYPE_GOBLIN_2 ? "goblin2"
+                                             : "goblin";
+
   SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
   x = config["target_texture_width"];
   y = config["target_texture_height"] - h * scale;
   vx_dir = -2.0; // flipped
   if (spawn_count > 0 || spawn_count == -1) {
-    spawn_goblin(x, y, vx_dir, vy_dir, scale, hp);
+
+    // if (rand() % 2 == 0) {
+    //   type = ENEMY_TYPE_GOBLIN_2;
+    // }
+
+    spawn_goblin(x, y, vx_dir, vy_dir, scale, hp, type);
+
     // decrement the spawn count
     if (spawn_count > 0) {
       generators[id].spawn_count--;
@@ -603,6 +617,10 @@ void update_generators() {
         case ENEMY_TYPE_GOBLIN: {
           handle_goblin_generator(id);
         } break;
+        case ENEMY_TYPE_GOBLIN_2: {
+          handle_goblin_generator(id);
+        } break;
+
         default:
           break;
         }
@@ -663,10 +681,12 @@ inline void update_explosions() {
 
 inline void handle_goblin_bullets(entity_id id) {
   static bool is_firing = true;
-  const int bullet_start_count =
-      enemy_bullet_definitions[ENEMY_TYPE_GOBLIN].count;
+
+  const enemy_type type = enemy_types[id];
+  const enemy_bullet_definition def = enemy_bullet_definitions[type];
+  const int bullet_start_count = def.count;
   static int bullet_count = bullet_start_count;
-  const int bullet_freq = enemy_bullet_definitions[ENEMY_TYPE_GOBLIN].frequency;
+  const int bullet_freq = def.frequency;
 
   // this is essentially "bullet_frequency"
   // it is how often we want to fire a bullet
@@ -703,6 +723,10 @@ inline void update_entity_special_actions() {
     // and frame frequencies
     switch (enemy_types[id]) {
     case ENEMY_TYPE_GOBLIN: {
+
+      handle_goblin_bullets(id);
+    } break;
+    case ENEMY_TYPE_GOBLIN_2: {
       handle_goblin_bullets(id);
 
     } break;

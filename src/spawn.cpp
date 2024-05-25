@@ -1,6 +1,7 @@
 #include "SDL_handler.h"
 #include "components.h"
 #include "enemy_bullets.h"
+#include "enemy_type.h"
 #include "entity_id.h"
 #include "entity_type.h"
 #include "mPrint.h"
@@ -100,12 +101,23 @@ entity_id spawn_entity(const string key, const bool is_animating,
 }
 
 void spawn_goblin(const double x, const double y, const double vx,
-                  const double vy, const double scale, const int hp) {
+                  const double vy, const double scale, const int hp,
+                  const enemy_type type) {
 
   mPrint("spawn_goblin: " + to_string(x) + " " + to_string(y) + " " +
          to_string(vx) + " " + to_string(vy) + " " + to_string(scale) + " " +
-         to_string(hp));
-  const string key = "goblin";
+         to_string(hp) + " " + to_string(type));
+
+  if (type != ENEMY_TYPE_GOBLIN && type != ENEMY_TYPE_GOBLIN_2) {
+    // if (type != ENEMY_TYPE_GOBLIN_2) {
+    mPrint("ERROR: spawn_goblin: invalid enemy type");
+    return;
+  }
+
+  const string key = type == ENEMY_TYPE_GOBLIN     ? "goblin"
+                     : type == ENEMY_TYPE_GOBLIN_2 ? "goblin2"
+                                                   : "goblin";
+
   SDL_QueryTexture(textures[key], NULL, NULL, &w, &h);
   const int numclips = num_clips[key];
   // const entity_id id = spawn_entity(key, true, numclips, x, y);
@@ -115,7 +127,10 @@ void spawn_goblin(const double x, const double y, const double vx,
   is_collidable[id] = true;
   is_enemy[id] = true;
   entity_types[id] = ENTITY_TYPE_ENEMY;
-  enemy_types[id] = ENEMY_TYPE_GOBLIN;
+
+  // enemy_types[id] = ENEMY_TYPE_GOBLIN;
+  enemy_types[id] = type;
+
   // hitpoints[id] = 1;
   hitpoints[id] = hp;
 }
@@ -148,7 +163,12 @@ void spawn_goblin_bullet(entity_id id) {
   double vx = 0;
   double vy = 0;
 
-  enemy_bullet_definition def = enemy_bullet_definitions[ENEMY_TYPE_GOBLIN];
+  enemy_type type = enemy_types[id];
+
+  mPrint("bullet type: " + to_string(type));
+
+  enemy_bullet_definition def = enemy_bullet_definitions[type];
+
   switch (def.movement) {
   case ENEMY_BULLET_MOVEMENT_UP:
     vx = 0;
@@ -404,6 +424,10 @@ void spawn_powerup() {
   bool is_anim = false;
   double x = config["target_texture_width"] + w;
   double y = texture_height_distribution(rng_generator) - h * 2;
+  if (y < 0) {
+    y = 0;
+  }
+  // y = 0;
   double angle = 0.0;
   switch (poweruptype) {
   case POWERUP_TYPE_KNIFE_LARGENESS:

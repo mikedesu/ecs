@@ -473,8 +473,8 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
 ## 16 May 2024
 
 - [ ] need to make sure data structures are properly cleaned-up after gameover and restart
-    - [ ] goblins are spawning because the current frame is not being reset
-        - [ ] need to distinguish the total frame_count for the game the whole time it is being run versus the total frame_count for this play thru (i.e. after game over)
+    - [x] goblins are spawning because the current frame is not being reset
+        - [x] need to distinguish the total frame_count for the game the whole time it is being run versus the total frame_count for this play thru (i.e. after game over)
 - [ ] powerup spawn positions are incorrect, can appear too-far above/below screen
 - [ ] need to pass in the bullet parameters to a JSON config, either generators or something else
     - [ ] bullet frequency
