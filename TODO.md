@@ -484,5 +484,7 @@ removalboundary is from -sprite.width to -2*sprite.width and screen.width + spri
     - [ ] bullet movement (directly up, left, down, right, spread, at player, homing)
 - [ ] dynamic movement for enemies  
 
+## 11 June 2024
 
+- [ ] realized generators are currently geared towards enemies and doesnt include things like powerups or collidable boxes so we need to modify generators to be more generic so we can handle arbitary entities
 

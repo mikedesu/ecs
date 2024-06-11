@@ -80,6 +80,30 @@ extern unordered_map<enemy_type, enemy_bullet_definition>
 extern vector<entity_id> entities;
 extern entity_id get_next_entity_id();
 
+// function declarations
+void spawn_generator(enemy_type type, bool active, int group, int cooldown,
+                     int cooldown_reduction, int frame_begin, int spawn_count,
+                     int hp, double scale, screen_position_t screen_position);
+void spawn_eyeball(const double x, const double y, const double vx,
+                   const double vy, const double scale, const int hp);
+void spawn_soulshard(const int x, const int y);
+void spawn_bat(const double x, const double y, const double vx, const double vy,
+               const double scale, const int hp);
+void spawn_goblin(const double x, const double y, const double vx,
+                  const double vy, const double scale, const int hp,
+                  const enemy_type type);
+entity_id spawn_entity(const string key, const bool is_animating,
+                       const int numclips, const int x, const int y,
+                       const double scale);
+void spawn_block(const int x, const int y, const int w, const int h);
+void spawn_goblin_bullet(entity_id id);
+void spawn_knife();
+void spawn_skull(const int x, const int y);
+void spawn_powerup();
+void spawn_small_explosion(const int x, const int y);
+void spawn_blood_pixels(const int x, const int y, const int n);
+
+// function implementations
 entity_id spawn_entity(const string key, const bool is_animating,
                        const int numclips, const int x, const int y,
                        const double scale) {
@@ -503,4 +527,19 @@ void spawn_blood_pixels(const int x, const int y, const int n) {
     entity_types[id] = ENTITY_TYPE_PARTICLE;
     entities.push_back(id);
   }
+}
+
+void spawn_block(const int x, const int y, const int w, const int h) {
+  const string key = "block-01-small";
+  // SDL_Texture *t = textures[key];
+  // SDL_QueryTexture(t, NULL, NULL, &w, &h);
+  const bool is_anim = false;
+  const int numclips = num_clips[key];
+  const double dx = x;
+  const double dy = y;
+  const double scale = 1.0;
+  entity_id id = spawn_entity(key, is_anim, numclips, x, y, scale);
+  transforms[id] = {dx, dy, 0, 0, 0, scale};
+  is_collidable[id] = true;
+  entity_types[id] = ENTITY_TYPE_BLOCK;
 }

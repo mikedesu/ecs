@@ -17,7 +17,8 @@ typedef enum {
 } screen_position_t;
 
 typedef struct {
-  enemy_type type;
+  enemy_type
+      type; // problematic, excludes boxes, powerups, other possible types
   bool active;
   int group;
   int cooldown;
