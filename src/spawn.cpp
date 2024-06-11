@@ -104,9 +104,9 @@ void spawn_goblin(const double x, const double y, const double vx,
                   const double vy, const double scale, const int hp,
                   const enemy_type type) {
 
-  mPrint("spawn_goblin: " + to_string(x) + " " + to_string(y) + " " +
-         to_string(vx) + " " + to_string(vy) + " " + to_string(scale) + " " +
-         to_string(hp) + " " + to_string(type));
+  //  mPrint("spawn_goblin: " + to_string(x) + " " + to_string(y) + " " +
+  //         to_string(vx) + " " + to_string(vy) + " " + to_string(scale) + " "
+  //         + to_string(hp) + " " + to_string(type));
 
   if (type != ENEMY_TYPE_GOBLIN && type != ENEMY_TYPE_GOBLIN_2) {
     // if (type != ENEMY_TYPE_GOBLIN_2) {
@@ -165,7 +165,7 @@ void spawn_goblin_bullet(entity_id id) {
 
   enemy_type type = enemy_types[id];
 
-  mPrint("bullet type: " + to_string(type));
+  // mPrint("bullet type: " + to_string(type));
 
   enemy_bullet_definition def = enemy_bullet_definitions[type];
 
@@ -392,10 +392,11 @@ void spawn_generator(enemy_type type, bool active, int group, int cooldown,
     return;
   }
 
-  mPrint("spawn_generator: " + to_string(type) + " " + to_string(active) + " " +
-         to_string(group) + " " + to_string(cooldown) + " " +
-         to_string(cooldown_reduction) + " " + to_string(frame_begin) + " " +
-         to_string(spawn_count) + " " + to_string(hp));
+  // mPrint("spawn_generator: " + to_string(type) + " " + to_string(active) + "
+  // " +
+  //        to_string(group) + " " + to_string(cooldown) + " " +
+  //        to_string(cooldown_reduction) + " " + to_string(frame_begin) + " " +
+  //        to_string(spawn_count) + " " + to_string(hp));
 
   const entity_id id = get_next_entity_id();
   generators[id] = {

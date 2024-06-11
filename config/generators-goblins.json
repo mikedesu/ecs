@@ -1,0 +1,4 @@
+[
+  {"type":"goblin","groupnum":1,"cooldown":120,"cooldown_reduction":0,"spawn_count":10,"frame_begin":0,"hp":1,"scale":2.0,"position":"right"},
+  {"type":"goblin2","groupnum":1,"cooldown":120,"cooldown_reduction":0,"spawn_count":10,"frame_begin":1800,"hp":1,"scale":4.0,"position":"right"}
+]
